@@ -1,0 +1,14 @@
+<header th:fragment="main-nav">
+    <div class="container">
+        <h1>
+            <img src="/images/gamegogo.png" class="navbar-logo" alt="겜할래 로고">
+            <a th:href="@{/}">겜할래</a>
+        </h1>
+        <nav>
+            <ul>
+                <li><a th:href="@{/login}">로그인</a></li>
+                <li><a th:href="@{/sign-up}">회원가입</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>

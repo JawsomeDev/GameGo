@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 겜할래</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- 헤더 (메인 페이지와 동일) -->
+<header th:replace="~{fragment.html :: main-nav}"></header>
+
+<!-- 회원가입 폼 -->
+<main class="login-container">
+    <div class="login-box">
+        <h2>회원가입</h2>
+        <form action="#" th:action="@{/sign-up}" method="POST" >
+            <div class="input-group">
+                <label for="username">이메일</label>
+                <input type="text" id="username" name="username" placeholder="이메일을 입력하세요" required>
+                <small id="usernameHelp">
+                    겜할래는 사용자의 이메일을 공개, 도용하지 않습니다.
+                </small>
+            </div>
+            <div class="input-group">
+                <label for="nickname">닉네임</label>
+                <input type="text" id="nickname" name="nickname" placeholder="닉네임을 입력하세요" required>
+                <small id="nicknameHelp">
+                    공백없이 문자와 숫자로만 2자이상 15자이내로 입력하세요.
+                </small>
+            </div>
+            <div class="input-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
+                <small id="passwordHelp">
+                    8자 이상 20자 이내로 입력하세요. 영문자, 숫자, 특수기호를 사용할 수 있으며 공백은 사용할 수 없습니다.
+                </small>
+            </div>
+            <div class="input-group">
+                <label for="confirm-password">비밀번호 확인</label>
+                <input type="password" id="confirm-password" name="confirm-password" placeholder="비밀번호를 다시 입력하세요" required>
+            </div>
+            <div class="input-group">
+                <label>성별</label>
+                <div class="gender-group">
+                    <label for="male">남</label>
+                    <input class="gender" type="radio" id="male" name="gender" value="male" required>
+                    <label for="female">여</label>
+                    <input class="gender" type="radio" id="female" name="gender" value="female" required>
+                </div>
+            </div>
+            <button type="submit" class="login-btn" >가입하기</button>
+        </form>
+        <small><a href="#">약관</a>에 동의하시면 가입을 완료해주세요.</small><br><small>이미 계정이 있으신가요? <a th:href="@{/login}">로그인</a></small>
+    </div>
+</main>
+
+<!-- 푸터 (메인 페이지와 동일) -->
+<div class="footer">
+    <img src="/images/gamefooter.png" alt="겜할래 로고" class="footer-logo">
+    <small class="copyright">&copy; 2025</small>
+</div>
+</body>
+</html>

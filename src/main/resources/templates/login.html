@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - 겜할래</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- 헤더 (메인 페이지와 동일) -->
+<header th:replace="~{fragment.html :: main-nav}"></header>
+
+<!-- 로그인 폼 -->
+<main class="login-container">
+    <div class="login-box">
+        <h2>로그인</h2>
+        <form action="#" th:action="@{/login}" method="POST">
+            <div class="input-group">
+                <label for="email">이메일 또는 닉네임</label>
+                <input type="text" id="email" name="email" placeholder="your@email.com" required>
+            </div>
+            <div class="input-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="remember">
+                <label for="remember">로그인 상태 유지</label>
+            </div>
+            <button type="submit" class="login-btn">로그인</button>
+        </form>
+        <small>아직 계정이 없나요? <a href="#" th:href="@{/sign-up}">회원가입</a></small>
+    </div>
+</main>
+
+<!-- 푸터 (메인 페이지와 동일) -->
+<div class="footer">
+    <img src="/images/gamefooter.png" alt="겜할래 로고" class="footer-logo">
+    <small>&copy; 2025</small>
+</div>
+
+</body>
+</html>
