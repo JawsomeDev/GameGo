@@ -1,14 +1,24 @@
-<header th:fragment="main-nav">
-    <div class="container">
-        <h1>
-            <img src="/images/gamegogo.png" class="navbar-logo" alt="겜할래 로고">
-            <a th:href="@{/}">겜할래</a>
-        </h1>
-        <nav>
-            <ul>
-                <li><a th:href="@{/login}">로그인</a></li>
-                <li><a th:href="@{/sign-up}">회원가입</a></li>
+
+
+
+
+<nav th:fragment="main-nav" class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
+    <div class="container-fluid">
+        <!-- 로고 정렬 수정 -->
+        <a class="navbar-brand d-flex align-items-center me-auto text-white" href="/">
+            <img src="/images/gamegogo.png" alt="겜할래" class="navbar-logo me-2" width="50">
+            <span class="fw-bold " >겜할래</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- 메뉴 오른쪽 정렬 -->
+            <ul class="navbar-nav ms-auto text-white">
+                <li class="nav-item"><a th:href="@{/login}" class="nav-link text-white">로그인</a></li>
+                <li class="nav-item"><a th:href="@{/sign-up}" class="nav-link text-white">회원가입</a></li>
+<!--                <li class="nav-item"><button class="nav-link text-white"></button></li>-->
             </ul>
-        </nav>
+        </div>
     </div>
-</header>
+</nav>

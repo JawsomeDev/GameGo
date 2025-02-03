@@ -32,22 +32,13 @@
     }
 })();
 
-const headerEl = document.querySelector("header");
-window.addEventListener('scroll', function(){
-    const broswerScrollY = this.window.pageYOffset;
-    if(broswerScrollY>0){
-        headerEl.classList.add("active");
-    }else{
-        headerEl.classList.remove("active");
-    }
-});
 
 
-
-const animationMove = function(selector){
+const animationMove = function(selector) {
     const targetEl = document.querySelector(selector);
-    const broswerScrollY = window.scrollY;
-    const targetScrollY = targetEl.getBoundingClientRect().top + broswerScrollY;
+    const headerHeight = document.querySelector(".navbar").offsetHeight; // 네비게이션 바 높이
+    const targetScrollY = targetEl.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+
     window.scrollTo({ top: targetScrollY, behavior: 'smooth' });
 };
 

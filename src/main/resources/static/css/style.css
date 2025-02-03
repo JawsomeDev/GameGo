@@ -9,67 +9,7 @@
     padding: 0;
     box-sizing: border-box;
 }
-a, a:link, a:visited{
-    color: inherit;
-    text-decoration: none;
-}
-li{
-    list-style: none;
-}
-.container{
-    margin:0 auto;
-    width: 1000px;
 
-}
-header{
-    position: fixed;
-    color: white;
-    top: 0;
-    z-index: 1;
-    width: 100%;
-    padding: 1rem;
-    background-color: black;
-}
-
-header .container{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
-header nav ul{
-    display: flex;
-}
-header nav ul li{
-    padding: 10px;
-}
-header button{
-    background:transparent;
-    border: 0;
-    cursor: pointer;
-}
-header.active{
-    background-color: rgba(0,0,0,1);
-    animation:fadeIn 0.5s ease-in-out;
-}
-
-@keyframes fadeIn{
-    0%{
-        opacity: 0;
-    }
-    100%{
-        opacity: 1;
-    }
-}
-header h1 button{
-    font-size: 2rem;
-    font-weight: bold;
-    color: white;
-}
-header nav ul li button{
-    font-size: 1.2rem;
-    color: white;
-}
 main{
     width: 100%;
     display: flex;
@@ -80,6 +20,9 @@ main{
     justify-content: center;
     align-items: center;
     text-align: center;
+}
+strong{
+    color : #f09c1e;
 }
 main h4{
     font-size: 3rem;
@@ -95,12 +38,12 @@ main p{
     margin: 0 auto;
     font-size: 1.25rem;
 }
-main button.download{
-    background-color: transparent;
+main .start{
+    background-color: transparent ;
     border: 3px solid white;
     border-radius: 20px;
     padding: 1rem 3rem;
-    margin-top: 3rem;
+    margin-top: 4rem;
     font-size: 1.5rem;
     color: white;
     font-weight: bold;
@@ -123,225 +66,15 @@ main h2 span::after{
     }
 }
 
-section{
-    font-family: "IBM Plex Sans KR", sans-serif;
-    padding: 5rem 0;
-}
-section:nth-child(2n){
-    background-color: #f8f8f8;
-}
-
-section .title{
-    margin-bottom: 3rem;
-}
-section .title h4{
-    font-size: 1.35rem;
-    color: #f09c1e;
-    position : relative;
-}
-section .title h2{
-    font-size: 3.5rem;
-}
-section .title p{
-    font-size: 1.15rem;
-}
-/* float 속성 해제 */
-section .about-self::after{
-    content: "";
-    clear: both;
-    display: block;
-}
-/* 본문 너비 절반 지정 & 왼쪽 배치 */
-section .about-self .left{
-    width:50%;
-    float: left;
-}
-/* 이미지 크기가 부모 영역을 넘지 않도록 부모 영역의 최대 크기로 지정 */
-section .about-self .left img{
-    max-width: 100%;
-}
-/* 본문 너비 절반 지정 & 오른쪽 배치 */
-section .about-self .right{
-
-    width: 50%;
-    float: left;
-    padding: 0 3rem;
-}
-
-/* 본문 오른쪽 h3 태그의 글자 크기와 여백 지정 */
-section .about-self .right h3{
-    font-size: 2.25rem;
-    margin-bottom: 1rem;
-}
-
-/* 본문 오른쪽 h3 태그의 strong 태그 색상 강조 */
-section .about-self .right p strong{
-    color: #ffba19;
-}
-
-section .about-self .right h4{
-    font-size: 1.15rem;
-    margin: 0;
-}
-
-
-/* clear 속성으로 float 속성값 해제 */
-section.faq::after{
-    content: "";
-    display: block;
-    clear: both;
-}
-/* faq-inner 사각형 꾸미기 */
-section.faq .faq-inner{
-    width: 31%;
-    margin-right: 3%;
-    padding: 1rem 1rem 1.5rem 1rem;
-    float: left;
-    background-color: #f8f8f8;
-    border: 1px solid #ccc;
-    margin-bottom: 3rem;
-}
-/* 3번째마다 margin-right 0적용 */
-section.faq .faq-inner:nth-child(3n){
-    margin-right: 0;
-}
-/*이미지 크기가 부모 요소를 넘지 않도록 100%로 지정 */
-section.faq .faq-inner img{
-    width: 100%;
-    display: block;
-}
-/* strong 태그 색상과 간격 */
-section.faq .faq-inner strong{
-    color: #ff8503;
-    margin: 0.5rem 0;
-    display: block;
-}
-/*h3 태그 색상과 간격 */
-section.faq .faq-inner h3{
-    font-size: 1.75rem;
-}
-section.contact .contact-me::after{
-    content: "";
-    display: block;
-    clear: both;
-}
-section.contact .contact-me .left{
-    width: 30%;
-    float: left;
-}
-section.contact .contact-me .right{
-    float: left;
-    width: 65%;
-    margin-left: 5%;
-    margin-bottom: 2rem;
-    border: 1px solid #ccc;
-    padding: 1rem;
-}
-section.contact .contact-me .left .card{
-    border: 1px solid #ccc;
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    margin-bottom:  1.25rem;
-}
-section.contact .contact-me .left .card .icon i{
-    font-size: 2rem;
-    margin-right: 15px;
-}
-/* form-group 사이 간격 지정 */
-section.contact .contact-me .right .form-group{
-    margin-bottom: 1.25rem;
-}
-/* label 태그가 인라인 성격이어서외부 여백을 적용하기 위해 block으로 변경 */
-section.contact .contact-me .right .form-group label{
-    display: block;
-    margin-bottom: 0.85rem;
-}
-/* input 요소 꾸미기 */
-section.contact .contact-me .right .form-group input{
-    padding: 0.625rem;
-    width: 100%;
-    outline: none;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-}
-/* :focus 가상 클래스 선택자로 입력 요소에 커서가 활성화 되면 파란색 테두리와 그림자 효과 추가 */
-section.contact .contact-me .right .form-group input:focus{
-    border: 1px solid #719ECE;
-    box-shadow:0 0 10px #719ECE;
-}
-/* textarea 요소 꾸미기 */
-section.contact .contact-me .right .form-group textarea{
-    height: 300px;
-    width: 100%;
-    resize: none;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-}
-/* textarea 요소에 커서가 활성화 되면 파란색 테두리와 그림자 효과 추가 */
-section.contact .contact-me .right .form-group textarea:focus{
-    outline: none;
-    border: 1px solid #719ECE;
-    box-shadow: 0 0 10px #719ECE;
-}
-/* 버튼 요소 꾸미기 */
-section.contact .contact-me .right button{
-    width: 100%;
-    padding: 1rem;
-    background-color: #f78b00;
-    border: none;
-    color: white;
-}
-
-
-/* media css */
-@media screen and (max-width:1140px){
-    /* 메인 영역 container 기준 너비 변경 */
-    main .container{
-        width: 992px;
-    }
-    /* sectio 영역 container 기준 너비 변경 - 2단으로 처리하기 위한 적정 너비 */
-    section .container{
-        width: 600px;
-    }
-    /*about me 영역 왼쪽 너비 50% -> 100% 변경 */
-    section .about-self .left{
-        width: 100%;
-        margin-bottom: 1.5rem;
-    }
-    section .about-self .right{
-        width:100%;
-        padding: 0;
-    }
-    section .do-me .do-inner{
-        width: 48%;
-        margin-bottom: 1.5rem;
-        margin-right: 0;
-    }
-    section .do-me .do-inner:nth-child(2n+1){
-        margin-right: 4%;
-    }
-    section .faq-me .faq-inner{
-        width: 48%;
-        margin-right: 0;
-    }
-    section .faq-me .faq-inner:nth-child(2n+1){
-        margin-right: 4%;
-    }
-
-    section.contact .contact-me .left{
-        width: 100%;
-    }
-    section.contact .contact-me .right{
-        width: 100%;
-        margin-left: 0;
-    }
-}
-
 .navbar-logo {
     height: 60px; /* 네비바 높이와 비슷하게 */
     width: auto;  /* 비율 유지 */
     vertical-align: middle;
+}
+
+#about {
+    text-align: left; /* 전체 내용 왼쪽 정렬 */
+    padding-left: 2rem; /* 좌측 여백 */
 }
 
 .footer {
@@ -358,96 +91,4 @@ section.contact .contact-me .right button{
 }
 .footer img {
     width: 180px; /* 로고 크기 조정 */
-}
-
-/* 로그인 페이지 스타일 */
-.login-container {
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-image: none;
-    background-color: #10253a;
-    padding-top: 100px;
-     padding-bottom: 100px;
-
-}
-
-.login-box {
-    background: rgb(255, 255, 255);
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border: 1px solid #000000;
-    width: 400px;
-    text-align: center;
-    margin: auto;
-    color: #000000;
-}
-
-.login-box h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    color: rgba(0,0,0);
-}
-
-.input-group {
-    text-align: left;
-    margin-bottom: 1rem;
-    color: #000000;
-}
-
-.input-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: rgba(0,0,0);
-}
-
-.input-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-
-    border-radius: 5px;
-}
-
-.checkbox-group {
-    text-align: left;
-    margin-bottom: 1rem;
-    color: rgba(0,0,0);
-}
-
-
-.login-btn {
-    width: 100%;
-    padding: 10px;
-    background-color: #270a8f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-.login-btn:hover {
-    background-color: #4c90bb;
-}
-
-
-
-.gender-group {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    align-items: center;
-}
-
-.gender-group .gender{
-    margin-left: -80px;
-}
-
-.login-box small a{
-    color: rgb(0, 106, 255);
 }
