@@ -1,13 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입 - 겜할래</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html::head}">
     <style> main {
         display: flex;
         justify-content: center;
@@ -20,7 +15,6 @@
     }</style>
 </head>
 <body>
-
 <!-- 헤더 (메인 페이지와 동일) -->
 <nav th:replace="~{fragment.html :: main-nav}"></nav>
 
@@ -28,37 +22,42 @@
 <main class="d-flex justify-content-center align-items-center">
     <div class="card shadow-lg p-4 rounded" style="width: 400px; background-color: white;">
         <h3 class="text-center mb-4 fw-bold">회원가입</h3>
-        <form action="#" th:action="@{/sign-up}" method="POST">
+        <form class="needs-validation" action="#" th:action="@{/sign-up}" th:object="${signUpForm}" method="POST">
             <div class="mb-3 text-start">
                 <label for="username" class="form-label fw-bold">이메일</label>
-                <input type="email" id="username" name="username" class="form-control" placeholder="이메일을 입력하세요" required>
-                <small class="text-muted">겜할래는 사용자의 이메일을 공개, 도용하지 않습니다.</small>
+                <input type="email" id="username" name="username" th:field="*{email}" class="form-control" placeholder="이메일을 입력하세요" required>
+                <small class="text-muted">겜할래는 사용자의 이메일을 공개, 도용하지 않습니다.</small><br>
+                <small class="text-danger small" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
             </div>
             <div class="mb-3 text-start">
                 <label for="nickname" class="form-label fw-bold">닉네임</label>
-                <input type="text" id="nickname" name="nickname" class="form-control" placeholder="닉네임을 입력하세요" required>
+                <input type="text" id="nickname" name="nickname"  th:field="*{nickname}" class="form-control" placeholder="닉네임을 입력하세요" required>
                 <small class="text-muted">공백 없이 문자와 숫자로만 2자 이상 15자 이내로 입력하세요.</small>
+                <small class="text-danger small" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"></small>
             </div>
             <div class="mb-3 text-start">
                 <label for="password" class="form-label fw-bold">비밀번호</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호를 입력하세요" required>
-                <small class="text-muted">8자 이상 20자 이내로 입력하세요. 영문자, 숫자, 특수기호 사용 가능.</small>
+                <input type="password" id="password" name="password"  th:field="*{password}" class="form-control" placeholder="비밀번호를 입력하세요" required>
+                <small class="text-muted">8자 이상 20자 이내로 입력하세요. 영문자, 숫자, 특수기호 사용 가능.</small><br>
+                <small class="text-danger small" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
             </div>
             <div class="mb-3 text-start">
                 <label for="confirm-password" class="form-label fw-bold">비밀번호 확인</label>
-                <input type="password" id="confirm-password" name="confirm-password" class="form-control" placeholder="비밀번호를 다시 입력하세요" required>
+                <input type="password" id="confirm-password" name="confirm-password"  th:field="*{confirmPassword}" class="form-control" placeholder="비밀번호를 다시 입력하세요" required>
+                <small class="text-danger small" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></small>
             </div>
             <div class="mb-3 text-start">
                 <label class="form-label fw-bold">성별</label>
                 <div class="d-flex align-items-center gap-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" id="male" name="gender" value="male" required>
+                        <input class="form-check-input" type="radio" id="male" th:field="*{gender}" name="gender" value="male" required>
                         <label class="form-check-label" for="male">남</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" id="female" name="gender" value="female" required>
+                        <input class="form-check-input" type="radio" id="female" th:field="*{gender}" name="gender" value="female" required>
                         <label class="form-check-label" for="female">여</label>
                     </div>
+                    <small class="text-danger small" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></small>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary w-100">가입하기</button>
@@ -70,14 +69,9 @@
     </div>
 </main>
 
-<!-- 푸터 -->
-<footer class="footer bg-dark text-white text-center py-3">
-    <div class="container d-flex justify-content-center align-items-center">
-        <img src="/images/gamefooter.png" alt="푸터 로고" class="me-2" width="120">
-        <span>© 2025</span>
-    </div>
-</footer>
 
+<footer th:replace="~{fragment.html :: footer}"></footer>
 
+<script th:replace="~{fragment.html :: form-validation}"></script>
 </body>
 </html>
