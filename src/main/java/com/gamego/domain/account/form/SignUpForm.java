@@ -27,7 +27,7 @@ public class SignUpForm {
     @Size(min=8, max = 20, message = "비밀번호는 8~20자 이내어야 합니다.")
     private String password;
 
-    @Transient
+    @Transient // JPA에서 제외
     private String confirmPassword;
 
 
