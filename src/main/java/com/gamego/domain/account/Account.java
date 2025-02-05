@@ -11,9 +11,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity
-@Getter @AllArgsConstructor
-@Builder @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity @Setter
+@Getter @AllArgsConstructor @NoArgsConstructor
 public class Account {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +26,7 @@ public class Account {
 
     private String password;
 
-    private boolean emailVerified = false;
+    private boolean emailVerified;
 
     private String emailCheckToken;
 
@@ -71,6 +70,19 @@ public class Account {
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
         this.emailCheckTokenGeneratedAt = LocalDateTime.now();
+    }
+
+    public boolean isValidToken(String token) {
+        return this. emailCheckToken.equals(token);
+    }
+
+    public void completeSignUp() {
+        this.emailVerified = true;
+        this.joinedAt = LocalDateTime.now();
+    }
+
+    public boolean canSendEmailAgain() {
+        return this.emailCheckTokenGeneratedAt == null || this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
     }
 
 }

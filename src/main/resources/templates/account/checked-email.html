@@ -1,0 +1,32 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment.html :: head}">
+
+</head>
+<body style="background-color: #10253a; color: white;">
+<div>
+    <div th:replace="~{fragment.html :: main-nav}"></div>
+
+    <div>
+        <div class="py-5 text-center" th:if="${error}">
+            <p class="lead">겜할래 이메일 인증</p>
+            <div class="alert alert-danger" role="alert">
+                이메일 확인 링크가 정확하지 않습니다.
+            </div>
+        </div>
+
+        <div class="py-5 text-center" th:if="${error == null}">
+            <p class="lead">겜할래 이메일 인증</p>
+            <h2>
+                이메일을 확인 했습니다. <span th:text="${numberOfUsers}">1000</span>번째 회원,
+                <span th:text="${nickname}">이승혁</span>님 가입을 축하합니다.
+            </h2>
+            <small class="text-info">이제부터 프로필 수정이 가능합니다.</small>
+        </div>
+    </div>
+
+    <div th:replace="~{fragment.html :: footer}"></div>
+</div>
+</body>
+
+</html>

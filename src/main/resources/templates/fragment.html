@@ -18,36 +18,82 @@
         </style>
 </head>
 <body>
-
-
-
-
-
-<nav th:fragment="main-nav" class="navbar navbar-expand-lg navbar-dark bg-black fixed-top">
+<nav th:fragment="main-nav" class="navbar navbar-expand-lg bg-black text-white">
     <div class="container-fluid">
-        <!-- 로고 정렬 수정 -->
-        <a class="navbar-brand d-flex align-items-center me-auto text-white" href="/">
+        <!-- 왼쪽 로고 -->
+        <a class="navbar-brand d-flex align-items-center me-4 text-white"
+           th:href="@{/main}" sec:authorize="isAuthenticated()">
             <img src="/images/gamegogo.png" alt="겜할래" class="navbar-logo me-2" width="50">
-            <span class="fw-bold " >겜할래</span>
+            <span class="fw-bold">겜할래</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- 메뉴 오른쪽 정렬 -->
-            <ul class="navbar-nav ms-auto text-white">
+        <a class="navbar-brand d-flex align-items-center me-4 text-white"
+           th:href="@{/}" sec:authorize="!isAuthenticated()">
+            <img src="/images/gamegogo.png" alt="겜할래" class="navbar-logo me-2" width="50">
+            <span class="fw-bold">겜할래</span>
+        </a>
+
+        <div class="collapse navbar-collapse">
+            <!-- 방 찾기 (왼쪽 배치) -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <form th:action="@{/search/study}" class="form-inline d-flex" sec:authorize="isAuthenticated()" method="get">
+                        <input class="form-control w-75 me-4" name="keyword" type="search" placeholder="방 찾기" aria-label="Search">
+                    </form>
+                </li>
+            </ul>
+
+            <!-- 네비게이션 요소들 오른쪽 정렬 -->
+            <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a th:href="@{/login}" class="nav-link text-white">로그인</a></li>
+                    <a class="nav-link text-white" th:href="@{/login}">로그인</a>
+                </li>
                 <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a th:href="@{/sign-up}" class="nav-link text-white">회원가입</a></li>
+                    <a class="nav-link text-white" th:href="@{/sign-up}">가입</a>
+                </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a th:href="@{/notifications}" class="nav-link text-white">
-                        <i class="fa fa-bell-o" aria-hidden="true"></i>
+                    <a class="nav-link text-white" th:href="@{/notifications}">
+                        <i class="fa-regular fa-bell text-white fa-xl"></i> <!-- 아이콘 수정 -->
                     </a>
+                </li>
+                <!-- 방 개설 버튼 (방 찾기와 간격 추가) -->
+                <li class="nav-item ms-4" sec:authorize="isAuthenticated()">
+                    <a class="btn btn-outline-warning text-white" th:href="@{/new-study}">
+                        <i class="fa fa-plus" aria-hidden="true"></i> 방 개설
+                    </a>
+                </li>
+
+                <!-- 사용자 드롭다운 -->
+                <li class="nav-item dropdown ms-4" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle p-0" href="#" id="userDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img th:src="${account != null && !#strings.isEmpty(account?.profileImage) && account.profileImage != '' ? account.profileImage : '/images/default.png'}"
+                             class="img-fluid rounded-circle profile-image"
+                             width="32" height="32" alt="User Avatar" th:alt="${account != null ? account.nickname : 'Default User'}" />
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <h6 class="dropdown-header">
+                            <span sec:authentication="name">Username</span>
+                        </h6>
+                        <li><a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.name}}">프로필</a></li>
+                        <li><a class="dropdown-item" href="#">스터디</a></li>
+                        <div class="dropdown-divider"></div>
+                        <li><a class="dropdown-item" href="#" th:href="@{'/settings/profile'}">설정</a></li>
+                        <li>
+                            <form class="form-inline my-2 my-lg-0" action="#" th:action="@{/logout}" method="post">
+                                <button class="dropdown-item" type="submit">로그아웃</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+
             </ul>
         </div>
     </div>
 </nav>
+
+
+
+
 
 
 

@@ -36,5 +36,9 @@ public class SignUpFormValidator implements Validator {
         if(accountRepository.existsByNickname(signUpForm.getNickname())){
             errors.rejectValue("nickname", "invalid.nickname", new Object[]{signUpForm.getNickname()}, "이미 사용중인 닉네임 입니다.");
         }
+
+        if(signUpForm.getGender() == null){
+            errors.rejectValue("gender", "invalid.gender", "성별을 선택하세요.");
+        }
     }
 }

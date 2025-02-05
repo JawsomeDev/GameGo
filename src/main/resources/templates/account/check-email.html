@@ -1,0 +1,48 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html :: head}">
+</head>
+<body style="background-color: #10253a; color: white">
+<div th:replace="~{fragment.html :: main-nav}"></div>
+<div class="container">
+    <div class="py-5 text-center" th:if="${error != null}">
+        <p class="lead">겜할래 가입</p>
+        <div class="alert alert-danger" role="alert" th:text="${error}"></div>
+        <p class="lead" th:text="${email}">your@email.com</p>
+    </div>
+    <div class="py-5 text-center" th:if="${error == null}">
+        <p class="lead">겜할래 가입</p>
+        <h2>프로필을 수정하려면 인증 이메일을 확인하세요.</h2>
+        <div>
+            <p class="lead" th:text="${email}">your@email.com</p>
+
+            <div id="success-message" class="alert alert-success mt-3" style="display: none;">
+                인증 이메일이 전송되었습니다.
+            </div>
+
+            <a id="resend-btn" class="btn btn-outline-info" th:href="@{/resend-checked-email}" onclick="disableButton(event)">
+                인증 이메일 다시 보내기
+            </a>
+        </div>
+    </div>
+</div>
+<script>
+    function disableButton(event) {
+        event.preventDefault();
+
+        let btn = document.getElementById('resend-btn');
+        let successMessage = document.getElementById('success-message');
+
+        btn.classList.add("disabled");
+        btn.innerText = "인증 이메일 전송 완료";
+
+        successMessage.style.display = "block";
+
+        setTimeout(() => {
+            window.location.href = btn.getAttribute("href");
+            }, 1000);
+    }
+</script>
+</body>
+</html>

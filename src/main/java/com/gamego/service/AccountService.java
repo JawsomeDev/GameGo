@@ -3,6 +3,7 @@ package com.gamego.service;
 
 import com.gamego.config.AppProperties;
 import com.gamego.domain.account.Account;
+import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.account.form.SignUpForm;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
@@ -11,6 +12,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,11 +46,14 @@ public class AccountService {
 
 
     public void createAccount(@Valid SignUpForm signUpForm) {
-        // BCrypt 로 인코딩
+
         signUpForm.setPassword(passwordEncoder.encode(signUpForm.getPassword()));
+
         Account account = modelMapper.map(signUpForm, Account.class);
-        accountRepository.save(account);
+
         account.generateEmailCheckToken();
+        accountRepository.save(account);
+
         sendVerificationEmail(account);
     }
 
@@ -56,6 +62,11 @@ public class AccountService {
      */
     @Async
     public void sendVerificationEmail(Account account) {
+
+        account.generateEmailCheckToken();
+        accountRepository.save(account);
+
+
         Context context = new Context();
         context.setVariable("link", "/check-email-token?token=" + account.getEmailCheckToken() +
                 "&email=" + account.getEmail());
@@ -72,5 +83,21 @@ public class AccountService {
                 .subject("겜할래, 이메일 인증")
                 .build();
         emailService.sendEmail(emailMessage);
+    }
+
+    /*
+        이메일 인증 후 바로 로그인
+     */
+    public void completeSignUp(Account account) {
+        account.completeSignUp();
+        login(account);
+    }
+
+    private static void login(Account account) {
+        AccountUserDetails userDetails = new AccountUserDetails(account);
+        UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(userDetails, account.getPassword(),userDetails.getAuthorities());
+
+        SecurityContextHolder.getContext().setAuthentication(token);
     }
 }

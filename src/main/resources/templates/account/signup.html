@@ -3,22 +3,12 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="~{fragment.html::head}">
-    <style> main {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 120vh; /* 위쪽 여백 확보 */
-        background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('/images/backgroundimage.png') center/cover;
-        padding-top: 50px;
-        padding-bottom: 50px;
-        background: #10253a;
-    }</style>
 </head>
 <body>
 <!-- 헤더 (메인 페이지와 동일) -->
 <nav th:replace="~{fragment.html :: main-nav}"></nav>
 
-<<!-- 회원가입 컨테이너 -->
+<!-- 회원가입 컨테이너 -->
 <main class="d-flex justify-content-center align-items-center">
     <div class="card shadow-lg p-4 rounded" style="width: 400px; background-color: white;">
         <h3 class="text-center mb-4 fw-bold">회원가입</h3>
@@ -65,11 +55,19 @@
         <div class="text-center mt-3">
             <small><a href="#" class="text-muted">약관</a>에 동의하시면 가입을 완료해주세요.</small><br>
             <small>이미 계정이 있으신가요? <a href="#" th:href="@{/login}" class="text-primary fw-bold">로그인</a></small>
+            <div id="loadingSpinner" class="spinner-border text-primary" role="status" style="display: none;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
         </div>
     </div>
 </main>
 
 
 <footer th:replace="~{fragment.html :: footer}"></footer>
+<script>
+    document.querySelector("form").addEventListener("submit", function () {
+    document.getElementById("loadingSpinner").style.display = "block";
+    document.querySelector("button[type=submit]").disabled = true;
+});</script>
 </body>
 </html>

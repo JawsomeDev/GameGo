@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class AccountUserDetails implements UserDetails {
 
-    private final Account account;
+    private Account account;
 
     public AccountUserDetails(Account account) {
         this.account = account;

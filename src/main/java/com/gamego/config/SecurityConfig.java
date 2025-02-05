@@ -29,7 +29,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**", "/fonts/**"
+                        auth.requestMatchers("/", "/check-email-token", "/login", "/css/**", "/js/**", "/images/**", "/fonts/**"
                         ,"/sign-up").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/profile").hasRole("USER")
                                 .anyRequest().authenticated());
@@ -37,13 +37,12 @@ public class SecurityConfig {
         http
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/main",true)
                         .usernameParameter("email")
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
-                        .deleteCookies("JESSIONID")
                         .permitAll());
 
 
