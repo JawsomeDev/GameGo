@@ -15,8 +15,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     boolean existsByNickname(String nickname);
 
     Account findByEmail(String email);
-    Optional<Account> findByNickname(String nickname);
+
+    Account findByNickname(String nickname);
 
     // 이메일 또는 닉네임으로 찾기
-    Optional<Account> findByEmailOrNickname(String email, String nickname);
+    Account findByEmailOrNickname(String email, String nickname);
 }

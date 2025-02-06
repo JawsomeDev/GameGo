@@ -38,11 +38,11 @@ public class AccountUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return account.getEmail();
+        return account.getNickname();
     }
 
-    public String getNickname(){
-        return account.getNickname();
+    public String getEmail(){
+        return account.getEmail();
     }
 
     @Override

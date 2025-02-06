@@ -18,7 +18,7 @@ public class TestAccountInitializer {
                 account.setEmail(email);
                 account.setNickname("test");
                 account.setPassword(passwordEncoder.encode("12341234"));
-                account.setEmailVerified(false);
+                account.setEmailVerified(true);
 
 
                 accountRepository.save(account);

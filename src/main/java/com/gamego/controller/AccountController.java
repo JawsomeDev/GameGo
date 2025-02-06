@@ -58,6 +58,24 @@ public class AccountController {
         return "redirect:/login";
     }
 
+    @GetMapping("/check-email-token")
+    public String checkEmailToken(String token, String email, Model model) {
+        Account account = accountRepository.findByEmail(email);
+        String view = "account/checked-email";
+        if(account == null) {
+            model.addAttribute("error", "wrong.email");
+            return view;
+        }
+        if(!account.isValidToken(token)){
+            model.addAttribute("error", "wrong.token");
+            return view;
+        }
+        accountService.completeSignUp(account);
+        model.addAttribute("numberOfUsers", accountRepository.count());
+        model.addAttribute("nickname", account.getNickname());
+        return view;
+    }
+
    @GetMapping("/check-email")
     public String checkEmail(@CurrentAccount Account account, Model model) {
         model.addAttribute("account", account);
@@ -78,4 +96,13 @@ public class AccountController {
         return "redirect:/main";
    }
 
+   @GetMapping("/profile/{nickname}")
+    public String profile(@PathVariable String nickname, Model model, @CurrentAccount Account account) {
+       Account myAccount = accountService.getAccount(nickname);
+
+       model.addAttribute("account", myAccount);
+       model.addAttribute("isOwner", myAccount.equals(account));
+
+       return "account/profile";
+   }
 }

@@ -21,28 +21,11 @@
                 인증 이메일이 전송되었습니다.
             </div>
 
-            <a id="resend-btn" class="btn btn-outline-info" th:href="@{/resend-checked-email}" onclick="disableButton(event)">
+            <a id="resend-btn" class="btn btn-outline-info" th:href="@{/resend-checked-email}">
                 인증 이메일 다시 보내기
             </a>
         </div>
     </div>
 </div>
-<script>
-    function disableButton(event) {
-        event.preventDefault();
-
-        let btn = document.getElementById('resend-btn');
-        let successMessage = document.getElementById('success-message');
-
-        btn.classList.add("disabled");
-        btn.innerText = "인증 이메일 전송 완료";
-
-        successMessage.style.display = "block";
-
-        setTimeout(() => {
-            window.location.href = btn.getAttribute("href");
-            }, 1000);
-    }
-</script>
 </body>
 </html>

@@ -4,6 +4,7 @@ package com.gamego.service;
 import com.gamego.config.AppProperties;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.AccountUserDetails;
+import com.gamego.domain.account.form.ProfileForm;
 import com.gamego.domain.account.form.SignUpForm;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
@@ -53,7 +54,6 @@ public class AccountService {
 
         account.generateEmailCheckToken();
         accountRepository.save(account);
-
         sendVerificationEmail(account);
     }
 
@@ -99,5 +99,17 @@ public class AccountService {
                 new UsernamePasswordAuthenticationToken(userDetails, account.getPassword(),userDetails.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(token);
+    }
+
+    public Account getAccount(String nickname) {
+        Account account = accountRepository.findByNickname(nickname);
+        if(account == null) {
+            throw new IllegalArgumentException(account + "에 해당하는 사용자가 없습니다.");
+        }
+        return account;
+    }
+
+    public void updateAccount(Account account, @Valid ProfileForm profileForm) {
+        accountRepository.save(account);
     }
 }
