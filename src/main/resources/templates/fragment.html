@@ -94,7 +94,14 @@
 
 
 
-
+<div class="list-group" th:fragment="settings-menu (currentMenu)">
+    <a th:href="@{/settings/profile}" class="list-group-item list-group-item-action list-group-item-secondary" th:classappend="${currentMenu == 'profile'}? active" >프로필 설정</a>
+    <a th:href="@{/settings/password}" class="list-group-item list-group-item-action list-group-item-secondary" th:classappend="${currentMenu == 'password'}? active">비밀번호 변경</a>
+    <a th:href="@{/settings/message}" class="list-group-item list-group-item-action list-group-item-secondary" th:classappend="${currentMenu == 'notifications'}? active">메시지</a>
+    <a th:href="@{/settings/games}" class="list-group-item list-group-item-action list-group-item-secondary" th:classappend="${currentMenu == 'games'}? active">관심 게임</a>
+    <a th:href="@{/settings/times}" class="list-group-item list-group-item-action list-group-item-secondary" th:classappend="${currentMenu == 'times'}? active">플레이 시간</a>
+    <a th:href="@{/settings/account}" class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'account'}? active">계정 삭제</a>
+</div>
 
 
 

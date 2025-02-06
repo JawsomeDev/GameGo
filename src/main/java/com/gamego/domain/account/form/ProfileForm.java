@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.Length;
 @Data
 public class ProfileForm {
 
-    @Length(max=35)
+    @Length(max=30)
     private String bio;
 
     @Length(max = 50)
