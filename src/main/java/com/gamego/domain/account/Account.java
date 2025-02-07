@@ -90,4 +90,8 @@ public class Account {
         this.accountRole = AccountRole.UNVERIFIED;
         this.emailVerified = false;
     }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
 }

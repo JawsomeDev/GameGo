@@ -1,5 +1,6 @@
 package com.gamego.config;
 import com.gamego.domain.account.Account;
+import com.gamego.domain.account.AccountRole;
 import com.gamego.domain.account.Gender;
 import com.gamego.repository.AccountRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -20,7 +21,8 @@ public class TestAccountInitializer {
                 account.setNickname("test");
                 account.setPassword(passwordEncoder.encode("12341234"));
                 account.setGender(Gender.male);
-                account.setEmailVerified(false);
+                account.setEmailVerified(true);
+                account.setAccountRole(AccountRole.ADMIN);
 
 
                 accountRepository.save(account);

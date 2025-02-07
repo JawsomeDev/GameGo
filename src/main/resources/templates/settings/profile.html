@@ -10,7 +10,7 @@
         }
     </style>
 </head>
-<body style="background-color: #10253a;">
+<body>
 <!-- 헤더 (메인 페이지와 동일) -->
 <nav th:replace="~{fragment.html :: main-nav}"></nav>
 <div class="container text-white">
@@ -26,7 +26,7 @@
                 </button>
             </div>
             <div class="row">
-                <h2 class="col-sm-12 mt-2" th:text="${account.nickname}">상어</h2>
+                <h2 class="col-sm-12 mt-3" th:text="${account.nickname}">상어</h2>
             </div>
             <div class="row mt-3">
                 <form class="col-sm-6" th:action="@{/settings/profile}" th:object="${profileForm}" method="post" novalidate>
@@ -65,7 +65,7 @@
                         <input id="profileImage" type="hidden" th:field="*{profileImage}" class="form-control">
                     </div>
 
-                    <div class="form-group mb-5">
+                    <div class="form-group mt-3 mb-5">
                         <button type="submit" class="btn btn-outline-success"
                                 aria-describedby="submitHelp">수정하기</button>
                     </div>

@@ -3,6 +3,7 @@ package com.gamego.controller;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
+import com.gamego.domain.account.form.PasswordForm;
 import com.gamego.domain.account.form.ProfileForm;
 import com.gamego.service.AccountService;
 import jakarta.validation.Valid;
@@ -45,5 +46,24 @@ public class ProfileController {
         accountService.updateAccount(account, profileForm);
         redirectAttributes.addFlashAttribute("message", "프로필을 수정했습니다.");
         return "redirect:/settings/profile";
+    }
+
+    @GetMapping("/settings/password")
+    public String passwordToUpdate(@CurrentAccount Account account, Model model){
+        model.addAttribute("account", account);
+        model.addAttribute(new PasswordForm());
+        return "settings/password";
+    }
+
+    @PostMapping("/settings/password")
+    public String updatePassword(@CurrentAccount Account account, @Valid PasswordForm passwordForm,
+                                 BindingResult bindingResult, Model model, RedirectAttributes attributes){
+        if(bindingResult.hasErrors()){
+            model.addAttribute("account", account);
+            return "settings/password";
+        }
+        accountService.updatePassword(account, passwordForm.getNewPassword());
+        attributes.addFlashAttribute("message", "패스워드를 변경했습니다.");
+        return "redirect:/settings/password";
     }
 }

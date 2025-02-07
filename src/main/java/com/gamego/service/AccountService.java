@@ -11,6 +11,7 @@ import com.gamego.email.EmailService;
 import com.gamego.repository.AccountRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -110,6 +111,11 @@ public class AccountService {
     }
 
     public void updateAccount(Account account, @Valid ProfileForm profileForm) {
+        accountRepository.save(account);
+    }
+
+    public void updatePassword(Account account, @Length(min = 8, max = 50) String newPassword) {
+        account.changePassword(passwordEncoder.encode(newPassword));
         accountRepository.save(account);
     }
 }

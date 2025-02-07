@@ -8,7 +8,7 @@
 <!-- 헤더 (메인 페이지와 동일) -->
 <nav th:replace="~{fragment.html :: main-nav}"></nav>
 
-<main class="d-flex justify-content-center align-items-center vh-100" style="background-color: #10253a;">
+<main class="d-flex justify-content-center align-items-center vh-100" >
     <div class="card shadow-lg p-4 rounded" style="width: 400px; background-color: white;">
         <div th:if="${param.error}" class="alert alert-danger" role="alert">
             <small>이메일(또는 닉네임)과 패스워드가 올바르지 않습니다.<br> 비밀번호가 기억나지 않는다면, <a href="#" th:href="@{/find-password}">패스워드 찾기</a>를 이용하세요.</small>
