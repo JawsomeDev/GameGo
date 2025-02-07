@@ -3,6 +3,13 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="~{fragment.html::head}">
+    <style>
+        img {
+            display: block;
+            max-width: 100%; /* This rule is very important, please do not ignore this! */
+        }
+
+    </style>
 </head>
 <body style="background-color: #10253a;">
 <!-- 헤더 (메인 페이지와 동일) -->
@@ -12,7 +19,7 @@
         <div class="col-2">
            <div th:replace="~{fragment.html::settings-menu (currentMenu = 'profile')}"></div>
         </div>
-        <div class="col-8">
+        <div class="col-8 bg-light text-body-emphasis" >
             <div id="liveToast" th:if="${message}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
                 <strong class="me-auto">완료 메시지</strong>
@@ -38,11 +45,197 @@
                             30자 이내로 입력해주세요.
                         </small>
                     </div>
+                    <div class="form-group">
+                        <label for="url">링크</label>
+                        <input id="url" type="url" th:field="*{url}" class="form-control"
+                               placeholder="http://instagram.com" aria-describedby="urlHelp" required>
+                        <small id="urlHelp" class="form-text text-muted">
+                            discord, sns, 유튜브 등 원하는 링크들을 추가하세요.
+                        </small>
+                        <small class="form-text text-danger" th:if="${#fields.hasErrors('url')}" th:errors="*{url}">
+                            URL 형식으로 입력해주세요.
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">거주지</label>
+                        <input id="location" type="text" th:field="*{location}" class="form-control"
+                               placeholder="서울특별시 강남구"
+                               aria-describedby="locationHelp" required>
+                        <small id="locationHelp" class="form-text text-muted">
+                            거주지를 간략하게 알려주세요.
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <input id="profileImage" type="hidden" th:field="*{profileImage}" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn-primary"
+                                aria-describedby="submitHelp">수정하기</button>
+                    </div>
                 </form>
+                <div class="col-sm-6">
+                    <div class="card text-center">
+                        <div class="card-header">
+                            프로필 이미지
+                        </div>
+                        <div id="current-profile-image" class="mt-3">
+                            <img th:src="${!#strings.isEmpty(profileForm.profileImage) ? profileForm.profileImage :
+                            (!#strings.isEmpty(account.profileImage) ? account.profileImage : '/images/default.png')}"
+                                 class="img-fluid rounded img-thumbnail profile-image"
+                                 width="125" height="125" th:alt="${account.nickname}">
+                        </div>
+                        <div id="new-profile-image" class="mt-3"></div>
+                        <div class="card-body d-flex flex-column align-items-center">
+                            <div class="custom-file mb-3">
+                                <input type="file" class="custom-file-input" id="profile-image-file">
+                                <label class="custom-file-label" for="profile-image-file"><span class="text-set">프로필 이미지 변경</span></label>
+                            </div>
+                            <div id="new-profile-image-control">
+                                <button class="btn btn-outline-primary mb-2" id="cut-button">자르기</button>
+                                <button class="btn btn-outline-success mb-2" id="save-button">확인</button>
+                                <button class="btn btn-outline-warning mb-2" id="delete-button">취소</button>
+                            </div>
+                            <div id="cropped-profile-image" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
     </div>
 </div>
+<link href="/node_modules/cropperjs/dist/cropper.min.css" rel="stylesheet">
+<script src="/node_modules/cropperjs/dist/cropper.min.js"></script>
+<script type="application/javascript">
+
+    function getRoundedCanvas(sourceCanvas) {
+        let canvas = document.createElement('canvas');
+        let context = canvas.getContext('2d');
+        let width = sourceCanvas.width;
+        let height = sourceCanvas.height;
+
+        canvas.width = width;
+        canvas.height = height;
+
+        context.imageSmoothingEnabled = true;
+        context.drawImage(sourceCanvas, 0, 0, width, height);
+        context.globalCompositeOperation = 'destination-in';
+        context.beginPath();
+        context.arc(width / 2, height / 2, Math.min(width, height) / 2, 0, 2 * Math.PI, true);
+        context.fill();
+
+        return canvas;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let cropper;
+        const profileImageFile = document.getElementById("profile-image-file");
+        const newProfileImageContainer = document.getElementById("new-profile-image");
+        const croppedProfileImageContainer = document.getElementById("cropped-profile-image");
+        const currentProfileImage = document.getElementById("current-profile-image");
+        const profileImageInput = document.getElementById("profileImage");
+
+        const cutButton = document.getElementById("cut-button");
+        const saveButton = document.getElementById("save-button");
+        const deleteButton = document.getElementById("delete-button");
+
+        // 초기 상태에서 버튼 숨기기
+        newProfileImageContainer.style.display = "none";
+        cutButton.style.display = "none";
+        saveButton.style.display = "none";
+        deleteButton.style.display = "none";
+
+        // 파일 선택 시 이미지 로드 및 Cropper 초기화
+        profileImageFile.addEventListener("change", function (event) {
+            if (event.target.files.length === 1) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    if (!e.target.result.startsWith("data:image")) {
+                        alert("이미지 파일을 선택하세요.");
+                        return;
+                    }
+
+                    // 기존 이미지 숨기고 새 이미지 추가
+                    currentProfileImage.style.display = "none";
+                    newProfileImageContainer.style.display = "block";
+                    newProfileImageContainer.innerHTML = `<img id="new-profile" src="${e.target.result}" style="max-width: 100%;">`;
+
+                    const image = document.getElementById("new-profile");
+
+                    // Cropper 초기화
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    cropper = new Cropper(image, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        ready: function () {
+                            // 크롭 박스를 원형으로 만들기
+                            document.querySelector(".cropper-view-box").style.borderRadius = "50%";
+                            document.querySelector(".cropper-face").style.borderRadius = "50%";
+                        }
+                    });
+
+                    // 버튼 표시
+                    cutButton.style.display = "inline-block";
+                    deleteButton.style.display = "inline-block";
+                    saveButton.style.display = "none";
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 자르기 버튼 클릭 시 크롭 이미지 표시
+        cutButton.addEventListener("click", function () {
+            if (cropper) {
+                const croppedCanvas = cropper.getCroppedCanvas();
+                const roundedCanvas = getRoundedCanvas(croppedCanvas);
+
+                if (!roundedCanvas) {
+                    alert("이미지를 자를 수 없습니다.");
+                    return;
+                }
+
+                let roundedImage = document.createElement("img");
+                roundedImage.src = roundedCanvas.toDataURL();
+                roundedImage.width = 125;
+                roundedImage.height = 125;
+                roundedImage.style.borderRadius = "50%"; // 원형 적용
+
+                croppedProfileImageContainer.innerHTML = "";
+                croppedProfileImageContainer.appendChild(roundedImage);
+                profileImageInput.value = roundedImage.src; // Base64 문자열 저장
+
+                // 버튼 조정
+                saveButton.style.display = "inline-block";
+            }
+        });
+
+        // 확인 버튼 클릭 시 프로필 이미지 업데이트
+        saveButton.addEventListener("click", function () {
+            currentProfileImage.style.display = "none";
+            newProfileImageContainer.innerHTML = croppedProfileImageContainer.innerHTML;
+            cutButton.style.display = "none";
+            saveButton.style.display = "none";
+            deleteButton.style.display = "inline-block";
+        });
+
+        // 취소 버튼 클릭 시 기존 이미지 복원
+        deleteButton.addEventListener("click", function () {
+            cropper.destroy();
+            currentProfileImage.style.display = "block";
+            newProfileImageContainer.style.display = "none";
+            croppedProfileImageContainer.innerHTML = "";
+            profileImageInput.value = "";
+            cutButton.style.display = "none";
+            saveButton.style.display = "none";
+            deleteButton.style.display = "none";
+        });
+    });
+</script>
 </body>
 </html>

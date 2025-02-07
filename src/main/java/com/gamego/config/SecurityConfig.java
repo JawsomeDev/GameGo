@@ -30,7 +30,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/", "/check-email-token", "/login", "/css/**", "/js/**", "/images/**", "/fonts/**"
-                        ,"/sign-up").permitAll()
+                        ,"/sign-up", "/node_modules/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/profile").hasRole("USER")
                                 .anyRequest().authenticated());
 

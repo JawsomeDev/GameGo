@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment.html :: head"></head>
+<head th:replace="~{fragment.html :: head}"></head>
 <body style="background-color: #10253a;">
-<div th:replace="fragment.html :: main-nav"></div>
+<div th:replace="~{fragment.html :: main-nav}"></div>
 
 <div class="container text-white">
         <div class="row mt-5 justify-content-center">
             <div class="col-2">
                 <img th:src="${account.profileImage != null and account.profileImage != '' ? account.profileImage : '/images/default.png'}"
                      alt="프로필 사진"
-                     class="img-fluid rounded"
+                     class="img-fluid rounded-circle"
                      style="max-width: 150px;">
             </div>
             <div class="col-8">
