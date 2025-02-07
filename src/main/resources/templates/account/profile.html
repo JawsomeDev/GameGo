@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="~{fragment.html :: head}"></head>
 <body style="background-color: #10253a;">
 <div th:replace="~{fragment.html :: main-nav}"></div>
@@ -49,16 +50,23 @@
                             </span>
                 <span th:text="${account.email}" class="col-9"></span>
             </p>
-            <p th:if="${isOwner || account.emailVerified}">
-                            <span style="font-size: 20px;">
-                                <i class="fa-solid fa-user-check" style="color: #B197FC;"></i>
-                            </span>
-                <span th:if="${isOwner && !account.emailVerified}" class="col-9">
-                            <a class="text-white" href="#" th:href="@{'/check-email'}">프로필을 수정하려면 이메일을 확인하세요.</a>
-                            </span>
-                <span th:if="${isOwner && account.emailVerified}" class="col-9">이메일 인증 완료</span>
+            <p>
+                <span style="font-size: 20px;">
+                    <i class="fa-solid fa-user-check" style="color: #B197FC;"></i>
+                </span>
+
+                <!-- 본인 계정(isOwner) + 미인증(account.emailVerified=false)인 경우 -->
+                <span th:if="${isOwner and !account.emailVerified}" class="col-9">
+                    <a class="text-white fw-bold" href="#" th:href="@{/check-email}">프로필을 수정하려면 이메일을 확인하세요.</a>
+                </span>
+
+                <!-- 본인 또는 다른 사람의 프로필에서, 인증이 완료된 경우 -->
+                <span th:if="${account.emailVerified}" class="col-9">이메일 인증 완료</span>
+
+                <!-- 다른 사람의 프로필에서, 인증되지 않은 계정인 경우 -->
+                <span th:if="${!isOwner and !account.emailVerified}" class="col-9">인증되지 않은 계정입니다.</span>
             </p>
-            <div th:if="${isOwner && account.emailVerified}">
+            <div sec:authorize="hasRole('USER')"  th:if="${isOwner}">
                 <a class="btn btn-outline-primary fw-bold" href="#" th:href="@{/settings/profile}">프로필 수정</a>
             </div>
         </div>

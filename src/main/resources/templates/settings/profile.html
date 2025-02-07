@@ -36,7 +36,7 @@
                                placeholder="간단한 소개를 적어주세요." aria-describedby="bioHelp" required>
                         <small id="bioHelp" class="form-text text-muted">
                             30자 이내로 간략히 입력하세요.
-                        </small>
+                        </small><br>
                         <small class="form-text text-danger" th:if="${#fields.hasErrors('bio')}" th:errors="*{bio}">
                             30자 이내로 입력해주세요.
                         </small>
@@ -46,10 +46,10 @@
                         <input id="url" type="url" th:field="*{url}" class="form-control"
                                placeholder="http://instagram.com" aria-describedby="urlHelp" required>
                         <small id="urlHelp" class="form-text text-muted">
-                            discord, sns, 유튜브 등 원하는 링크들을 추가하세요.
-                        </small>
+                            sns, 유튜브, 디스코드 등 원하는 링크를 추가하세요.
+                        </small><br>
                         <small class="form-text text-danger" th:if="${#fields.hasErrors('url')}" th:errors="*{url}">
-                            URL 형식으로 입력해주세요.
+                            올바른 URL이어야 합니다.
                         </small>
                     </div>
                     <div class="form-group">

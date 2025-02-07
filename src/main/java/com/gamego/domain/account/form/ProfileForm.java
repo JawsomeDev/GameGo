@@ -3,6 +3,7 @@ package com.gamego.domain.account.form;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.URL;
 
 @Data
 public class ProfileForm {
@@ -11,6 +12,7 @@ public class ProfileForm {
     private String bio;
 
     @Length(max = 50)
+    @URL
     private String url;
 
     @Length(max = 30)

@@ -86,7 +86,7 @@ public class AccountService {
     }
 
     /*
-        이메일 인증 후 바로 로그인
+        이메일 인증 성공
      */
     public void completeSignUp(Account account) {
         account.completeSignUp();

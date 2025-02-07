@@ -15,12 +15,12 @@ public class TestAccountInitializer {
         return args -> {
             String email = "test@email.com";
             if (!accountRepository.existsByEmail(email)) {  // 이미 계정이 있으면 생성 안 함
-                Account account = new Account();
+                Account account = new Account();  // TODO 실제 배포 시엔 더미 데이터를 삭제하고 Account 테이블의 기본생성사 protected 로 변환
                 account.setEmail(email);
                 account.setNickname("test");
                 account.setPassword(passwordEncoder.encode("12341234"));
                 account.setGender(Gender.male);
-                account.setEmailVerified(true);
+                account.setEmailVerified(false);
 
 
                 accountRepository.save(account);

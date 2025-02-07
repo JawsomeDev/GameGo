@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity @Setter @EqualsAndHashCode(of = "id")
-@Getter @AllArgsConstructor @NoArgsConstructor
+@Getter @AllArgsConstructor
 public class Account {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,7 +59,7 @@ public class Account {
     private Gender Gender;
 
     @Enumerated(EnumType.STRING)
-    private AccountRole accountRole = AccountRole.USER;
+    private AccountRole accountRole;
 
     @ManyToMany
     private Set<Game> games = new HashSet<>();
@@ -78,6 +78,7 @@ public class Account {
 
     public void completeSignUp() {
         this.emailVerified = true;
+        this.accountRole = AccountRole.USER;
         this.joinedAt = LocalDateTime.now();
     }
 
@@ -85,4 +86,8 @@ public class Account {
         return this.emailCheckTokenGeneratedAt == null || this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
     }
 
+    public Account(){
+        this.accountRole = AccountRole.UNVERIFIED;
+        this.emailVerified = false;
+    }
 }

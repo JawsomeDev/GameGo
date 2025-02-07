@@ -25,7 +25,6 @@ import java.util.Optional;
 public class AccountController {
 
     private final AccountService accountService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final SignUpFormValidator signUpFormValidator;
     private final AccountRepository accountRepository;
 
