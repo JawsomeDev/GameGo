@@ -26,7 +26,7 @@
                 </button>
             </div>
             <div class="row">
-                <strong><h2 class="col-sm-12 mt-3 " th:text="${account.nickname}">상어</h2></strong>
+              <h2 class="col-sm-12 mt-3 " th:text="${account.nickname}">상어</h2>
             </div>
             <div class="row mt-3">
                 <form class="col-sm-6" th:action="@{/settings/profile}" th:object="${profileForm}" method="post" novalidate>
