@@ -27,7 +27,7 @@ main{
     text-align: center;
 }
 strong{
-    color : #f09c1e;
+    color : #FF9800;
 }
 main h4{
     font-size: 3rem;
@@ -97,3 +97,22 @@ main h2 span::after{
 .footer img {
     width: 180px; /* 로고 크기 조정 */
 }
+
+/* 스위치 버튼 기본 색상 변경 */
+.form-check-input:checked {
+    background-color: #28a745 !important;  /* 녹색 */
+    border-color: #28a745 !important;
+}
+
+/* 스위치 버튼이 비활성화되었을 때 */
+.form-check-input {
+    background-color: #ddd !important; /* 회색 */
+    border-color: #bbb !important;
+}
+
+/* 스위치 버튼이 활성화되었을 때 마우스 호버 효과 */
+.form-check-input:checked:hover {
+    background-color: #218838 !important; /* 더 진한 녹색 */
+}
+
+

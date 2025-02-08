@@ -14,18 +14,26 @@
             <small>이메일(또는 닉네임)과 패스워드가 올바르지 않습니다.<br> 비밀번호가 기억나지 않는다면, <a href="#" th:href="@{/find-password}">패스워드 찾기</a>를 이용하세요.</small>
         </div>
         <h3 class="text-center mb-4 fw-bold">로그인</h3>
-        <form action="#" th:action="@{/login}" method="POST">
+        <form class="needs-validation" action="#" th:action="@{/login}" method="POST" novalidate>
             <div class="mb-3 text-start">
                 <label for="email" class="form-label">이메일 또는 닉네임</label>
                 <input type="text" id="email" name="email" class="form-control" placeholder="your@email.com" required>
+                <small id="emailHelp" class="form-text text-muted">
+                    가입할 때 사용한 이메일 또는 닉네임을 입력하세요.
+                </small>
+                <small class="invalid-feedback">이메일을 입력하세요.</small>
             </div>
             <div class="mb-3 text-start">
                 <label for="password" class="form-label">비밀번호</label>
                 <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호를 입력하세요" required>
+                <small id="passwordHelp" class="form-text text-muted">
+                    패스워드가 기억나지 않는다면, <a href="#" th:href="@{/forget-password}">패스워드 찾기</a>
+                </small>
+                <small class="invalid-feedback">패드워드를 입력하세요.</small>
             </div>
             <div class="form-check mb-3 text-start">
-                <input type="checkbox" class="form-check-input" id="remember">
-                <label for="remember" class="form-check-label">로그인 상태 유지</label>
+                <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me" checked>
+                <label for="remember-me" class="form-check-label">로그인 상태 유지</label>
             </div>
             <button type="submit" class="btn btn-primary w-100">로그인</button>
         </form>
@@ -37,6 +45,6 @@
 
 <!-- 푸터 -->
 <footer th:replace="~{fragment.html :: footer}"></footer>
-
+<script th:replace="~{fragment.html :: validators}"></script>
 </body>
 </html>

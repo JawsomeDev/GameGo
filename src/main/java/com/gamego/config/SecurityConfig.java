@@ -19,6 +19,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 import static org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl.fromHierarchy;
 
@@ -28,11 +32,14 @@ import static org.springframework.security.access.hierarchicalroles.RoleHierarch
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final CustomUserService userService;
+    private final DataSource dataSource;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/", "/check-email-token", "/login", "/css/**", "/js/**", "/images/**", "/fonts/**"
+                        auth.requestMatchers("/", "/check-email-token", "/css/**", "/js/**", "/images/**", "/fonts/**"
                         ,"/sign-up", "/node_modules/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/profile").hasRole("UNVERIFIED")
                                 .requestMatchers("/settings/**").hasRole("USER")
@@ -41,7 +48,7 @@ public class SecurityConfig {
         http
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/main",true)
+                        .defaultSuccessUrl("/main")
                         .usernameParameter("email")
                         .permitAll())
                 .logout(logout -> logout
@@ -49,9 +56,19 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/")
                         .permitAll());
 
-
+        http.rememberMe(httpSecurityRememberMeConfigurer -> httpSecurityRememberMeConfigurer
+                .userDetailsService(userService)
+                .tokenRepository(tokenRepository()));
 
         return http.build();
+    }
+
+
+    @Bean
+    public PersistentTokenRepository tokenRepository() {
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        return jdbcTokenRepository;
     }
 
     @Bean

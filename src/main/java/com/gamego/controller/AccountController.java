@@ -34,7 +34,10 @@ public class AccountController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(@CurrentAccount Account account) {
+        if(account != null){
+            return "redirect:/main";
+        }
         return "account/login";
     }
 

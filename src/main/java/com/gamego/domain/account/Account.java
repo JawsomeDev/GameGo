@@ -43,28 +43,28 @@ public class Account {
 
     private boolean gameCreatedByEmail;
 
-    private boolean gameCreatedByWeb;
+    private boolean gameCreatedByWeb = true;
 
     private boolean gameEnrollmentResultByEmail;
 
-    private boolean gameEnrollmentResultByWeb;
+    private boolean gameEnrollmentResultByWeb = true;
 
     private boolean gameUpdatedByEmail;
 
-    private boolean gameUpdatedByWeb;
+    private boolean gameUpdatedByWeb = true;
 
     private LocalDateTime emailCheckTokenGeneratedAt;
 
     @Enumerated(EnumType.STRING)
-    private Gender Gender;
+    private Gender gender;
 
     @Enumerated(EnumType.STRING)
     private AccountRole accountRole;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Game> games = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Time> times = new HashSet<>();
 
     public void generateEmailCheckToken() {
@@ -73,7 +73,7 @@ public class Account {
     }
 
     public boolean isValidToken(String token) {
-        return this. emailCheckToken.equals(token);
+        return this.emailCheckToken.equals(token);
     }
 
     public void completeSignUp() {

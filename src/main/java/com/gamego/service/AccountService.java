@@ -4,6 +4,7 @@ package com.gamego.service;
 import com.gamego.config.AppProperties;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.AccountUserDetails;
+import com.gamego.domain.account.form.Messages;
 import com.gamego.domain.account.form.ProfileForm;
 import com.gamego.domain.account.form.SignUpForm;
 import com.gamego.email.EmailMessage;
@@ -13,7 +14,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.modelmapper.ModelMapper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,7 +53,7 @@ public class AccountService {
 
         Account account = modelMapper.map(signUpForm, Account.class);
 
-        account.generateEmailCheckToken();
+
         accountRepository.save(account);
         sendVerificationEmail(account);
     }
@@ -61,7 +61,7 @@ public class AccountService {
     /*
         이메일 전송은 좀 시간이 걸릴 수도있으니 비동기로 처리해봄.
      */
-    @Async
+
     public void sendVerificationEmail(Account account) {
 
         account.generateEmailCheckToken();
@@ -118,4 +118,10 @@ public class AccountService {
         account.changePassword(passwordEncoder.encode(newPassword));
         accountRepository.save(account);
     }
+
+    public void updateMessages(Account account, @Valid Messages messages) {
+        modelMapper.map(messages, account);
+        accountRepository.save(account);
+    }
+
 }

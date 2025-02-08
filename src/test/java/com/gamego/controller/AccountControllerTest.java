@@ -125,4 +125,29 @@ class AccountControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
+
+    @DisplayName("인증 메일 확인 - 입력값 오류")
+    @Test
+    void checkEmailToken_with_wrong_input() throws Exception {
+        mockMvc.perform(get("/check-email-token")
+                        .param("token", "asdaqwfwq")
+                        .param("email", "email@email.com"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("error"))
+                .andExpect(view().name("account/checked-email"))
+                .andExpect(unauthenticated());
+    }
+
+    @DisplayName("인증 메일 확인 - 입력값 정상")
+    @Test
+    void checkEmailToken() throws Exception {
+
+    }
+
+    @Test
+    @DisplayName("이메일 인증 성공 후 뷰")
+    void verifiedUser() throws Exception {
+
+
+    }
 }
