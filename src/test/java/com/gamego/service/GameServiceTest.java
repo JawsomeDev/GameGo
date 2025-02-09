@@ -1,6 +1,8 @@
 package com.gamego.service;
 
 
+import com.gamego.domain.Game;
+import com.gamego.repository.GameRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +15,15 @@ class GameServiceTest {
 
     @Autowired
     private GameService gameService;
+    @Autowired
+    private GameRepository gameRepository;
 
     @Test
     @DisplayName("게임 목록 보기")
     void getSteamGame() {
-        List<String> top1000Games = gameService.getTop1000Games();
-        System.out.println(top1000Games.size());
-        for (String top100Game : top1000Games) {
-            System.out.println(top100Game);
+        List<Game> all = gameRepository.findAll();
+        for (Game game : all) {
+            System.out.println(game);
         }
     }
 }

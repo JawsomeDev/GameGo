@@ -1,26 +1,36 @@
 package com.gamego.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gamego.domain.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
+import com.gamego.domain.account.form.GameForm;
 import com.gamego.domain.account.form.Messages;
 import com.gamego.domain.account.form.PasswordForm;
 import com.gamego.domain.account.form.ProfileForm;
+import com.gamego.repository.GameRepository;
 import com.gamego.service.AccountService;
 import com.gamego.validator.PasswordFormValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @PreAuthorize("hasRole('USER')")
@@ -31,6 +41,8 @@ public class ProfileController {
 
     private final ModelMapper modelMapper;
     private final AccountService accountService;
+    private final GameRepository gameRepository;
+    private final ObjectMapper objectMapper;
 
 
     @InitBinder("passwordForm")
@@ -95,5 +107,57 @@ public class ProfileController {
         accountService.updateMessages(account, messages);
         attributes.addFlashAttribute("error", "메시지 설정을 변경했습니다.");
         return "redirect:/settings/messages";
+    }
+
+    @GetMapping("/settings/games")
+    public String gameToSelect(@CurrentAccount Account account, Model model) throws JsonProcessingException {
+        model.addAttribute("account", account);
+
+        Set<Game> games = accountService.getGames(account);
+        model.addAttribute("games", games.stream().map(Game::getName).collect(Collectors.toList()));
+
+        List<String> allGames = gameRepository.findAll().stream().map(Game::getName).toList();
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(allGames));
+
+        return "settings/games";
+    }
+
+    @PostMapping("/settings/games/add")
+    @ResponseBody
+    public ResponseEntity<?> addGame(@CurrentAccount Account account, @RequestBody GameForm gameForm){
+        Game game = gameRepository.findByName(gameForm.getGameName());
+
+
+        if (game == null) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("status", "error");
+            errorResponse.put("message", "등록된 게임만 선택 가능합니다.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        accountService.addGame(account, game);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "add");
+        response.put("gameTitle", gameForm.getGameName());
+
+
+        return ResponseEntity.ok(response);
+    }
+    @PostMapping("/settings/games/remove")
+    @ResponseBody
+    public ResponseEntity<?> removeGame(@CurrentAccount Account account, @RequestBody GameForm gameForm) {
+        Game game = gameRepository.findByName(gameForm.getGameName());
+        if (game == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        accountService.removeGame(account, game);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "remove");
+        response.put("gameTitle", gameForm.getGameName());
+
+        return ResponseEntity.ok(response);
     }
 }

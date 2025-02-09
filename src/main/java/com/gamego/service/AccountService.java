@@ -2,6 +2,7 @@ package com.gamego.service;
 
 
 import com.gamego.config.AppProperties;
+import com.gamego.domain.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.account.form.Messages;
@@ -22,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
+
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -122,6 +126,26 @@ public class AccountService {
     public void updateMessages(Account account, @Valid Messages messages) {
         modelMapper.map(messages, account);
         accountRepository.save(account);
+    }
+
+    public Set<Game> getGames(Account account){
+        return accountRepository.findById(account.getId())
+                .map(Account::getGames)
+                .orElseThrow(() -> new IllegalArgumentException("계정을 찾을 수 없습니다."));
+    }
+
+    public void addGame(Account account, Game game) {
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        byId.ifPresent(a -> {
+            a.getGames().add(game);
+        });
+    }
+
+    public void removeGame(Account account, Game game) {
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        byId.ifPresent(a -> {
+            a.getGames().remove(game);
+        });
     }
 
 }
