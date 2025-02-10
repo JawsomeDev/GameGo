@@ -12,7 +12,10 @@ import com.gamego.domain.account.form.SignUpForm;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
 import com.gamego.repository.AccountRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.modelmapper.ModelMapper;
@@ -34,6 +37,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AccountService {
 
+
+    private final EntityManager em;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
@@ -149,14 +154,28 @@ public class AccountService {
             a.getGames().remove(game);
         });
     }
+    public String getTimePreference(Account account){
+        TimePreference timePreference = accountRepository.findById(account.getId())
+                .map(Account::getTimePreference).orElse(null);
+       return timePreference != null ? timePreference.getValue() : null;
+    }
 
     public void addTimePreference(Account account, TimePreference timePreference) {
-       account.updateTimePreference(timePreference);
-       accountRepository.save(account);
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        byId.ifPresent(a -> {
+            a.updateTimePreference(timePreference);
+        });
     }
 
     public void removeTimePreference(Account account) {
-        account.updateTimePreference(null);
-        accountRepository.save(account);
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        byId.ifPresent(a -> {
+            a.updateTimePreference(null);
+        });
+    }
+
+    public void updateNickname(Account account, String nickname) {
+        accountRepository.findByNickname(nickname);
+        account.changeNickname(nickname);
     }
 }

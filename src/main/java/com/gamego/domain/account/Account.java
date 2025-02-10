@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity @Setter @EqualsAndHashCode(of = "id")
+@Entity @EqualsAndHashCode(of = "id")
 @Getter @AllArgsConstructor
 public class Account {
 
@@ -97,6 +97,10 @@ public class Account {
 
     public void updateTimePreference(TimePreference newPreference) {
         this.timePreference = newPreference;
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
     }
 
 }

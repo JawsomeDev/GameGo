@@ -37,7 +37,23 @@
         // CSRF 토큰과 헤더 값 가져오기
         const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
         const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
-
+        // 서버에서 최신 시간대 목록을 가져오는 함수
+        function refreshTagify() {
+            fetch("/settings/times", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    [csrfHeader]: csrfToken
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Updated Time Preferences:", data);
+                    tagify.removeAllTags(); // 기존 태그 삭제
+                    tagify.addTags(data); // 새 데이터 추가
+                })
+                .catch(error => console.error("Error fetching updated time preferences:", error));
+        }
         // 태그 추가/삭제 요청 함수
         function tagRequest(url, timePreference, tagifyInstance) {
             fetch("/settings/times" + url , {

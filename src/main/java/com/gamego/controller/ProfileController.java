@@ -164,10 +164,9 @@ public class ProfileController {
     public String timeToSelect(@CurrentAccount Account account, Model model) throws JsonProcessingException {
         model.addAttribute("account", account);
 
-        String currentPreference = (account.getTimePreference() != null)
-                ? account.getTimePreference().getValue() : "";
+        String timePreference = accountService.getTimePreference(account);
 
-        model.addAttribute("timePreference", currentPreference);
+        model.addAttribute("timePreference", timePreference);
 
         List<String> whitelist = Stream.of(TimePreference.values())
                 .map(TimePreference :: getValue).toList();
@@ -199,5 +198,25 @@ public class ProfileController {
         Map<String, String> response = new HashMap<>();
         response.put("status", "remove");
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/settings/account")
+    public String accountToUpdate(@CurrentAccount Account account, Model model){
+        model.addAttribute("account", account);
+        model.addAttribute(modelMapper.map(account, NicknameForm.class));
+        return "settings/account";
+    }
+
+    @PostMapping("/settings/account")
+    public String updateAccount(@CurrentAccount Account account, @Valid NicknameForm nicknameForm,
+                                BindingResult bindingResult, Model model, RedirectAttributes attributes){
+        if(bindingResult.hasErrors()){
+            model.addAttribute("account", account);
+            return "settings/account";
+        }
+
+        accountService.updateNickname(account, nicknameForm.getNickname());
+        attributes.addFlashAttribute("message", "닉네임을 수정했습니다.");
+        return "redirect:/settings/account";
     }
 }
