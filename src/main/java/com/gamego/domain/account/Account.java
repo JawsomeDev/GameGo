@@ -2,7 +2,6 @@ package com.gamego.domain.account;
 
 
 import com.gamego.domain.Game;
-import com.gamego.domain.Time;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +14,7 @@ import java.util.UUID;
 @Getter @AllArgsConstructor
 public class Account {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(unique = true)
@@ -56,6 +55,9 @@ public class Account {
     private LocalDateTime emailCheckTokenGeneratedAt;
 
     @Enumerated(EnumType.STRING)
+    private TimePreference timePreference;
+
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
@@ -64,8 +66,6 @@ public class Account {
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Game> games = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Set<Time> times = new HashSet<>();
 
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
@@ -94,4 +94,9 @@ public class Account {
     public void changePassword(String password) {
         this.password = password;
     }
+
+    public void updateTimePreference(TimePreference newPreference) {
+        this.timePreference = newPreference;
+    }
+
 }

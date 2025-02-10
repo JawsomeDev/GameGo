@@ -135,3 +135,14 @@ main h2 span::after{
     transition: 0s;
     border-color: var(--tags-focus-border-color);
 }
+
+
+.tagify {
+    width: 100%;
+    max-width: 400px; /* 선택 상자의 최대 너비 조절 */
+    min-height: 40px; /* 높이를 명확하게 설정 */
+}
+
+.timebox{
+    background-color: white;
+}

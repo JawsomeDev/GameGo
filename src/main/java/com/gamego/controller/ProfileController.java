@@ -6,10 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gamego.domain.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.account.form.GameForm;
-import com.gamego.domain.account.form.Messages;
-import com.gamego.domain.account.form.PasswordForm;
-import com.gamego.domain.account.form.ProfileForm;
+import com.gamego.domain.account.TimePreference;
+import com.gamego.domain.account.form.*;
 import com.gamego.repository.GameRepository;
 import com.gamego.service.AccountService;
 import com.gamego.validator.PasswordFormValidator;
@@ -31,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @PreAuthorize("hasRole('USER')")
@@ -158,6 +157,47 @@ public class ProfileController {
         response.put("status", "remove");
         response.put("gameTitle", gameForm.getGameName());
 
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/settings/times")
+    public String timeToSelect(@CurrentAccount Account account, Model model) throws JsonProcessingException {
+        model.addAttribute("account", account);
+
+        String currentPreference = (account.getTimePreference() != null)
+                ? account.getTimePreference().getValue() : "";
+
+        model.addAttribute("timePreference", currentPreference);
+
+        List<String> whitelist = Stream.of(TimePreference.values())
+                .map(TimePreference :: getValue).toList();
+
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(whitelist));
+
+        return "settings/times";
+    }
+
+    @ResponseBody
+    @PostMapping("/settings/times/add")
+    public ResponseEntity<?> addTimePreference(@CurrentAccount Account account, @RequestBody TimePreferenceForm form){
+
+        String selectedPreference = form.getTimePreference();
+        TimePreference timePreference = TimePreference.fromValue(selectedPreference);
+
+        accountService.addTimePreference(account, timePreference);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "add");
+        response.put("timePreference", selectedPreference);
+        return ResponseEntity.ok(response);
+    }
+
+
+    @ResponseBody
+    @PostMapping("/settings/times/remove")
+    public ResponseEntity<?> removeTimePreference(@CurrentAccount Account account){
+        accountService.removeTimePreference(account);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "remove");
         return ResponseEntity.ok(response);
     }
 }

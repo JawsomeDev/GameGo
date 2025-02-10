@@ -4,9 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.gamego.domain.Game;
 import com.gamego.repository.GameRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Transactional
+
 @RequiredArgsConstructor
 @Service
 public class GameService {
@@ -24,7 +28,8 @@ public class GameService {
     private final GameRepository gameRepository;
 
 
-    @PostConstruct
+    @Transactional
+    @EventListener(ContextRefreshedEvent.class)
     public void getTop1000Games() {
         RestTemplate restTemplate = new RestTemplate();
         List<String> gameList = new ArrayList<>();
@@ -41,7 +46,7 @@ public class GameService {
         } catch (Exception e) {
             log.info("API 호출 실패 : {}", e.getMessage());
         }
-        List<String> koreaGames = List.of(
+        List<String> koreaGames = List.of("리그오브레전드",
                 "서든어택", "카트라이더 드리프트", "던전앤파이터", "로스트아크",
                 "메이플스토리", "블레이드 & 소울", "검은사막", "에오스 레드",
                 "바람의나라", "뮤 온라인", "리니지", "리니지2", "엘소드", "발로란트", "오버워치2", "메이플랜드"

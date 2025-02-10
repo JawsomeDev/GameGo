@@ -5,6 +5,7 @@ import com.gamego.config.AppProperties;
 import com.gamego.domain.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.AccountUserDetails;
+import com.gamego.domain.account.TimePreference;
 import com.gamego.domain.account.form.Messages;
 import com.gamego.domain.account.form.ProfileForm;
 import com.gamego.domain.account.form.SignUpForm;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -148,4 +150,13 @@ public class AccountService {
         });
     }
 
+    public void addTimePreference(Account account, TimePreference timePreference) {
+       account.updateTimePreference(timePreference);
+       accountRepository.save(account);
+    }
+
+    public void removeTimePreference(Account account) {
+        account.updateTimePreference(null);
+        accountRepository.save(account);
+    }
 }
