@@ -1,22 +1,18 @@
 package com.gamego.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.gamego.domain.Game;
+import com.gamego.domain.game.Game;
 import com.gamego.repository.GameRepository;
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 

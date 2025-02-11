@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html::head}">
+</head>
+<body>
+
+<nav th:replace="~{fragment.html :: main-nav}"></nav>
+<div class="container text-white">
+    <div class="row mt-5 justify-content-center">
+        <div class="col-2">
+            <div th:replace="~{fragment.html::settings-menu (currentMenu = 'account')}"></div>
+        </div>
+        <div class="col-8 bg-body-secondary text-body-emphasis">
+            <div th:if="${message}" class="alert alert-primary alert-dismissible fade show mt-3" role="alert">
+                <span th:text="${message}">완료</span>
+                <button type="button" class="btn-close position-absolute top-50 end-0 translate-middle-y me-2" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="row">
+                <h2 class="col-sm-12 mt-3 ">닉네임 변경</h2>
+            </div>
+            <div class="row mt-3">
+                <form class="needs-validation col-12" th:action="@{/settings/account}" th:object="${nicknameForm}" method="post" novalidate>
+                    <div class="form-group">
+                        <label for="nickname">새 닉네임</label>
+                        <input id="nickname" type="text" th:field="*{nickname}" class="form-control"
+                               aria-describedby="nicknameHelp" required>
+                        <small class="invalid-feedback">닉네임을 입력하세요.</small>
+                        <small class="form-text text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">
+                            닉네임 에러
+                        </small>
+                    </div>
+                    <div class="form-group">
+                      <button class="btn btn-outline-success mt-3 mb-3" type="submit" aria-describedby="nicknameHelp">변경하기</button>
+                    </div>
+                </form>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h2 class="text-danger mt-3">계정 삭제</h2>
+                    <div class="alert alert-danger" role="alert">
+                        계정이 삭제되면 복구가 불가능합니다.
+                    </div>
+
+                    <button type="button" class="btn btn-outline-danger mb-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        계정 삭제
+                    </button>
+
+
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">계정 삭제</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    계정을 삭제하면 다시 복구할 수 없습니다.<br>
+                                    정말로 계정을 삭제하시겠습니까?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                    <form th:action="@{/settings/account/delete}" method="post">
+                                    <button type="submit" class="btn btn-danger" id="myInput">계정 삭제</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:replace="~{fragment.html::validators}"></script>
+<script>
+    const myModal = document.getElementById('exampleModal')
+    const myInput = document.getElementById('myInput')
+
+    myModal.addEventListener('shown.bs.modal', () => {
+        myInput.focus()
+    })
+</script>
+</body>
+</html>

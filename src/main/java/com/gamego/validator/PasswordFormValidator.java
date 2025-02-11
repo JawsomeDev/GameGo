@@ -1,9 +1,15 @@
 package com.gamego.validator;
 
-import com.gamego.domain.account.form.PasswordForm;
+import com.gamego.domain.form.PasswordForm;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+
+
+@Component
+@RequiredArgsConstructor
 public class PasswordFormValidator implements Validator {
     @Override
     public boolean supports(Class<?> clazz) {

@@ -1,4 +1,4 @@
-package com.gamego.domain.account;
+package com.gamego.domain.account.accountenum;
 
 public enum AccountRole {
    UNVERIFIED, USER, MANAGER, MASTER, ADMIN

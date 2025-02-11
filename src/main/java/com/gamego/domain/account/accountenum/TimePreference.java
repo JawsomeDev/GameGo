@@ -1,4 +1,4 @@
-package com.gamego.domain.account;
+package com.gamego.domain.account.accountenum;
 
 public enum TimePreference {
     WORKER("출근러"), MORNING("아침형"),

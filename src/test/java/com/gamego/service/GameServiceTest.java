@@ -1,7 +1,7 @@
 package com.gamego.service;
 
 
-import com.gamego.domain.Game;
+import com.gamego.domain.game.Game;
 import com.gamego.repository.GameRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

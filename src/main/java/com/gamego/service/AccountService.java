@@ -2,20 +2,18 @@ package com.gamego.service;
 
 
 import com.gamego.config.AppProperties;
-import com.gamego.domain.Game;
+import com.gamego.domain.game.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.AccountUserDetails;
-import com.gamego.domain.account.TimePreference;
-import com.gamego.domain.account.form.Messages;
-import com.gamego.domain.account.form.ProfileForm;
-import com.gamego.domain.account.form.SignUpForm;
+import com.gamego.domain.account.accountenum.TimePreference;
+import com.gamego.domain.form.Messages;
+import com.gamego.domain.form.ProfileForm;
+import com.gamego.domain.form.SignUpForm;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
 import com.gamego.repository.AccountRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.modelmapper.ModelMapper;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -175,7 +172,13 @@ public class AccountService {
     }
 
     public void updateNickname(Account account, String nickname) {
-        accountRepository.findByNickname(nickname);
-        account.changeNickname(nickname);
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        byId.ifPresent(a -> {
+            a.changeNickname(nickname);
+        });
+    }
+
+    public void deleteAccount(Account account) {
+        accountRepository.delete(account);
     }
 }

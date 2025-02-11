@@ -1,4 +1,4 @@
-package com.gamego.domain.account.form;
+package com.gamego.domain.form;
 
 
 import jakarta.validation.constraints.NotBlank;

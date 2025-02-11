@@ -146,3 +146,7 @@ main h2 span::after{
 .timebox{
     background-color: white;
 }
+
+.dropdown-divider{
+    border-top: 1px solid black;
+}

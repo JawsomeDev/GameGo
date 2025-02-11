@@ -1,4 +1,4 @@
-package com.gamego.domain.account;
+package com.gamego.domain.account.accountenum;
 
 import lombok.Getter;
 

@@ -1,14 +1,14 @@
-package com.gamego.domain.account.form;
+package com.gamego.domain.form;
 
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.security.core.parameters.P;
 
 @Data
 public class NicknameForm {
+
 
     @NotBlank
     @Length(min=2, max = 15)

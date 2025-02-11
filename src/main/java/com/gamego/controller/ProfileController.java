@@ -3,17 +3,20 @@ package com.gamego.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gamego.domain.Game;
+import com.gamego.domain.game.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.account.TimePreference;
-import com.gamego.domain.account.form.*;
+import com.gamego.domain.account.accountenum.TimePreference;
+import com.gamego.domain.form.*;
 import com.gamego.repository.GameRepository;
 import com.gamego.service.AccountService;
+import com.gamego.validator.NicknameFormValidator;
 import com.gamego.validator.PasswordFormValidator;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,15 +40,19 @@ import java.util.stream.Stream;
 @Controller
 public class ProfileController {
 
-
+    private final NicknameFormValidator nicknameFormValidator;
     private final ModelMapper modelMapper;
     private final AccountService accountService;
     private final GameRepository gameRepository;
     private final ObjectMapper objectMapper;
 
+    @InitBinder("nicknameForm")
+    public void initBinder1(WebDataBinder binder){
+        binder.setValidator(nicknameFormValidator);
+    }
 
     @InitBinder("passwordForm")
-    public void initBinder(WebDataBinder binder) {
+    public void initBinder2(WebDataBinder binder) {
         binder.addValidators(new PasswordFormValidator());
     }
 
@@ -218,5 +225,21 @@ public class ProfileController {
         accountService.updateNickname(account, nicknameForm.getNickname());
         attributes.addFlashAttribute("message", "닉네임을 수정했습니다.");
         return "redirect:/settings/account";
+    }
+
+    @PostMapping("/settings/account/delete")
+    public String deleteAccount(@CurrentAccount Account account, HttpServletRequest request, HttpServletResponse response){
+        accountService.deleteAccount(account);
+
+        // 삭제되면 로그아웃, 쿠키 삭제, 세션만료
+        request.getSession().invalidate();
+
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
+
+        return "redirect:/";
     }
 }

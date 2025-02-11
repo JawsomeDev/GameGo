@@ -1,7 +1,11 @@
 package com.gamego.domain.account;
 
 
-import com.gamego.domain.Game;
+import com.gamego.domain.roomaccount.RoomAccount;
+import com.gamego.domain.game.Game;
+import com.gamego.domain.account.accountenum.AccountRole;
+import com.gamego.domain.account.accountenum.Gender;
+import com.gamego.domain.account.accountenum.TimePreference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -65,6 +69,9 @@ public class Account {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Game> games = new HashSet<>();
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<RoomAccount> roomAccounts = new HashSet<>();
 
 
     public void generateEmailCheckToken() {

@@ -1,9 +1,8 @@
-package com.gamego.domain;
+package com.gamego.domain.game;
 
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
 
 @Entity @Builder

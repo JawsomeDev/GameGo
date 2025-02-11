@@ -1,7 +1,7 @@
 //package com.gamego.config;
 //import com.gamego.domain.account.Account;
-//import com.gamego.domain.account.AccountRole;
-//import com.gamego.domain.account.Gender;
+//import com.gamego.domain.account.accountenum.AccountRole;
+//import com.gamego.domain.account.accountenum.Gender;
 //import com.gamego.repository.AccountRepository;
 //import org.springframework.boot.CommandLineRunner;
 //import org.springframework.context.annotation.Bean;
