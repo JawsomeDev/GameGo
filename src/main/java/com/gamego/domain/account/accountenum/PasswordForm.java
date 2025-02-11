@@ -1,10 +1,9 @@
-package com.gamego.domain.form;
+package com.gamego.domain.account.accountenum;
 
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 @Data
 public class PasswordForm {

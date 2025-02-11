@@ -1,6 +1,6 @@
 package com.gamego.validator;
 
-import com.gamego.domain.form.PasswordForm;
+import com.gamego.domain.account.accountenum.PasswordForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

@@ -1,4 +1,4 @@
-package com.gamego.domain.form;
+package com.gamego.domain.account.accountenum;
 
 
 import jakarta.validation.constraints.NotBlank;

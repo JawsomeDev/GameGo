@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html::head}">
+</head>
+<body>
+<nav th:replace="~{fragment.html :: main-nav}"></nav>
+<div class="container">
+    <div class="text-body-emphasis bg-body-secondary mt-5">
+    <div class="py-5 text-center">
+        <h2>게임 방 개설</h2>
+    </div>
+
+    <div class="row justify-content-center">
+        <form class="needs-validation col-sm-10" th:action="@{/new-room}" th:object="${roomForm}" method="post" novalidate>
+            <div class="form-group">
+                <label for="path">URL</label>
+                <input id="path" type="text" th:field="*{path}" class="form-control"
+                       placeholder="예) room-path" aria-describedby="pathHelp" required min="2", max="20">
+                <small id="pathHelp" class="form-text text-muted">
+                    공백없이 문자, 숫자, 대시(-), 언더바(_)만 2자 이상 20자 이내로 입력하세요. 게임 모집 주소에 사용합니다.
+                    예) /room/<b>room-path</b>
+                </small>
+                <small class="invalid-feedback">게임 방 경로를 입력하세요.</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('path')}" th:errors="*{path}">
+                    Path Error
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="title">게임 방 이름</label>
+                <input id="title" type="text" th:field="*{title}" class="form-control"
+                       placeholder="예) 칼바람 한판 고고?" aria-describedby="titleHelp" required max="50">
+                <small id="titleHelp" class="form-text text-muted">
+                    게임 방 이름을 50자 이내로 입력하세요.
+                </small>
+                <small class="invalid-feedback">게임 방 이름을 입력하세요.</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+                    Title Error
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="shortDescription">짧은 소개</label>
+                <textarea id="shortDescription" th:field="*{shortDescription}" class="form-control"
+                          placeholder="게임 방을 짧게 소개해주세요." aria-describedby="shortDescriptionHelp" required maxlength="100"></textarea>
+                <small id="shortDescriptionHelp" class="form-text text-muted">
+                    100자 이내로 짧은 소개를 적어주세요.
+                </small>
+                <small class="invalid-feedback">짧은 소개를 입력하세요.</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('shortDescription')}" th:errors="*{shortDescription}">
+                    Short Description Error
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="longDescription">상세 소개</label>
+                <textarea id="longDescription" th:field="*{longDescription}" class="form-control summernote"></textarea>
+                <small id="longDescriptionHelp" class="form-text text-muted">
+                    게임 스타일, 목표 점수, 디스코드 링크 등 게임 방에 대해 자세히 적어주세요.
+                </small>
+                <small class="invalid-feedback">상세 소개를 입력하세요.</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('longDescription')}" th:errors="*{longDescription}">
+                    Long Description Error
+                </small>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-outline-success mb-5" type="submit" aria-describedby="submitHelp">
+                    방 만들기
+                </button>
+            </div>
+        </form>
+    </div>
+    </div>
+
+</div>
+<div th:replace="~{fragment.html::footer}"></div>
+<script th:replace="~{fragment.html :: validators}"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- include summernote css/js -->
+<link href="/node_modules/summernote/dist/summernote-bs5.css" rel="stylesheet">
+<script src="/node_modules/summernote/dist/summernote-bs5.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.summernote').summernote({
+            lang: 'ko-KR',
+            placeholder: '게임 스타일, 목표 점수, 디스코드 링크 등 게임 방에 대해 자세히 적어주세요.',
+            tabsize: 2,
+            height: 300,
+            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS' ,'Courier New', '맑은 고딕', '나눔고딕'],
+            fontNamesIgnoreCheck: ['맑은 고딕', '나눔고딕'], // 시스템에 없는 폰트도 허용
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript', 'fontsize', 'fontname']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ],
+            defaultFontName: '맑은 고딕' // 기본 폰트 설정
+        });
+    });
+</script>
+</body>
+</html>

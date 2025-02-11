@@ -9,7 +9,7 @@
 <nav th:replace="~{fragment.html :: main-nav}"></nav>
 
 <!-- 회원가입 컨테이너 -->
-<main class="d-flex justify-content-center align-items-center">
+<div class="d-flex justify-content-center align-items-center">
     <div class="card shadow-lg p-4 rounded" style="width: 400px; background-color: white;">
         <h3 class="text-center mb-4 fw-bold">회원가입</h3>
         <form class="needs-validation" action="#" th:action="@{/sign-up}" th:object="${signUpForm}" method="POST">
@@ -60,7 +60,7 @@
             </div>
         </div>
     </div>
-</main>
+</div>
 
 
 <footer th:replace="~{fragment.html :: footer}"></footer>

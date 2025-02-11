@@ -1,7 +1,6 @@
-package com.gamego.domain.form;
+package com.gamego.domain.account.accountenum;
 
 
-import com.gamego.domain.account.accountenum.Gender;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

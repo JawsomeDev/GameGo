@@ -31,4 +31,11 @@ public class RoomAccount {
     private RoomRole role; // 방장, 매니저, 일반
 
     private LocalDateTime joinedAt;
+
+    public RoomAccount(Room room, Account account, RoomRole role, LocalDateTime now) {
+        this.room = room;
+        this.account = account;
+        this.role = role;
+        this.joinedAt = now;
+    }
 }

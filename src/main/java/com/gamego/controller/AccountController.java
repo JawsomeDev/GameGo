@@ -3,7 +3,7 @@ package com.gamego.controller;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.form.SignUpForm;
+import com.gamego.domain.account.accountenum.SignUpForm;
 import com.gamego.repository.AccountRepository;
 import com.gamego.service.AccountService;
 import com.gamego.validator.SignUpFormValidator;

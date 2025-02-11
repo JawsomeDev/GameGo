@@ -3,11 +3,10 @@ package com.gamego.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gamego.domain.account.accountenum.*;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.account.accountenum.TimePreference;
-import com.gamego.domain.form.*;
 import com.gamego.repository.GameRepository;
 import com.gamego.service.AccountService;
 import com.gamego.validator.NicknameFormValidator;
