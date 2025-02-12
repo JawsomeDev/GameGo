@@ -1,4 +1,4 @@
-package com.gamego.domain.account.accountenum;
+package com.gamego.domain.game.dto;
 
 
 import com.gamego.domain.game.Game;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class GameForm {
+public class GameReq {
 
 
     @NotNull

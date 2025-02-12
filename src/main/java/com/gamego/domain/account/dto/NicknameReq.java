@@ -1,4 +1,4 @@
-package com.gamego.domain.account.accountenum;
+package com.gamego.domain.account.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
@@ -7,7 +7,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-public class NicknameForm {
+public class NicknameReq {
 
 
     @NotBlank

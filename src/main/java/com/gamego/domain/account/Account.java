@@ -29,7 +29,7 @@ public class Account {
 
     private String password;
 
-    private boolean emailVerified;
+    private boolean emailVerified = false;
 
     private String emailCheckToken;
 

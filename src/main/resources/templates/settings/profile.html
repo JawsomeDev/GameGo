@@ -29,7 +29,7 @@
               <h2 class="col-sm-12 mt-3 " th:text="${account.nickname}">상어</h2>
             </div>
             <div class="row mt-3">
-                <form class="col-sm-6" th:action="@{/settings/profile}" th:object="${profileForm}" method="post" novalidate>
+                <form class="col-sm-6" th:action="@{/settings/profile}" th:object="${profileReq}" method="post" novalidate>
                     <div class="form-group">
                         <label for="bio" class="form-label">간단한 소개</label>
                         <input id="bio" type="text" th:field="*{bio}" class="form-control"
@@ -76,7 +76,7 @@
                             프로필 이미지
                         </div>
                         <div id="current-profile-image" class="mt-3">
-                            <img th:src="${!#strings.isEmpty(profileForm.profileImage) ? profileForm.profileImage :
+                            <img th:src="${!#strings.isEmpty(profileReq.profileImage) ? profileReq.profileImage :
                             (!#strings.isEmpty(account.profileImage) ? account.profileImage : '/images/default.png')}"
                                  class="img-fluid rounded img-thumbnail profile-image"
                                  width="125" height="125" th:alt="${account.nickname}">

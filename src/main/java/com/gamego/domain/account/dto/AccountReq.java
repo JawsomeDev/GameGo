@@ -1,6 +1,7 @@
-package com.gamego.domain.account.accountenum;
+package com.gamego.domain.account.dto;
 
 
+import com.gamego.domain.account.accountenum.Gender;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class SignUpForm {
+public class AccountReq {
 
     @NotBlank(message = "닉네임을 입력하세요.")
     @Size(min = 2, max = 15, message = "닉네임은 2~15자 이내로 입력하세요.")
@@ -31,7 +32,6 @@ public class SignUpForm {
 
 
     private Gender gender;
-
 
 
     // 비밀번호 일치 여부

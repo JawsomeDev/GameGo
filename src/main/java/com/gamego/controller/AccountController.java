@@ -3,10 +3,11 @@ package com.gamego.controller;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.account.accountenum.SignUpForm;
+import com.gamego.domain.account.dto.AccountReq;
+import com.gamego.domain.account.dto.AccountResp;
 import com.gamego.repository.AccountRepository;
 import com.gamego.service.AccountService;
-import com.gamego.validator.SignUpFormValidator;
+import com.gamego.validator.AccountValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,12 +23,12 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     private final AccountService accountService;
-    private final SignUpFormValidator signUpFormValidator;
+    private final AccountValidator accountValidator;
     private final AccountRepository accountRepository;
 
-    @InitBinder("signUpForm")
+    @InitBinder("accountReq")
     public void initBinder(WebDataBinder binder) {
-        binder.addValidators(signUpFormValidator);
+        binder.addValidators(accountValidator);
     }
 
     @GetMapping("/login")
@@ -40,19 +41,19 @@ public class AccountController {
 
     @GetMapping("/sign-up")
     public String signUp(Model model) {
-        model.addAttribute("signUpForm", new SignUpForm());
+        model.addAttribute("accountReq", new AccountReq());
         return "account/signup";
     }
 
     @PostMapping("/sign-up")
-    public String signupSubmit(@Valid @ModelAttribute("signUpForm") SignUpForm signUpForm,
+    public String signupSubmit(@Valid @ModelAttribute("accountReq") AccountReq accountReq,
                                BindingResult bindingResult,Model model) {
         if(bindingResult.hasErrors()) {
-            model.addAttribute("signUpForm", signUpForm);
+            model.addAttribute("accountReq", accountReq);
             return "account/signup";
         }
 
-        accountService.createAccount(signUpForm);
+        accountService.createAccount(accountReq);
 
         return "redirect:/login";
     }
@@ -97,10 +98,12 @@ public class AccountController {
 
    @GetMapping("/profile/{nickname}")
     public String profile(@PathVariable String nickname, Model model, @CurrentAccount Account account) {
-       Account myAccount = accountService.getAccount(nickname);
+       AccountResp myAccount = accountService.getAccount(nickname);
+
+       boolean isOwner = account.getNickname().equals(myAccount.getNickname());
 
        model.addAttribute("account", myAccount);
-       model.addAttribute("isOwner", myAccount.equals(account));
+       model.addAttribute("isOwner", isOwner);
 
        return "account/profile";
    }

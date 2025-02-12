@@ -4,13 +4,17 @@ package com.gamego.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gamego.domain.account.accountenum.*;
+import com.gamego.domain.account.dto.*;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
+import com.gamego.domain.game.dto.GameListResp;
+import com.gamego.domain.game.dto.GameReq;
+import com.gamego.domain.game.dto.GameResp;
 import com.gamego.repository.GameRepository;
 import com.gamego.service.AccountService;
-import com.gamego.validator.NicknameFormValidator;
-import com.gamego.validator.PasswordFormValidator;
+import com.gamego.validator.NicknameValidator;
+import com.gamego.validator.PasswordValidator;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,8 +33,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -39,38 +41,39 @@ import java.util.stream.Stream;
 @Controller
 public class ProfileController {
 
-    private final NicknameFormValidator nicknameFormValidator;
+    private final NicknameValidator nicknameValidator;
     private final ModelMapper modelMapper;
     private final AccountService accountService;
     private final GameRepository gameRepository;
     private final ObjectMapper objectMapper;
 
-    @InitBinder("nicknameForm")
+    @InitBinder("nicknameReq")
     public void initBinder1(WebDataBinder binder){
-        binder.setValidator(nicknameFormValidator);
+        binder.setValidator(nicknameValidator);
     }
 
-    @InitBinder("passwordForm")
+    @InitBinder("passwordReq")
     public void initBinder2(WebDataBinder binder) {
-        binder.addValidators(new PasswordFormValidator());
+        binder.addValidators(new PasswordValidator());
     }
 
     @GetMapping("/settings/profile")
     public String profileToUpdate(@CurrentAccount Account account, Model model){
+        ProfileResp profileResp = modelMapper.map(account, ProfileResp.class);
         model.addAttribute("account", account);
-        model.addAttribute("profileForm", modelMapper.map(account, ProfileForm.class));
+        model.addAttribute("profileReq", profileResp);
         return "settings/profile";
     }
 
     @PostMapping("/settings/profile")
-    public String updateAccount(@CurrentAccount Account account, @Valid @ModelAttribute ProfileForm profileForm,
+    public String updateAccount(@CurrentAccount Account account, @Valid @ModelAttribute ProfileReq profileReq,
                                 BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes){
         if(bindingResult.hasErrors()){
             model.addAttribute("account", account);
             return "settings/profile";
         }
-        modelMapper.map(profileForm, account);
-        accountService.updateAccount(account, profileForm);
+
+        accountService.updateAccount(account, profileReq);
         redirectAttributes.addFlashAttribute("message", "프로필을 수정했습니다.");
         return "redirect:/settings/profile";
     }
@@ -78,18 +81,18 @@ public class ProfileController {
     @GetMapping("/settings/password")
     public String passwordToUpdate(@CurrentAccount Account account, Model model){
         model.addAttribute("account", account);
-        model.addAttribute(new PasswordForm());
+        model.addAttribute(new PasswordReq());
         return "settings/password";
     }
 
     @PostMapping("/settings/password")
-    public String updatePassword(@CurrentAccount Account account, @Valid PasswordForm passwordForm,
+    public String updatePassword(@CurrentAccount Account account, @Valid PasswordReq passwordReq,
                                  BindingResult bindingResult, Model model, RedirectAttributes attributes){
         if(bindingResult.hasErrors()){
             model.addAttribute("account", account);
             return "settings/password";
         }
-        accountService.updatePassword(account, passwordForm.getNewPassword());
+        accountService.updatePassword(account, passwordReq.getNewPassword());
         attributes.addFlashAttribute("message", "패스워드를 변경했습니다.");
         return "redirect:/settings/password";
     }
@@ -97,72 +100,54 @@ public class ProfileController {
     @GetMapping("/settings/messages")
     public String messageToUpdate(@CurrentAccount Account account, Model model){
         model.addAttribute("account", account);
-        model.addAttribute("messages", modelMapper.map(account, Messages.class));
+        model.addAttribute("messageReq", modelMapper.map(account, MessageReq.class));
         return "settings/messages";
     }
 
     @PostMapping("/settings/messages")
-    public String updateMessages(@CurrentAccount Account account, @Valid Messages messages, BindingResult bindingResult,
+    public String updateMessages(@CurrentAccount Account account, @Valid MessageReq messageReq, BindingResult bindingResult,
                                  Model model, RedirectAttributes attributes){
         if(bindingResult.hasErrors()){
             model.addAttribute("account", account);
             return "settings/messages";
         }
 
-        accountService.updateMessages(account, messages);
+        accountService.updateMessages(account, messageReq);
         attributes.addFlashAttribute("error", "메시지 설정을 변경했습니다.");
         return "redirect:/settings/messages";
     }
 
     @GetMapping("/settings/games")
     public String gameToSelect(@CurrentAccount Account account, Model model) throws JsonProcessingException {
-        model.addAttribute("account", account);
-
-        Set<Game> games = accountService.getGames(account);
-        model.addAttribute("games", games.stream().map(Game::getName).collect(Collectors.toList()));
-
-        List<String> allGames = gameRepository.findAll().stream().map(Game::getName).toList();
-        model.addAttribute("whitelist", objectMapper.writeValueAsString(allGames));
-
+        GameListResp response = accountService.getGameListResponse(account);
+        model.addAttribute("games", response.getGames());
+        model.addAttribute("whitelist", response.getWhitelist());
         return "settings/games";
     }
 
     @PostMapping("/settings/games/add")
     @ResponseBody
-    public ResponseEntity<?> addGame(@CurrentAccount Account account, @RequestBody GameForm gameForm){
-        Game game = gameRepository.findByName(gameForm.getGameName());
-
-
+    public ResponseEntity<?> addGame(@CurrentAccount Account account,
+                                     @RequestBody @Valid GameReq gameReq) {
+        Game game = gameRepository.findByName(gameReq.getGameName());
         if (game == null) {
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("status", "error");
-            errorResponse.put("message", "등록된 게임만 선택 가능합니다.");
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest()
+                    .body("{\"status\":\"error\",\"message\":\"등록된 게임만 선택 가능합니다.\"}");
         }
 
-        accountService.addGame(account, game);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("status", "add");
-        response.put("gameTitle", gameForm.getGameName());
-
-
+        GameResp response = accountService.addGame(account, game);
         return ResponseEntity.ok(response);
     }
     @PostMapping("/settings/games/remove")
     @ResponseBody
-    public ResponseEntity<?> removeGame(@CurrentAccount Account account, @RequestBody GameForm gameForm) {
-        Game game = gameRepository.findByName(gameForm.getGameName());
+    public ResponseEntity<?> removeGame(@CurrentAccount Account account,
+                                        @RequestBody @Valid GameReq gameReq) {
+        Game game = gameRepository.findByName(gameReq.getGameName());
         if (game == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        accountService.removeGame(account, game);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("status", "remove");
-        response.put("gameTitle", gameForm.getGameName());
-
+        GameResp response = accountService.removeGame(account, game);
         return ResponseEntity.ok(response);
     }
 
@@ -184,7 +169,7 @@ public class ProfileController {
 
     @ResponseBody
     @PostMapping("/settings/times/add")
-    public ResponseEntity<?> addTimePreference(@CurrentAccount Account account, @RequestBody TimePreferenceForm form){
+    public ResponseEntity<?> addTimePreference(@CurrentAccount Account account, @RequestBody TimePreferenceReq form){
 
         String selectedPreference = form.getTimePreference();
         TimePreference timePreference = TimePreference.fromValue(selectedPreference);
@@ -209,19 +194,19 @@ public class ProfileController {
     @GetMapping("/settings/account")
     public String accountToUpdate(@CurrentAccount Account account, Model model){
         model.addAttribute("account", account);
-        model.addAttribute(modelMapper.map(account, NicknameForm.class));
+        model.addAttribute(modelMapper.map(account, NicknameReq.class));
         return "settings/account";
     }
 
     @PostMapping("/settings/account")
-    public String updateAccount(@CurrentAccount Account account, @Valid NicknameForm nicknameForm,
+    public String updateAccount(@CurrentAccount Account account, @Valid NicknameReq nicknameReq,
                                 BindingResult bindingResult, Model model, RedirectAttributes attributes){
         if(bindingResult.hasErrors()){
             model.addAttribute("account", account);
             return "settings/account";
         }
 
-        accountService.updateNickname(account, nicknameForm.getNickname());
+        accountService.updateNickname(account, nicknameReq.getNickname());
         attributes.addFlashAttribute("message", "닉네임을 수정했습니다.");
         return "redirect:/settings/account";
     }

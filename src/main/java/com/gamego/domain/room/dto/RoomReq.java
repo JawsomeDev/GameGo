@@ -1,14 +1,13 @@
-package com.gamego.domain.room.form;
+package com.gamego.domain.room.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-public class RoomForm {
+public class RoomReq {
 
     @NotBlank
     @Length(min = 2, max = 20)

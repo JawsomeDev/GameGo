@@ -1,18 +1,20 @@
 package com.gamego.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gamego.config.AppProperties;
+import com.gamego.domain.account.dto.*;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.account.accountenum.TimePreference;
-import com.gamego.domain.account.accountenum.Messages;
-import com.gamego.domain.account.accountenum.ProfileForm;
-import com.gamego.domain.account.accountenum.SignUpForm;
+import com.gamego.domain.game.dto.GameListResp;
+import com.gamego.domain.game.dto.GameResp;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
 import com.gamego.repository.AccountRepository;
-import jakarta.persistence.EntityManager;
+import com.gamego.repository.GameRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -26,22 +28,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class AccountService {
 
-
-    private final EntityManager em;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
     private final AppProperties appProperties;
     private final SpringTemplateEngine templateEngine;
     private final EmailService emailService;
+    private final GameRepository gameRepository;
+    private final ObjectMapper objectMapper;
 
 
     @GetMapping("/login")
@@ -54,15 +57,14 @@ public class AccountService {
         return "signup";
     }
 
+    // 회원가입
+    public void createAccount(@Valid AccountReq accountReq) {
 
-    public void createAccount(@Valid SignUpForm signUpForm) {
+        accountReq.setPassword(passwordEncoder.encode(accountReq.getPassword()));
 
-        signUpForm.setPassword(passwordEncoder.encode(signUpForm.getPassword()));
-
-        Account account = modelMapper.map(signUpForm, Account.class);
-
-
+        Account account = modelMapper.map(accountReq, Account.class);
         accountRepository.save(account);
+
         sendVerificationEmail(account);
     }
 
@@ -110,15 +112,16 @@ public class AccountService {
         SecurityContextHolder.getContext().setAuthentication(token);
     }
 
-    public Account getAccount(String nickname) {
+    public AccountResp getAccount(String nickname) {
         Account account = accountRepository.findByNickname(nickname);
         if(account == null) {
             throw new IllegalArgumentException(account + "에 해당하는 사용자가 없습니다.");
         }
-        return account;
+        return modelMapper.map(account, AccountResp.class);
     }
 
-    public void updateAccount(Account account, @Valid ProfileForm profileForm) {
+    public void updateAccount(Account account, @Valid ProfileReq profileReq) {
+        modelMapper.map(profileReq, account);
         accountRepository.save(account);
     }
 
@@ -127,30 +130,54 @@ public class AccountService {
         accountRepository.save(account);
     }
 
-    public void updateMessages(Account account, @Valid Messages messages) {
-        modelMapper.map(messages, account);
+    public void updateMessages(Account account, @Valid MessageReq messageReq) {
+        modelMapper.map(messageReq, account);
         accountRepository.save(account);
     }
 
-    public Set<Game> getGames(Account account){
-        return accountRepository.findById(account.getId())
-                .map(Account::getGames)
+    public GameListResp getGameListResponse(Account account) throws JsonProcessingException {
+        Account accountWithGames = accountRepository.findAccountWithGamesById(account.getId())
                 .orElseThrow(() -> new IllegalArgumentException("계정을 찾을 수 없습니다."));
+
+        List<String> gameNames = accountWithGames.getGames()
+                .stream()
+                .map(Game::getName)
+                .collect(Collectors.toList());
+
+        List<String> allGames = gameRepository.findAll()
+                .stream()
+                .map(Game::getName)
+                .collect(Collectors.toList());
+
+        GameListResp response = new GameListResp();
+        response.setGames(gameNames);
+        response.setWhitelist(objectMapper.writeValueAsString(allGames));
+        return response;
     }
 
-    public void addGame(Account account, Game game) {
-        Optional<Account> byId = accountRepository.findById(account.getId());
-        byId.ifPresent(a -> {
-            a.getGames().add(game);
-        });
+    public GameResp addGame(Account account, Game game) {
+        Account accountWithGames = accountRepository.findAccountWithGamesById(account.getId())
+                .orElseThrow(() -> new IllegalArgumentException("계정을 찾을 수 없습니다."));
+        accountWithGames.getGames().add(game);
+
+        GameResp response = new GameResp();
+        response.setStatus("add");
+        response.setGameTitle(game.getName());
+        return response;
     }
 
-    public void removeGame(Account account, Game game) {
-        Optional<Account> byId = accountRepository.findById(account.getId());
-        byId.ifPresent(a -> {
-            a.getGames().remove(game);
-        });
+    public GameResp removeGame(Account account, Game game) {
+        Account accountWithGames = accountRepository.findAccountWithGamesById(account.getId())
+                .orElseThrow(() -> new IllegalArgumentException("계정을 찾을 수 없습니다."));
+        accountWithGames.getGames().remove(game);
+
+        GameResp response = new GameResp();
+        response.setStatus("remove");
+        response.setGameTitle(game.getName());
+        return response;
     }
+
+
     public String getTimePreference(Account account){
         TimePreference timePreference = accountRepository.findById(account.getId())
                 .map(Account::getTimePreference).orElse(null);

@@ -12,7 +12,7 @@
 <div class="d-flex justify-content-center align-items-center">
     <div class="card shadow-lg p-4 rounded" style="width: 400px; background-color: white;">
         <h3 class="text-center mb-4 fw-bold">회원가입</h3>
-        <form class="needs-validation" action="#" th:action="@{/sign-up}" th:object="${signUpForm}" method="POST">
+        <form class="needs-validation" action="#" th:action="@{/sign-up}" th:object="${accountReq}" method="POST">
             <div class="mb-3 text-start">
                 <label for="username" class="form-label fw-bold">이메일</label>
                 <input type="email" id="username" name="username" th:field="*{email}" class="form-control" placeholder="이메일을 입력하세요" required>

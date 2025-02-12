@@ -3,14 +3,13 @@ package com.gamego.controller;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.room.Room;
-import com.gamego.domain.room.form.RoomForm;
-import com.gamego.repository.RoomRepository;
+import com.gamego.domain.room.dto.RoomReq;
+import com.gamego.domain.room.dto.RoomResp;
+import com.gamego.service.RoomQueryService;
 import com.gamego.service.RoomService;
-import com.gamego.validator.RoomFormValidator;
+import com.gamego.validator.RoomValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,41 +26,40 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class RoomController {
 
-    private final RoomRepository roomRepository;
-    private final RoomService roomService;
-    private final ModelMapper modelMapper;
-    private final RoomFormValidator roomFormValidator;
 
-    @InitBinder("roomForm")
+    private final RoomService roomService;
+    private final RoomValidator roomValidator;
+    private final RoomQueryService roomQueryService;
+
+    @InitBinder("roomReq")
     public void roomFormInitBinder(WebDataBinder binder) {
-        binder.addValidators(roomFormValidator);
+        binder.addValidators(roomValidator);
     }
 
 
     @GetMapping("/new-room")
     public String newRoomForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
-        model.addAttribute(new RoomForm());
+        model.addAttribute(new RoomReq());
         return "room/form";
     }
 
     @PostMapping("/new-room")
-    public String newRoomUpdate(@CurrentAccount Account account, @Valid RoomForm roomForm,
+    public String newRoomUpdate(@CurrentAccount Account account, @Valid RoomReq roomReq,
                                 BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()) {
             model.addAttribute(account);
             return "room/form";
         }
-        Room newRoom = roomService.createNewRoom(modelMapper.map(roomForm, Room.class), account);
+        RoomResp newRoom = roomService.createNewRoom(roomReq, account);
         return "redirect:/room/" + URLEncoder.encode(newRoom.getPath(), StandardCharsets.UTF_8);
     }
 
     @GetMapping("/room/{path}")
     public String viewRoom(@CurrentAccount Account account, @PathVariable String path, Model model) {
-        Room room = roomService.getRoom(path);
-
+        RoomResp roomResp = roomQueryService.getRoom(path);
         model.addAttribute(account);
-        model.addAttribute(room);
+        model.addAttribute("room", roomResp);
         return "room/view";
     }
 }

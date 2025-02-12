@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-
 @RequiredArgsConstructor
 @Service
 public class GameService {

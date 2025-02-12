@@ -1,4 +1,4 @@
-package com.gamego.domain.account.accountenum;
+package com.gamego.domain.account.dto;
 
 
 import lombok.Data;
@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 
 @Data
-public class ProfileForm {
+public class ProfileReq {
 
     @Length(max=30)
     private String bio;

@@ -101,9 +101,9 @@ class AccountControllerTest {
     void createAccount_success() throws Exception {
 
         ResultActions resultAction = mockMvc.perform(post("/sign-up")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)  // 🟢 폼 데이터 전송
-                .param("nickname", "shark")
-                .param("email", "hyuk2000s@naver.com")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("nickname", "test")
+                .param("email", "hyuk2000s@test.com")
                 .param("password", "12341234")
                 .param("confirmPassword", "12341234")
                 .param("gender", "male")
@@ -124,18 +124,5 @@ class AccountControllerTest {
                 .andExpect(model().attributeExists("error"))
                 .andExpect(view().name("account/checked-email"))
                 .andExpect(unauthenticated());
-    }
-
-    @DisplayName("인증 메일 확인 - 입력값 정상")
-    @Test
-    void checkEmailToken() throws Exception {
-
-    }
-
-    @Test
-    @DisplayName("이메일 인증 성공 후 뷰")
-    void verifiedUser() throws Exception {
-
-
     }
 }
