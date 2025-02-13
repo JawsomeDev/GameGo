@@ -12,6 +12,7 @@ import com.gamego.domain.game.dto.GameListResp;
 import com.gamego.domain.game.dto.GameReq;
 import com.gamego.domain.game.dto.GameResp;
 import com.gamego.repository.GameRepository;
+import com.gamego.service.AccountQueryService;
 import com.gamego.service.AccountService;
 import com.gamego.validator.NicknameValidator;
 import com.gamego.validator.PasswordValidator;
@@ -46,6 +47,7 @@ public class ProfileController {
     private final AccountService accountService;
     private final GameRepository gameRepository;
     private final ObjectMapper objectMapper;
+    private final AccountQueryService accountQueryService;
 
     @InitBinder("nicknameReq")
     public void initBinder1(WebDataBinder binder){
@@ -119,7 +121,7 @@ public class ProfileController {
 
     @GetMapping("/settings/games")
     public String gameToSelect(@CurrentAccount Account account, Model model) throws JsonProcessingException {
-        GameListResp response = accountService.getGameListResponse(account);
+        GameListResp response = accountQueryService.getGameListResponse(account);
         model.addAttribute("games", response.getGames());
         model.addAttribute("whitelist", response.getWhitelist());
         return "settings/games";
@@ -155,7 +157,7 @@ public class ProfileController {
     public String timeToSelect(@CurrentAccount Account account, Model model) throws JsonProcessingException {
         model.addAttribute("account", account);
 
-        String timePreference = accountService.getTimePreference(account);
+        String timePreference = accountQueryService.getTimePreference(account);
 
         model.addAttribute("timePreference", timePreference);
 

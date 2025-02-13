@@ -112,13 +112,7 @@ public class AccountService {
         SecurityContextHolder.getContext().setAuthentication(token);
     }
 
-    public AccountResp getAccount(String nickname) {
-        Account account = accountRepository.findByNickname(nickname);
-        if(account == null) {
-            throw new IllegalArgumentException(account + "에 해당하는 사용자가 없습니다.");
-        }
-        return modelMapper.map(account, AccountResp.class);
-    }
+
 
     public void updateAccount(Account account, @Valid ProfileReq profileReq) {
         modelMapper.map(profileReq, account);
@@ -135,25 +129,7 @@ public class AccountService {
         accountRepository.save(account);
     }
 
-    public GameListResp getGameListResponse(Account account) throws JsonProcessingException {
-        Account accountWithGames = accountRepository.findAccountWithGamesById(account.getId())
-                .orElseThrow(() -> new IllegalArgumentException("계정을 찾을 수 없습니다."));
 
-        List<String> gameNames = accountWithGames.getGames()
-                .stream()
-                .map(Game::getName)
-                .collect(Collectors.toList());
-
-        List<String> allGames = gameRepository.findAll()
-                .stream()
-                .map(Game::getName)
-                .collect(Collectors.toList());
-
-        GameListResp response = new GameListResp();
-        response.setGames(gameNames);
-        response.setWhitelist(objectMapper.writeValueAsString(allGames));
-        return response;
-    }
 
     public GameResp addGame(Account account, Game game) {
         Account accountWithGames = accountRepository.findAccountWithGamesById(account.getId())
@@ -178,11 +154,7 @@ public class AccountService {
     }
 
 
-    public String getTimePreference(Account account){
-        TimePreference timePreference = accountRepository.findById(account.getId())
-                .map(Account::getTimePreference).orElse(null);
-       return timePreference != null ? timePreference.getValue() : null;
-    }
+
 
     public void addTimePreference(Account account, TimePreference timePreference) {
         Optional<Account> byId = accountRepository.findById(account.getId());

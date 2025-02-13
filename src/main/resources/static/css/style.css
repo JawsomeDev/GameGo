@@ -150,3 +150,19 @@ main h2 span::after{
 .dropdown-divider{
     border-top: 1px solid black;
 }
+
+.custom-room{
+    background-color: #f4f6f9;
+}
+
+.icon-blue{
+    color : #2980b9;
+}
+
+.room-content{
+    color:#2c3e50;
+}
+
+.room-title{
+    color: #34495e;
+}

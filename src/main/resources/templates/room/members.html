@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html::head}">
+</head>
+<body>
+<nav th:replace="~{fragment.html :: main-nav}"></nav>
+<div th:replace="~{fragment.html :: banner}"></div>
+<div class="container mt-5  text-body-emphasis custom-room">
+    <div th:replace="~{fragment.html :: room-info}"></div>
+    <div th:replace="~{fragment.html::room-menu (roomMenu = 'members')}"></div>
+
+</div>
+<div th:replace="~{fragment.html::footer}"></div>
+<script th:replace="~{fragment.html :: tooltip}"></script>
+</body>
+</html>

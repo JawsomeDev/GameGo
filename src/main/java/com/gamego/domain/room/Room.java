@@ -1,6 +1,8 @@
 package com.gamego.domain.room;
 
 
+import com.gamego.domain.account.Account;
+import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.roomaccount.RoomAccount;
 import com.gamego.domain.account.accountenum.TimePreference;
 import com.gamego.domain.event.Event;
@@ -67,4 +69,11 @@ public class Room {
     private Set<Game> games = new HashSet<>();
 
 
+    public boolean isJoinable(Account account){
+
+        boolean alreadyJoined = this.roomAccounts.stream()
+                .anyMatch(roomAccount -> roomAccount.getAccount().equals(account));
+
+        return this.isActive() && this.isRecruiting() && !alreadyJoined;
+    }
 }

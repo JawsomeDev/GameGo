@@ -51,7 +51,7 @@
                     </a>
                 </li>
                 <li class="nav-item ms-4" sec:authorize="isAuthenticated()">
-                    <a class="btn btn-outline-warning text-white" th:href="@{/new-study}">
+                    <a class="btn btn-outline-warning text-white" th:href="@{/new-room}">
                         <i class="fa fa-plus" aria-hidden="true"></i> 방 개설
                     </a>
                 </li>
@@ -95,6 +95,95 @@
 </div>
 
 
+<div th:fragment="room-menu (roomMenu)" class="custom-room row px-3 justify-content-center">
+    <div class="col-10 nav nav-tabs">
+        <a class="nav-item nav-link icon-blue" href="#" th:classappend="${roomMenu == 'info'}? active" th:href="@{'/room/' + ${room.path}}">
+            <i class="fa fa-info-circle icon-blue"></i> 소개
+        </a>
+        <a class="nav-item nav-link icon-blue" href="#" th:classappend="${roomMenu == 'members'}? active" th:href="@{'/room/' + ${room.path} + '/members'}">
+            <i class="fa fa-user icon-blue"></i> 구성원
+        </a>
+        <a class="nav-item nav-link icon-blue" th:classappend="${roomMenu == 'events'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/events'}">
+            <i class="fa fa-calendar icon-blue"></i> 모임
+        </a>
+        <a sec:authorize="isAuthenticated()" th:if="${room.isManagerOrMaster}"
+           class="nav-item nav-link icon-blue" th:classappend="${roomMenu == 'settings'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/settings/description'}">
+            <i class="fa fa-cog icon-blue"></i> 설정
+        </a>
+    </div>
+</div>
+
+
+<div th:fragment="banner" class="row g-0" id="room-banner" th:if="${room.useBanner} ">
+    <img th:src="${room.useBanner && !#strings.isEmpty(room.image) ? room.image : '/images/default_banner.png'}"
+         alt="Room Banner" class="img-fluid w-100 rounded"/>
+</div>
+
+<div th:fragment="room-info">
+    <div  class="row pt-4 text-left justify-content-center">
+        <div class="col-6">
+            <a th:href="@{'/room/' + ${room.path}}" class="text-decoration-none">
+                <span class="h2 room-title"  th:text="${room.title}">게임 방 이름</span>
+            </a>
+        </div>
+        <div class="col-4 text-end justify-content-end">
+                <span th:if="${!room.active}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="방 공개 준비중">
+                    <button class="btn btn-secondary btn-sm" style="pointer-events: none;" type="button" disabled>준비중</button>
+                </span>
+
+            <span th:if="${room.closed}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="비활성화">
+                    <button class="btn btn-secondary btn-sm" style="pointer-events: none;" type="button" disabled>CLOSED</button>
+                </span>
+
+            <span th:if="${!room.recruiting}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="팀원 모집 중 아님">
+                    <button class="btn btn-secondary btn-sm" style="pointer-events: none;" type="button" disabled>OFF</button>
+                </span>
+
+            <span sec:authorize="isAuthenticated()" th:if="${room.isJoinAble}" class="btn-group" role="group" >
+                    <form th:action="@{'/room/' + ${room.path} + '/join'}" method="post" style="display: inline;">
+                        <button class="btn btn-primary" type="submit">가입</button>
+                    </form>
+                    <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/members'}" th:text="${room.memberCount}">2</a>
+                </span>
+
+            <span sec:authorize="isAuthenticated()"  th:if="${room.active && !room.closed && room.isManagerOrMaster()}">
+                    <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/new-event'}">
+                        <i class="fa fa-plus"><</i> 모임 만들기
+                    </a>
+                </span>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <p class="lead room-content"  th:text="${room.shortDescription}"></p>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <p>
+                    <span th:each="game : ${room.games}" class="font-weight-light text-monospace badge text-bg-info me-3">
+                        <a th:href="@{'/search/tag/' + ${game.title}}" class="text-decoration-none text-white">
+                            <i class="fa fa-tag"></i><span th:text="${game.title}">Game</span>
+                        </a>
+                    </span>
+                <span th:if="${room.timePreference != null}" class="font-weight-light text-monospace badge badge-primary mr-3">
+                            <a th:href="@{'/search/time/' + ${room.timePreference}}" class="text-decoration-none text-white">
+                                <i class="fa fa-globe"></i> <span th:text="${room.timePreference}">time</span>
+                            </a>
+                    </span>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+<script th:fragment="tooltip" type="application/javascript">
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+</script>
+
+
 <script th:fragment="validators">
     document.addEventListener("DOMContentLoaded", function() {
         (() => {
@@ -115,17 +204,12 @@
     });
 </script>
 
-
-
 <footer th:fragment="footer" class="footer text-white text-center py-3">
     <div class="container d-flex justify-content-center align-items-center">
         <img src="/images/gamefooter.png" alt="푸터 로고" class="me-2" width="120">
         <span>© 2025</span>
     </div>
 </footer>
-
-
-
 
 </body>
 </html>

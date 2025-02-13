@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
@@ -19,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
+@Transactional
 class AccountControllerTest {
 
     @Autowired
@@ -34,7 +36,7 @@ class AccountControllerTest {
         mockMvc.perform(get("/sign-up"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("account/signup"))
-                .andExpect(model().attributeExists("signUpForm"))
+                .andExpect(model().attributeExists("accountReq"))
                 .andExpect(unauthenticated());
     }
 
@@ -102,8 +104,8 @@ class AccountControllerTest {
 
         ResultActions resultAction = mockMvc.perform(post("/sign-up")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("nickname", "test")
-                .param("email", "hyuk2000s@test.com")
+                .param("nickname", "test122323")
+                .param("email", "hyuk2000s@test123231.com")
                 .param("password", "12341234")
                 .param("confirmPassword", "12341234")
                 .param("gender", "male")

@@ -6,6 +6,7 @@ import com.gamego.domain.account.CurrentAccount;
 import com.gamego.domain.account.dto.AccountReq;
 import com.gamego.domain.account.dto.AccountResp;
 import com.gamego.repository.AccountRepository;
+import com.gamego.service.AccountQueryService;
 import com.gamego.service.AccountService;
 import com.gamego.validator.AccountValidator;
 import jakarta.validation.Valid;
@@ -25,6 +26,7 @@ public class AccountController {
     private final AccountService accountService;
     private final AccountValidator accountValidator;
     private final AccountRepository accountRepository;
+    private final AccountQueryService accountQueryService;
 
     @InitBinder("accountReq")
     public void initBinder(WebDataBinder binder) {
@@ -98,7 +100,7 @@ public class AccountController {
 
    @GetMapping("/profile/{nickname}")
     public String profile(@PathVariable String nickname, Model model, @CurrentAccount Account account) {
-       AccountResp myAccount = accountService.getAccount(nickname);
+       AccountResp myAccount = accountQueryService.getAccount(nickname);
 
        boolean isOwner = account.getNickname().equals(myAccount.getNickname());
 

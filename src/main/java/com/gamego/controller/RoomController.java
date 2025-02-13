@@ -57,9 +57,18 @@ public class RoomController {
 
     @GetMapping("/room/{path}")
     public String viewRoom(@CurrentAccount Account account, @PathVariable String path, Model model) {
-        RoomResp roomResp = roomQueryService.getRoom(path);
+        RoomResp roomResp = roomQueryService.getRoom(path, account);
         model.addAttribute(account);
         model.addAttribute("room", roomResp);
         return "room/view";
+    }
+
+    @GetMapping("/room/{path}/members")
+    public String viewRoomMembers(@CurrentAccount Account account, @PathVariable String path, Model model) {
+        RoomResp roomResp = roomQueryService.getRoom(path, account);
+        model.addAttribute(account);
+        model.addAttribute("room", roomResp);
+
+        return "room/members";
     }
 }
