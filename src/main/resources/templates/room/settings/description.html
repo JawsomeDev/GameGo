@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html::head}">
+</head>
+<body>
+<nav th:replace="~{fragment.html :: main-nav}"></nav>
+<div th:replace="~{fragment.html :: banner}"></div>
+<div class="container mt-5  text-body-emphasis custom-room">
+    <div th:replace="~{fragment.html :: room-info}"></div>
+    <div th:replace="~{fragment.html::room-menu (roomMenu = 'settings')}"></div>
+    <div class="row px-3 justify-content-center bg-white" style="min-height: 100vh;">
+        <div class="col-2">
+            <div th:replace="~{fragment.html:: room-settings-menu (currentMenu = 'description')}"></div>
+        </div>
+        <div class="col-8">
+            <div th:if="${message}" class="alert alert-primary alert-dismissible fade show mt-3" role="alert">
+                <span th:text="${message}">완료</span>
+                <button type="button" class="btn-close position-absolute top-50 end-0 translate-middle-y me-2" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="needs-validation" th:action="@{'/room/' + ${room.getPath()} + '/settings/description'}"
+                  th:object="${roomDescriptionReq}" method="post" novalidate>
+                <div class="form-group">
+                    <label for="shortDescription">짧은 소개</label>
+                    <textarea id="shortDescription" th:field="*{shortDescription}" class="form-control"
+                              placeholder="게임 방을 짧게 소개해주세요." aria-describedby="shortDescriptionHelp" required maxlength="100"></textarea>
+                    <small id="shortDescriptionHelp" class="form-text text-muted">
+                        100자 이내로 짧은 소개를 적어주세요.
+                    </small>
+                    <small class="invalid-feedback">짧은 소개를 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('shortDescription')}" th:errors="*{shortDescription}">
+                        Short Description Error
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="longDescription">상세 소개</label>
+                    <textarea id="longDescription" th:field="*{longDescription}" class="form-control summernote" required></textarea>
+                    <small id="longDescriptionHelp" class="form-text text-muted">
+                        게임 스타일, 목표 점수, 디스코드 링크 등 게임 방에 대해 자세히 적어주세요.
+                    </small>
+                    <small class="invalid-feedback">상세 소개를 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('longDescription')}" th:errors="*{longDescription}">
+                        Long Description Error
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-outline-success mb-5" type="submit" aria-describedby="submitHelp">
+                        수정하기
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragment.html::footer}"></div>
+<script th:replace="~{fragment.html :: tooltip}"></script>
+<script th:replace="~{fragment.html:: summernote}"></script>
+<script th:replace="~{fragment.html::validators}"></script>
+</body>
+</html>

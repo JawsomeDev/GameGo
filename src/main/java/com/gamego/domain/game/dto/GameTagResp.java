@@ -1,4 +1,4 @@
-package com.gamego.domain.room.dto;
+package com.gamego.domain.game.dto;
 
 
 import lombok.Data;

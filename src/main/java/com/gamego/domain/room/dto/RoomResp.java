@@ -1,7 +1,7 @@
 package com.gamego.domain.room.dto;
 
 
-import com.gamego.domain.account.accountenum.TimePreference;
+import com.gamego.domain.game.dto.GameTagResp;
 import lombok.Data;
 
 import java.util.List;
@@ -32,7 +32,16 @@ public class RoomResp {
     // 매니저 이상의 권한을 갖고있는지 여부
     private boolean managerOrMaster;
 
+    private boolean user;
+
+    private boolean manager;
+
+    private boolean master;
+
     private String timePreference;
 
     private List<GameTagResp> games;
+
+    private List<RoomMemberResp> members;
+
 }

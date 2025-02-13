@@ -3,18 +3,19 @@ package com.gamego.service;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.room.Room;
+import com.gamego.domain.room.dto.RoomDescriptionReq;
 import com.gamego.domain.room.dto.RoomReq;
 import com.gamego.domain.room.dto.RoomResp;
 import com.gamego.domain.roomaccount.RoomAccount;
 import com.gamego.domain.roomaccount.RoomRole;
 import com.gamego.repository.RoomAccountRepository;
 import com.gamego.repository.RoomRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -37,4 +38,12 @@ public class RoomService {
         return modelMapper.map(savedRoom, RoomResp.class);
     }
 
+
+    public void updateRoomDescription(String path, Account account, @Valid RoomDescriptionReq roomDescriptionReq) {
+        Room room = roomRepository.findByPath(path);
+        if (room == null) {
+            throw new IllegalArgumentException("방을 찾을 수 없습니다.");
+        }
+        modelMapper.map(roomDescriptionReq, room);
+    }
 }

@@ -10,7 +10,23 @@
 <div class="container mt-5  text-body-emphasis custom-room">
     <div th:replace="~{fragment.html :: room-info}"></div>
     <div th:replace="~{fragment.html::room-menu (roomMenu = 'members')}"></div>
-
+    <div class="row px-3 justify-content-center bg-white" style="min-height: 100vh;">
+        <ul class="list-unstyled col-10">
+            <li class="d-flex align-items-center mt-3" th:each="member : ${room.members}">
+                <img th:src="${member != null && !#strings.isEmpty(member?.profileImage) && member.profileImage != '' ? member.profileImage : '/images/default.png'}"
+                     class="img-fluid rounded-circle img-thumbnail profile-image"
+                     width="64" height="64" alt="User Avatar" th:alt="${member !=null ? member.nickname : 'Default User'}">
+                <div class="ms-3">
+                    <h5 class="mt-0 mb-1">
+                        <span th:text="${member.nickname}"></span>
+                        <span th:if="${room.isManager()}" class="badge badge-background">매니저</span>
+                        <span th:if="${room.isMaster()}" class="badge badge-background">방장</span>
+                        <span th:if="${room.isUser()}" class="badge badge-background">게스트</span>
+                    </h5>
+                </div>
+            </li>
+        </ul>
+    </div>
 </div>
 <div th:replace="~{fragment.html::footer}"></div>
 <script th:replace="~{fragment.html :: tooltip}"></script>

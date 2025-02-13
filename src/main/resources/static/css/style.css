@@ -159,6 +159,10 @@ main h2 span::after{
     color : #2980b9;
 }
 
+.badge-background{
+    background-color: #2980b9;
+}
+
 .room-content{
     color:#2c3e50;
 }

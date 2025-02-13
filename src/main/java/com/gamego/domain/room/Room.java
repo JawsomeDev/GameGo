@@ -8,6 +8,7 @@ import com.gamego.domain.account.accountenum.TimePreference;
 import com.gamego.domain.event.Event;
 import com.gamego.domain.game.Game;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,8 +30,10 @@ public class Room {
     @Column(unique = true)
     private String path;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String shortDescription;
 
     @Lob
@@ -39,6 +42,7 @@ public class Room {
 
 
     @Lob
+    @Column(nullable = false)
     @Basic(fetch = FetchType.EAGER)
     private String longDescription;
 
@@ -46,6 +50,7 @@ public class Room {
 
     @Enumerated(EnumType.STRING)
     private TimePreference timePreference;
+
 
     private LocalDateTime activeDateTime;
     private LocalDateTime closedDateTime;
@@ -75,5 +80,13 @@ public class Room {
                 .anyMatch(roomAccount -> roomAccount.getAccount().equals(account));
 
         return this.isActive() && this.isRecruiting() && !alreadyJoined;
+    }
+
+    public void changeShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
+    public void changeLongDescription(String longDescription) {
+        this.longDescription = longDescription;
     }
 }
