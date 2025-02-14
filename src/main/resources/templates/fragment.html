@@ -96,7 +96,7 @@
     <a th:href="@{/settings/account}" class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'account'}? active">계정 삭제</a>
 </div>
 
-<div class="list-group" th:fragment="room-settings-menu (currentMenu)">
+<div class="list-group mt-3" th:fragment="room-settings-menu (currentMenu)">
     <a th:href="@{'/room/' + ${room.path} + '/settings/description'}" class="list-group-item list-group-item-action list-group-item-secondary" th:classappend="${currentMenu == 'description'}? active" >소개</a>
     <a th:href="@{'/room/' + ${room.path} + '/settings/banner'}" class="list-group-item list-group-item-action list-group-item-secondary" th:classappend="${currentMenu == 'banner'}? active">이미지</a>
     <a th:href="@{'/room/' + ${room.path} + '/settings/games'}" class="list-group-item list-group-item-action list-group-item-secondary" th:classappend="${currentMenu == 'games'}? active">주 게임</a>
@@ -124,13 +124,14 @@
 </div>
 
 
-<div th:fragment="banner" class="row g-0" id="room-banner" th:if="${room.useBanner} ">
-    <img th:src="${room.useBanner && !#strings.isEmpty(room.image) ? room.image : '/images/default_banner.png'}"
-         alt="Room Banner" class="img-fluid w-100 rounded"/>
-</div>
+
 
 <div th:fragment="room-info">
-    <div  class="row pt-4 text-left justify-content-center">
+    <div class="row text-left justify-content-center" >
+        <div class="row gx-0 gy-0" id="room-banner" th:if="${room.useBanner} ">
+            <img th:src="${room.useBanner && !#strings.isEmpty(room.image) ? room.image : '/images/default_banner.jpg'}"
+                 alt="Room Banner" class="banner img-fluid"/>
+        </div><hr>
         <div class="col-6">
             <a th:href="@{'/room/' + ${room.path}}" class="text-decoration-none">
                 <span class="h2 room-title"  th:text="${room.title}">게임 방 이름</span>

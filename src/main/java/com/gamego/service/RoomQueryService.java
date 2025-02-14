@@ -35,7 +35,7 @@ public class RoomQueryService {
         RoomResp roomResp = modelMapper.map(room, RoomResp.class);
 
         roomResp.setMemberCount(getMemberCount(room));
-        roomResp.setJoinAble(room.isJoinable(account));
+        roomResp.setJoinAble(isJoinAble(room, account));
         roomResp.setManagerOrMaster(isManagerOrMaster(account, room));
         roomResp.setManager(isManager(account, room));
         roomResp.setMaster(isMaster(account, room));
@@ -109,5 +109,13 @@ public class RoomQueryService {
         if(!roomResp.isMaster()){
             throw new AccessDeniedException("해당 기능은 방장만 사용 가능합니다.");
         }
+    }
+
+    private boolean isJoinAble(Room room, Account account) {
+        // 원래 엔티티의 isJoinable 로직과 동일하게 처리
+        boolean alreadyJoined = room.getRoomAccounts().stream()
+                .anyMatch(roomAccount -> roomAccount.getAccount().equals(account));
+
+        return room.isActive() && room.isRecruiting() && !alreadyJoined;
     }
 }

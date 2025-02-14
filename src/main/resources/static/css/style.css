@@ -157,6 +157,7 @@ main h2 span::after{
 
 .icon-blue{
     color : #2980b9;
+
 }
 
 .badge-background{
@@ -169,4 +170,9 @@ main h2 span::after{
 
 .room-title{
     color: #34495e;
+}
+
+.banner{
+    width: 100%;
+    max-height: 300px;
 }

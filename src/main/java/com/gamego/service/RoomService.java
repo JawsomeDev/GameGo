@@ -46,4 +46,37 @@ public class RoomService {
         }
         modelMapper.map(roomDescriptionReq, room);
     }
+
+    public void updateRoomBanner(RoomResp roomResp, String image) {
+        Room room = roomRepository.findByPath(roomResp.getPath());
+        if (room == null) {
+            throw new IllegalArgumentException("방을 찾을 수 없습니다.");
+        }
+        room.updateBanner(image);
+    }
+
+    public void disableRoomBanner(RoomResp roomResp) {
+        Room room = roomRepository.findByPath(roomResp.getPath());
+        if (room == null) {
+            throw new IllegalArgumentException("방을 찾을 수 없습니다.");
+        }
+        room.disableBanner();
+    }
+
+    public void enableRoomBanner(RoomResp roomResp) {
+        Room room = roomRepository.findByPath(roomResp.getPath());
+        if (room == null) {
+            throw new IllegalArgumentException("방을 찾을 수 없습니다.");
+        }
+        room.enableBanner();
+    }
+
+    public void useDefaultBanner(RoomResp roomResp) {
+        Room room = roomRepository.findByPath(roomResp.getPath());
+        if (room == null) {
+            throw new IllegalArgumentException("방을 찾을 수 없습니다.");
+        }
+        room.defaultImage();
+
+    }
 }

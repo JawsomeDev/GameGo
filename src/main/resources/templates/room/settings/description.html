@@ -6,7 +6,6 @@
 </head>
 <body>
 <nav th:replace="~{fragment.html :: main-nav}"></nav>
-<div th:replace="~{fragment.html :: banner}"></div>
 <div class="container mt-5  text-body-emphasis custom-room">
     <div th:replace="~{fragment.html :: room-info}"></div>
     <div th:replace="~{fragment.html::room-menu (roomMenu = 'settings')}"></div>
@@ -14,7 +13,7 @@
         <div class="col-2">
             <div th:replace="~{fragment.html:: room-settings-menu (currentMenu = 'description')}"></div>
         </div>
-        <div class="col-8">
+        <div class="col-8 mt-3">
             <div th:if="${message}" class="alert alert-primary alert-dismissible fade show mt-3" role="alert">
                 <span th:text="${message}">완료</span>
                 <button type="button" class="btn-close position-absolute top-50 end-0 translate-middle-y me-2" data-bs-dismiss="alert" aria-label="Close">

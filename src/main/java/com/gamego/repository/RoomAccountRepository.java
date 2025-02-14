@@ -13,5 +13,4 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface RoomAccountRepository extends JpaRepository<RoomAccount, Long> {
 
-    Optional<RoomAccount> findByRoomAndAccount(Room room, Account account);
 }

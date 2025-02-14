@@ -70,7 +70,7 @@ public class Account {
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Game> games = new HashSet<>();
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "account")
     private Set<RoomAccount> roomAccounts = new HashSet<>();
 
 

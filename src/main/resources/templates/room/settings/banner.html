@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html::head}">
+</head>
+<body>
+<nav th:replace="~{fragment.html :: main-nav}"></nav>
+
+<div class="container mt-5 text-body-emphasis custom-room" >
+    <div th:replace="~{fragment.html :: room-info}"></div>
+    <div th:replace="~{fragment.html::room-menu (roomMenu = 'settings')}"></div>
+    <div class="row px-3 justify-content-center bg-white" style="min-height: 100vh;">
+        <div class="col-2">
+            <div th:replace="~{fragment.html:: room-settings-menu (currentMenu = 'banner')}"></div>
+        </div>
+        <div class="col-8 mt-3">
+            <div th:if="${message}" class="alert alert-primary alert-dismissible fade show mt-3" role="alert">
+                <span th:text="${message}">완료</span>
+                <button type="button" class="btn-close position-absolute top-50 end-0 translate-middle-y me-2" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="row">
+                <h2 class="col-sm-12">배너 사용</h2>
+            </div>
+            <form th:if="${!room.useBanner}" th:action="@{'/room/' + ${room.getPath()} + '/settings/banner/enabled'}" method="POST">
+                <div class="alert alert-info" role="alert">
+                    배너 이미지를 사용하지 않습니다. 방 목록에서는 기본 배너 이미지가 적용됩니다.
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-outline-primary btn-block" type="submit" aria-describedby="submitHelp">배너 사용하기</button>
+                </div>
+            </form>
+
+            <form th:if="${room.useBanner}" th:action="@{'/room/' + ${room.getPath()} + '/settings/banner/disabled'}" method="POST">
+                <div class="alert alert-info" role="alert">
+                    배너 이미지를 사용합니다. 설정하지 않았다면, 기본 배너 이미지가 적용됩니다.
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-outline-primary btn-block" type="submit" aria-describedby="submitHelp">배너 사용하지 않기</button>
+                </div>
+            </form>
+            <form th:if="${room.image != '/images/default_banner.png' && room.useBanner}"
+                  th:action="@{'/room/' + ${room.getPath()} + '/settings/banner/default'}"
+                  method="POST">
+                <div class="form-group">
+                    <button class="btn btn-outline-primary mt-2" type="submit" aria-describedby="submitHelp">기본 배너로 변경</button>
+                </div>
+            </form>
+
+            <hr/>
+            <div class="row">
+                <h2 class="col-sm-12">배너 이미지 변경</h2>
+            </div>
+            <!-- 폼: 최종 Base64 문자열은 숨김 인풋에 저장 -->
+            <form id="imageForm" th:action="@{'/room/' + ${room.getPath()} + '/settings/banner'}" method="POST">
+                <div class="form-group">
+                    <input id="roomImage" type="hidden" name="image" class="form-control">
+                </div>
+            </form>
+            <div class="card text-center">
+                <div id="current-room-image" class="mt-3">
+                    <img class="rounded" th:src="${!#strings.isEmpty(room.image) ? room.image : '/images/default_banner.jpg'}" width="640" alt="name" th:alt="${room.title}">
+                </div>
+                <div id="new-room-image" class="mt-3"></div>
+                <div class="card-body">
+                    <!-- 숨김 처리된 파일 입력 -->
+                    <input type="file" class="custom-file-input" id="room-image-file" style="display:none;">
+                    <!-- "배너 이미지 변경" 버튼 (최초에 보임) -->
+                    <button id="change-banner-btn" class="btn btn-outline-primary">배너 이미지 변경</button>
+
+                    <!-- 크롭 컨트롤 버튼들 (초기엔 모두 숨김) -->
+                    <button id="cut-button" class="btn btn-outline-primary" style="display:none;">자르기</button>
+                    <button id="confirm-button" class="btn btn-outline-success" style="display:none;">확인</button>
+                    <button id="reset-button" class="btn btn-outline-warning" style="display:none;">취소</button>
+                    <!-- 저장 버튼은 동적으로 생성됩니다 -->
+
+                    <!-- 크롭된 이미지 미리보기 영역 -->
+                    <div id="cropped-new-room-image" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CropperJS 라이브러리 -->
+<link href="/node_modules/cropperjs/dist/cropper.min.css" rel="stylesheet">
+<script src="/node_modules/cropperjs/dist/cropper.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let cropper;
+        const changeBannerBtn = document.getElementById("change-banner-btn");
+        const fileInput = document.getElementById("room-image-file");
+        const newImageContainer = document.getElementById("new-room-image");
+        const croppedImageContainer = document.getElementById("cropped-new-room-image");
+        const currentImageContainer = document.getElementById("current-room-image");
+        const hiddenInput = document.getElementById("roomImage");
+
+        const cutButton = document.getElementById("cut-button");
+        const confirmButton = document.getElementById("confirm-button");
+        const resetButton = document.getElementById("reset-button");
+        let saveButton; // 동적으로 생성될 저장 버튼
+
+        // 초기 상태: 파일 입력, 크롭 영역, 컨트롤 버튼 숨김 (배너 변경 버튼만 보임)
+        fileInput.style.display = "none";
+        newImageContainer.style.display = "none";
+        cutButton.style.display = "none";
+        confirmButton.style.display = "none";
+        resetButton.style.display = "none";
+
+        // "배너 이미지 변경" 버튼 클릭 시 파일 선택창 강제 실행
+        changeBannerBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            fileInput.click();
+        });
+
+        // 파일 선택 시: 이미지 로드 및 Cropper 초기화
+        fileInput.addEventListener("change", function(event) {
+            if (event.target.files.length === 1) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (!e.target.result.startsWith("data:image")) {
+                        alert("이미지 파일을 선택하세요.");
+                        return;
+                    }
+                    // 기존 이미지 숨기고 새 이미지 영역 보이기
+                    currentImageContainer.style.display = "none";
+                    newImageContainer.style.display = "block";
+                    newImageContainer.innerHTML = `<img id="new-banner" src="${e.target.result}" style="max-width: 100%;">`;
+
+                    const image = document.getElementById("new-banner");
+                    if (cropper) { cropper.destroy(); }
+                    cropper = new Cropper(image, {
+                        aspectRatio: 3,
+                        viewMode: 1
+                    });
+                    // 파일 선택 후 크롭 관련 버튼들 표시 (자르기와 취소)
+                    cutButton.style.display = "inline-block";
+                    // 확인 버튼은 아직 숨김 (보여주기 전, 먼저 "자르기"로 미리보기 확인)
+                    confirmButton.style.display = "none";
+                    resetButton.style.display = "inline-block";
+                    // 만약 저장 버튼이 있다면 숨김 처리
+                    if (saveButton) {
+                        saveButton.style.display = "none";
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // "자르기" 버튼 클릭: 크롭한 결과 미리보기 생성
+        cutButton.addEventListener("click", function(e) {
+            e.preventDefault();
+            if (cropper) {
+                const croppedCanvas = cropper.getCroppedCanvas();
+                if (!croppedCanvas) {
+                    alert("이미지를 자를 수 없습니다.");
+                    return;
+                }
+                let croppedDataURL = croppedCanvas.toDataURL();
+                croppedImageContainer.innerHTML = "";
+                let previewImage = document.createElement("img");
+                previewImage.src = croppedDataURL;
+                previewImage.style.maxWidth = "100%";
+                croppedImageContainer.appendChild(previewImage);
+                hiddenInput.value = croppedDataURL; // Base64 문자열 저장
+                // "확인" 버튼 표시하여 최종 확정
+                confirmButton.style.display = "inline-block";
+            }
+        });
+
+        // "확인" 버튼 클릭: 크롭 결과 확정 후 저장 버튼 생성 및 form 제출 준비
+        confirmButton.addEventListener("click", function(e) {
+            e.preventDefault();
+            // 확정된 결과로 새 이미지 영역 업데이트
+            currentImageContainer.style.display = "none";
+            newImageContainer.innerHTML = croppedImageContainer.innerHTML;
+            // 자르기, 확인 버튼 숨김, 취소 버튼 유지
+            cutButton.style.display = "none";
+            confirmButton.style.display = "none";
+            resetButton.style.display = "inline-block";
+            // 동적으로 "저장" 버튼 생성 (혹은 이미 있으면 보이기)
+            if (!saveButton) {
+                saveButton = document.createElement("button");
+                saveButton.id = "save-button";
+                saveButton.className = "btn btn-outline-success";
+                saveButton.textContent = "저장";
+                // 저장 버튼은 크롭 컨트롤 버튼 영역에 추가
+                confirmButton.parentNode.appendChild(saveButton);
+                saveButton.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    // 최종 form submit: hiddenInput의 값이 폼에 포함되어 POST 요청됨.
+                    document.getElementById("imageForm").submit();
+                });
+            } else {
+                saveButton.style.display = "inline-block";
+            }
+        });
+
+        // "취소" 버튼 클릭: 크롭 작업 취소 및 초기 상태 복원
+        resetButton.addEventListener("click", function(e) {
+            e.preventDefault();
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            // 원래의 배너 이미지 보이기, 새 이미지 및 미리보기 영역 초기화
+            currentImageContainer.style.display = "block";
+            newImageContainer.style.display = "none";
+            croppedImageContainer.innerHTML = "";
+            fileInput.value = "";
+            // 모든 크롭 관련 버튼 숨김 (동적 저장 버튼도 숨김)
+            cutButton.style.display = "none";
+            confirmButton.style.display = "none";
+            resetButton.style.display = "none";
+            if (saveButton) {
+                saveButton.style.display = "none";
+            }
+        });
+    });
+</script>
+</body>
+</html>

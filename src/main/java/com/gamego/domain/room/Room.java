@@ -67,26 +67,25 @@ public class Room {
     @OneToMany
     private List<Event> event = new ArrayList<>();
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "room")
     private Set<RoomAccount> roomAccounts = new HashSet<>();
 
     @ManyToMany
     private Set<Game> games = new HashSet<>();
 
-
-    public boolean isJoinable(Account account){
-
-        boolean alreadyJoined = this.roomAccounts.stream()
-                .anyMatch(roomAccount -> roomAccount.getAccount().equals(account));
-
-        return this.isActive() && this.isRecruiting() && !alreadyJoined;
+    public void updateBanner(String image) {
+        this.image = image;
     }
 
-    public void changeShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
+    public void disableBanner() {
+        this.useBanner = false;
     }
 
-    public void changeLongDescription(String longDescription) {
-        this.longDescription = longDescription;
+    public void enableBanner() {
+        this.useBanner = true;
+    }
+
+    public void defaultImage() {
+        this.image = null;
     }
 }

@@ -58,4 +58,43 @@ public class RoomSettingsController {
                  + "/settings/description";
     }
 
+    @GetMapping("/banner")
+    public String roomBannerForm(@CurrentAccount Account account, @PathVariable String path, Model model) {
+        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
+        model.addAttribute("room", roomResp);
+        model.addAttribute(account);
+        return "room/settings/banner";
+    }
+
+    @PostMapping("/banner")
+    public String roomBannerUpdate(@CurrentAccount Account account, @PathVariable String path, String image
+            ,RedirectAttributes attributes) {
+        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
+        roomService.updateRoomBanner(roomResp, image);
+        return "redirect:/room/" + URLEncoder.encode(roomResp.getPath(), StandardCharsets.UTF_8) + "/settings/banner";
+    }
+
+    @PostMapping("/banner/disabled")
+    public String disableBanner(@CurrentAccount Account account, @PathVariable String path) {
+        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
+        roomService.disableRoomBanner(roomResp);
+
+        return "redirect:/room/" + URLEncoder.encode(roomResp.getPath(), StandardCharsets.UTF_8) + "/settings/banner";
+    }
+
+    @PostMapping("/banner/enabled")
+    public String enableBanner(@CurrentAccount Account account, @PathVariable String path) {
+        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
+        roomService.enableRoomBanner(roomResp);
+        return "redirect:/room/" + URLEncoder.encode(roomResp.getPath(), StandardCharsets.UTF_8) + "/settings/banner";
+    }
+
+    @PostMapping("/banner/default")
+    public String useDefaultBanner(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
+        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
+        roomService.useDefaultBanner(roomResp);
+        attributes.addFlashAttribute("message", "기본 배너로 변경했습니다.");
+        return "redirect:/room/" + URLEncoder.encode(roomResp.getPath(), StandardCharsets.UTF_8) + "/settings/banner";
+    }
+
 }
