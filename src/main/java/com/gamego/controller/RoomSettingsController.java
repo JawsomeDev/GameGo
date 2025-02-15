@@ -3,8 +3,9 @@ package com.gamego.controller;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.room.dto.RoomDescriptionReq;
-import com.gamego.domain.room.dto.RoomResp;
+import com.gamego.domain.room.Room;
+import com.gamego.domain.room.dto.RoomDescriptionForm;
+import com.gamego.repository.GameRepository;
 import com.gamego.service.RoomQueryService;
 import com.gamego.service.RoomService;
 import jakarta.validation.Valid;
@@ -27,41 +28,41 @@ public class RoomSettingsController {
     private final RoomQueryService roomQueryService;
     private final RoomService roomService;
     private final ModelMapper modelMapper;
+    private final GameRepository gameRepository;
 
     @GetMapping("/description")
     public String viewRoomSettings(@CurrentAccount Account account, @PathVariable String path, Model model) {
-        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
-
-        RoomDescriptionReq roomDescriptionReq = modelMapper.map(roomResp, RoomDescriptionReq.class);
-
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        checkAuth(account, model, room);
+        model.addAttribute(room);
         model.addAttribute(account);
-        model.addAttribute("roomDescriptionReq", roomDescriptionReq);
-        model.addAttribute("room", roomResp);
+        model.addAttribute(modelMapper.map(room, RoomDescriptionForm.class));
         return "room/settings/description";
     }
 
     @PostMapping("/description")
     public String updateRoomInfo(@CurrentAccount Account account, @PathVariable String path,
-                                 @Valid RoomDescriptionReq roomDescriptionReq, BindingResult bindingResult,
+                                 @Valid RoomDescriptionForm roomDescriptionForm, BindingResult bindingResult,
                                  Model model, RedirectAttributes attributes) {
-        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
+        Room room = roomQueryService.getRoomToUpdate(path, account);
         if (bindingResult.hasErrors()) {
             model.addAttribute(account);
-            model.addAttribute("room", roomResp);
+            checkAuth(account, model, room);
+            model.addAttribute(room);
             return "room/settings/description";
         }
-
-        roomService.updateRoomDescription(path, account, roomDescriptionReq);
+        roomService.updateRoomDescription(path, account, roomDescriptionForm);
         attributes.addFlashAttribute("message", "방 소개를 수정했습니다.");
 
-        return "redirect:/room/" + URLEncoder.encode(roomResp.getPath(), StandardCharsets.UTF_8)
+        return "redirect:/room/" + room.getEncodedPath()
                  + "/settings/description";
     }
 
     @GetMapping("/banner")
     public String roomBannerForm(@CurrentAccount Account account, @PathVariable String path, Model model) {
-        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
-        model.addAttribute("room", roomResp);
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        checkAuth(account, model, room);
+        model.addAttribute("room", room);
         model.addAttribute(account);
         return "room/settings/banner";
     }
@@ -69,32 +70,39 @@ public class RoomSettingsController {
     @PostMapping("/banner")
     public String roomBannerUpdate(@CurrentAccount Account account, @PathVariable String path, String image
             ,RedirectAttributes attributes) {
-        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
-        roomService.updateRoomBanner(roomResp, image);
-        return "redirect:/room/" + URLEncoder.encode(roomResp.getPath(), StandardCharsets.UTF_8) + "/settings/banner";
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        roomService.updateRoomBanner(room, image);
+        return "redirect:/room/" + room.getEncodedPath() + "/settings/banner";
     }
 
     @PostMapping("/banner/disabled")
     public String disableBanner(@CurrentAccount Account account, @PathVariable String path) {
-        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
-        roomService.disableRoomBanner(roomResp);
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        roomService.disableRoomBanner(room);
 
-        return "redirect:/room/" + URLEncoder.encode(roomResp.getPath(), StandardCharsets.UTF_8) + "/settings/banner";
+        return "redirect:/room/" + room.getEncodedPath() + "/settings/banner";
     }
 
     @PostMapping("/banner/enabled")
     public String enableBanner(@CurrentAccount Account account, @PathVariable String path) {
-        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
-        roomService.enableRoomBanner(roomResp);
-        return "redirect:/room/" + URLEncoder.encode(roomResp.getPath(), StandardCharsets.UTF_8) + "/settings/banner";
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        roomService.enableRoomBanner(room);
+        return "redirect:/room/" + room.getEncodedPath() + "/settings/banner";
     }
 
     @PostMapping("/banner/default")
     public String useDefaultBanner(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
-        RoomResp roomResp = roomQueryService.getRoomToUpdate(path, account);
-        roomService.useDefaultBanner(roomResp);
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        roomService.useDefaultBanner(room);
         attributes.addFlashAttribute("message", "기본 배너로 변경했습니다.");
-        return "redirect:/room/" + URLEncoder.encode(roomResp.getPath(), StandardCharsets.UTF_8) + "/settings/banner";
+        return "redirect:/room/" + room.getEncodedPath() + "/settings/banner";
+    }
+
+    private void checkAuth(Account account, Model model, Room room) {
+        boolean isMaster = roomQueryService.isMaster(account, room);
+        model.addAttribute("isMaster", isMaster);
+        boolean isManagerOrMaster = roomQueryService.isManagerOrMaster(account, room);
+        model.addAttribute("isManagerOrMaster", isManagerOrMaster);
     }
 
 }

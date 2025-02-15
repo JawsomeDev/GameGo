@@ -39,7 +39,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/", "/check-email-token", "/css/**", "/js/**", "/images/**", "/fonts/**"
+                        auth.requestMatchers("/", "/check-email-token", "/reset-password/**" , "/reset-password-confirm" , "/reset-password/confirm" ,"/css/**", "/js/**", "/images/**", "/fonts/**"
                         ,"/sign-up", "/node_modules/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/profile").hasRole("UNVERIFIED")
                                 .requestMatchers("/settings/**").hasRole("USER")
@@ -87,8 +87,6 @@ public class SecurityConfig {
 
     @Bean
     public RoleHierarchy roleHierarchy() {
-        return fromHierarchy("ROLE_ADMIN > ROLE_MANAGER\n" +
-                "ROLE_MANAGER > ROLE_USER\n" +
-                "ROLE_USER > ROLE_UNVERIFIED");
+        return fromHierarchy("ROLE_USER > ROLE_UNVERIFIED");
     }
 }

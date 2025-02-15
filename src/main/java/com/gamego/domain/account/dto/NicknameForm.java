@@ -7,7 +7,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-public class NicknameReq {
+public class NicknameForm {
 
 
     @NotBlank

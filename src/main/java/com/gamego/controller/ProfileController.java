@@ -9,7 +9,7 @@ import com.gamego.domain.game.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
 import com.gamego.domain.game.dto.GameListResp;
-import com.gamego.domain.game.dto.GameReq;
+import com.gamego.domain.game.dto.GameForm;
 import com.gamego.domain.game.dto.GameResp;
 import com.gamego.repository.GameRepository;
 import com.gamego.service.AccountQueryService;
@@ -49,52 +49,51 @@ public class ProfileController {
     private final ObjectMapper objectMapper;
     private final AccountQueryService accountQueryService;
 
-    @InitBinder("nicknameReq")
+    @InitBinder("nicknameForm")
     public void initBinder1(WebDataBinder binder){
         binder.setValidator(nicknameValidator);
     }
 
-    @InitBinder("passwordReq")
+    @InitBinder("passwordForm")
     public void initBinder2(WebDataBinder binder) {
         binder.addValidators(new PasswordValidator());
     }
 
     @GetMapping("/settings/profile")
     public String profileToUpdate(@CurrentAccount Account account, Model model){
-        ProfileResp profileResp = modelMapper.map(account, ProfileResp.class);
         model.addAttribute("account", account);
-        model.addAttribute("profileReq", profileResp);
+        model.addAttribute("profileForm", modelMapper.map(account, ProfileForm.class));
         return "settings/profile";
     }
 
     @PostMapping("/settings/profile")
-    public String updateAccount(@CurrentAccount Account account, @Valid @ModelAttribute ProfileReq profileReq,
-                                BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes){
+    public String updateAccount(@CurrentAccount Account account, @Valid @ModelAttribute ProfileForm profileForm,
+                                BindingResult bindingResult, Model model, RedirectAttributes attributes){
         if(bindingResult.hasErrors()){
             model.addAttribute("account", account);
             return "settings/profile";
         }
 
-        accountService.updateAccount(account, profileReq);
-        redirectAttributes.addFlashAttribute("message", "프로필을 수정했습니다.");
+        accountService.updateAccount(account, profileForm);
+        attributes.addFlashAttribute("message", "프로필을 수정했습니다.");
         return "redirect:/settings/profile";
     }
 
     @GetMapping("/settings/password")
     public String passwordToUpdate(@CurrentAccount Account account, Model model){
         model.addAttribute("account", account);
-        model.addAttribute(new PasswordReq());
+        model.addAttribute(new PasswordForm());
         return "settings/password";
     }
 
     @PostMapping("/settings/password")
-    public String updatePassword(@CurrentAccount Account account, @Valid PasswordReq passwordReq,
+    public String updatePassword(@CurrentAccount Account account, @Valid PasswordForm passwordForm,
                                  BindingResult bindingResult, Model model, RedirectAttributes attributes){
         if(bindingResult.hasErrors()){
             model.addAttribute("account", account);
             return "settings/password";
         }
-        accountService.updatePassword(account, passwordReq.getNewPassword());
+        accountService.updatePassword(account, passwordForm.getNewPassword());
         attributes.addFlashAttribute("message", "패스워드를 변경했습니다.");
         return "redirect:/settings/password";
     }
@@ -102,19 +101,19 @@ public class ProfileController {
     @GetMapping("/settings/messages")
     public String messageToUpdate(@CurrentAccount Account account, Model model){
         model.addAttribute("account", account);
-        model.addAttribute("messageReq", modelMapper.map(account, MessageReq.class));
+        model.addAttribute("messageForm", modelMapper.map(account, MessageForm.class));
         return "settings/messages";
     }
 
     @PostMapping("/settings/messages")
-    public String updateMessages(@CurrentAccount Account account, @Valid MessageReq messageReq, BindingResult bindingResult,
+    public String updateMessages(@CurrentAccount Account account, @Valid MessageForm messageForm, BindingResult bindingResult,
                                  Model model, RedirectAttributes attributes){
         if(bindingResult.hasErrors()){
             model.addAttribute("account", account);
             return "settings/messages";
         }
 
-        accountService.updateMessages(account, messageReq);
+        accountService.updateMessages(account, messageForm);
         attributes.addFlashAttribute("error", "메시지 설정을 변경했습니다.");
         return "redirect:/settings/messages";
     }
@@ -130,8 +129,8 @@ public class ProfileController {
     @PostMapping("/settings/games/add")
     @ResponseBody
     public ResponseEntity<?> addGame(@CurrentAccount Account account,
-                                     @RequestBody @Valid GameReq gameReq) {
-        Game game = gameRepository.findByName(gameReq.getGameName());
+                                     @RequestBody @Valid GameForm gameForm) {
+        Game game = gameRepository.findByName(gameForm.getGameName());
         if (game == null) {
             return ResponseEntity.badRequest()
                     .body("{\"status\":\"error\",\"message\":\"등록된 게임만 선택 가능합니다.\"}");
@@ -143,8 +142,8 @@ public class ProfileController {
     @PostMapping("/settings/games/remove")
     @ResponseBody
     public ResponseEntity<?> removeGame(@CurrentAccount Account account,
-                                        @RequestBody @Valid GameReq gameReq) {
-        Game game = gameRepository.findByName(gameReq.getGameName());
+                                        @RequestBody @Valid GameForm gameForm) {
+        Game game = gameRepository.findByName(gameForm.getGameName());
         if (game == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -171,7 +170,7 @@ public class ProfileController {
 
     @ResponseBody
     @PostMapping("/settings/times/add")
-    public ResponseEntity<?> addTimePreference(@CurrentAccount Account account, @RequestBody TimePreferenceReq form){
+    public ResponseEntity<?> addTimePreference(@CurrentAccount Account account, @RequestBody TimePreferenceForm form){
 
         String selectedPreference = form.getTimePreference();
         TimePreference timePreference = TimePreference.fromValue(selectedPreference);
@@ -196,19 +195,19 @@ public class ProfileController {
     @GetMapping("/settings/account")
     public String accountToUpdate(@CurrentAccount Account account, Model model){
         model.addAttribute("account", account);
-        model.addAttribute(modelMapper.map(account, NicknameReq.class));
+        model.addAttribute(modelMapper.map(account, NicknameForm.class));
         return "settings/account";
     }
 
     @PostMapping("/settings/account")
-    public String updateAccount(@CurrentAccount Account account, @Valid NicknameReq nicknameReq,
+    public String updateAccount(@CurrentAccount Account account, @Valid NicknameForm nicknameForm,
                                 BindingResult bindingResult, Model model, RedirectAttributes attributes){
         if(bindingResult.hasErrors()){
             model.addAttribute("account", account);
             return "settings/account";
         }
 
-        accountService.updateNickname(account, nicknameReq.getNickname());
+        accountService.updateNickname(account, nicknameForm.getNickname());
         attributes.addFlashAttribute("message", "닉네임을 수정했습니다.");
         return "redirect:/settings/account";
     }

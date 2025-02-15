@@ -2,6 +2,7 @@ package com.gamego.domain.roomaccount;
 
 
 import com.gamego.domain.account.Account;
+import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.room.Room;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +10,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
+@Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
@@ -27,6 +28,9 @@ public class RoomAccount {
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
+    private String nickname;
+
+
     @Enumerated(EnumType.STRING)
     private RoomRole role; // 방장, 매니저, 일반
 
@@ -38,4 +42,23 @@ public class RoomAccount {
         this.role = role;
         this.joinedAt = now;
     }
+
+
+
+    public boolean isMember() {
+        return this.role == RoomRole.MEMBER;
+    }
+
+    public boolean isManager() {
+        return this.role == RoomRole.MANAGER;
+    }
+
+    public boolean isMaster() {
+        return this.role == RoomRole.MASTER;
+    }
+
+    public boolean isManagerOrMaster() {
+        return this.role == RoomRole.MANAGER || this.role == RoomRole.MASTER;
+    }
 }
+

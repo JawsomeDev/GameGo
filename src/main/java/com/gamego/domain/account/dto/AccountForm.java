@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class AccountReq {
+public class AccountForm {
 
     @NotBlank(message = "닉네임을 입력하세요.")
     @Size(min = 2, max = 15, message = "닉네임은 2~15자 이내로 입력하세요.")

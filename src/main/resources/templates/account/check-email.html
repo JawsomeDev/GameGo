@@ -5,7 +5,7 @@
 </head>
 <body style="color: white">
 <div th:replace="~{fragment.html :: main-nav}"></div>
-<div class="container">
+<div class="container" style="min-height: 100vh">
     <div class="py-5 text-center" th:if="${error != null}">
         <p class="lead">겜할래 가입</p>
         <div class="alert alert-danger" role="alert" th:text="${error}"></div>

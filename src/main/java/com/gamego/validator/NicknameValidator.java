@@ -1,7 +1,7 @@
 package com.gamego.validator;
 
 import com.gamego.domain.account.Account;
-import com.gamego.domain.account.dto.NicknameReq;
+import com.gamego.domain.account.dto.NicknameForm;
 import com.gamego.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,12 +19,12 @@ public class NicknameValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return NicknameReq.class.isAssignableFrom(clazz);
+        return NicknameForm.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        NicknameReq form = (NicknameReq) target;
+        NicknameForm form = (NicknameForm) target;
         Account account = accountRepository.findByNickname(form.getNickname());
         if(account !=null){
             errors.rejectValue("nickname", "wrong.value", "이미 사용중인 닉네임입니다.");

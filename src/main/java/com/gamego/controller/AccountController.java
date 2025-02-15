@@ -3,20 +3,25 @@ package com.gamego.controller;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.account.dto.AccountReq;
-import com.gamego.domain.account.dto.AccountResp;
+import com.gamego.domain.account.dto.AccountForm;
+import com.gamego.domain.account.dto.PasswordForm;
 import com.gamego.repository.AccountRepository;
 import com.gamego.service.AccountQueryService;
 import com.gamego.service.AccountService;
 import com.gamego.validator.AccountValidator;
+import com.gamego.validator.PasswordValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -27,8 +32,14 @@ public class AccountController {
     private final AccountValidator accountValidator;
     private final AccountRepository accountRepository;
     private final AccountQueryService accountQueryService;
+    private final PasswordValidator passwordValidator;
 
-    @InitBinder("accountReq")
+    @InitBinder("passwordForm")
+    public void initPasswordBinder(WebDataBinder binder) {
+        binder.setValidator(passwordValidator);
+    }
+
+    @InitBinder("accountForm")
     public void initBinder(WebDataBinder binder) {
         binder.addValidators(accountValidator);
     }
@@ -43,19 +54,19 @@ public class AccountController {
 
     @GetMapping("/sign-up")
     public String signUp(Model model) {
-        model.addAttribute("accountReq", new AccountReq());
+        model.addAttribute("accountForm", new AccountForm());
         return "account/signup";
     }
 
     @PostMapping("/sign-up")
-    public String signupSubmit(@Valid @ModelAttribute("accountReq") AccountReq accountReq,
+    public String signupSubmit(@Valid @ModelAttribute("accountReq") AccountForm accountForm,
                                BindingResult bindingResult,Model model) {
         if(bindingResult.hasErrors()) {
-            model.addAttribute("accountReq", accountReq);
+            model.addAttribute("accountForm", accountForm);
             return "account/signup";
         }
 
-        accountService.createAccount(accountReq);
+        accountService.createAccount(accountForm);
 
         return "redirect:/login";
     }
@@ -100,13 +111,66 @@ public class AccountController {
 
    @GetMapping("/profile/{nickname}")
     public String profile(@PathVariable String nickname, Model model, @CurrentAccount Account account) {
-       AccountResp myAccount = accountQueryService.getAccount(nickname);
-
+       Account myAccount = accountQueryService.getAccount(nickname);
        boolean isOwner = account.getNickname().equals(myAccount.getNickname());
 
+       model.addAttribute("currentAccount", account);
        model.addAttribute("account", myAccount);
        model.addAttribute("isOwner", isOwner);
 
        return "account/profile";
+   }
+
+
+   @GetMapping("/reset-password")
+    public String resetPasswordForm(String token, Model model) {
+        model.addAttribute("token", token);
+        return "account/reset-password";
+   }
+
+   @PostMapping("/reset-password")
+    public String processResetPasswordRequest(@RequestParam String email, Model model) {
+       Account account = accountRepository.findByEmail(email);
+       if(account == null){
+           model.addAttribute("error", "유효하지 않은 이메일입니다.");
+           return "account/reset-password";
+       }
+       account.generatePasswordToken();
+       accountRepository.save(account);
+       accountService.sendResetPasswordEmail(account);
+
+       model.addAttribute("message", "입력하신 이메일로 비밀번호 재설정 링크를 전송했습니다.");
+       return "account/reset-password";
+   }
+
+   @GetMapping("/reset-password/confirm")
+    public String resetPasswordConfirmForm(String token, Model model) {
+       Account account = accountRepository.findByResetPasswordToken(token);
+       if(account == null || !account.isResetPasswordTokenValid(token)){
+           model.addAttribute("error", "유효하지 않거나 만료된 토큰입니다.");
+           return "account/reset-password-confirm";
+       }
+       model.addAttribute("token", token);
+       model.addAttribute("passwordForm", new PasswordForm());
+       return "account/reset-password-confirm";
+   }
+
+   @PostMapping("/reset-password/confirm")
+    public String processResetPasswordConfirm(@RequestParam("token") String token, @Valid PasswordForm passwordForm,BindingResult bindingResult,
+                                              Model model,RedirectAttributes attributes) {
+       Account account = accountRepository.findByResetPasswordToken(token);
+       if(bindingResult.hasErrors()) {
+           return "account/reset-password-confirm";
+       }
+
+
+        if(account ==null ||!account.isResetPasswordTokenValid(token)){
+            model.addAttribute("error", "유효하지 않거나 만료된 토큰입니다.");
+            return "account/reset-password-confirm";
+        }
+
+       accountService.updatePassword(account, passwordForm.getNewPassword());
+       attributes.addFlashAttribute("message", "패스워드를 변경했습니다.");
+       return "redirect:/login";
    }
 }

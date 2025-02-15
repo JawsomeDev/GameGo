@@ -7,7 +7,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-public class RoomReq {
+public class RoomForm {
 
     @NotBlank
     @Length(min = 2, max = 20)

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class GameReq {
+public class GameForm {
 
 
     @NotNull

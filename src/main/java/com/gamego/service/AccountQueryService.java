@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.accountenum.TimePreference;
-import com.gamego.domain.account.dto.AccountResp;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.game.dto.GameListResp;
 import com.gamego.repository.AccountRepository;
@@ -28,12 +27,12 @@ public class AccountQueryService {
     private final ModelMapper modelMapper;
     private final ObjectMapper objectMapper;
 
-    public AccountResp getAccount(String nickname) {
+    public Account getAccount(String nickname) {
         Account account = accountRepository.findByNickname(nickname);
         if(account == null) {
             throw new IllegalArgumentException(account + "에 해당하는 사용자가 없습니다.");
         }
-        return modelMapper.map(account, AccountResp.class);
+        return account;
     }
 
     public GameListResp getGameListResponse(Account account) throws JsonProcessingException {

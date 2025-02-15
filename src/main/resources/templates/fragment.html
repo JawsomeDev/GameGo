@@ -47,7 +47,7 @@
                     <a class="nav-link text-white" th:href="@{/sign-up}">가입</a>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link text-white" th:href="@{/messageReq}">
+                    <a class="nav-link text-white" th:href="@{/messageForm}">
                         <i class="fa-regular text-white fa-xl fa-envelope-open"></i>
 <!--                        <i class="fa-regular fa-envelope"></i>-->
                     </a>
@@ -60,9 +60,10 @@
                 <li class="nav-item dropdown ms-4" sec:authorize="isAuthenticated()">
                     <a class="nav-link dropdown-toggle p-0" id="userDropdown" role="button"
                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img th:src="${account != null && !#strings.isEmpty(account?.profileImage) && account.profileImage != '' ? account.profileImage : '/images/default.png'}"
+                        <img th:src="${currentAccount != null and !#strings.isEmpty(currentAccount.profileImage) ? currentAccount.profileImage : '/images/default.png'}"
                              class="img-fluid rounded-circle profile-image"
-                             width="32" height="32" alt="User Avatar" th:alt="${account != null ? account.nickname : 'Default User'}" />
+                             width="32" height="32"
+                             alt="User Avatar" th:alt="${currentAccount != null ? currentAccount.nickname : 'Default User'}" />
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <h6 class="dropdown-header">
@@ -116,7 +117,7 @@
         <a class="nav-item nav-link icon-blue" th:classappend="${roomMenu == 'events'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/events'}">
             <i class="fa fa-calendar icon-blue"></i> 모임
         </a>
-        <a sec:authorize="isAuthenticated()" th:if="${room.isManagerOrMaster}"
+        <a sec:authorize="isAuthenticated()"  th:if="${isMaster}"
            class="nav-item nav-link icon-blue" th:classappend="${roomMenu == 'settings'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/settings/description'}">
             <i class="fa fa-cog icon-blue"></i> 설정
         </a>
@@ -150,14 +151,14 @@
                     <button class="btn btn-secondary btn-sm" style="pointer-events: none;" type="button" disabled>OFF</button>
                 </span>
 
-            <span sec:authorize="isAuthenticated()" th:if="${room.isJoinAble}" class="btn-group" role="group" >
+            <span sec:authorize="isAuthenticated()" th:if="${room.isJoinAble(#authentication.principal)}" class="btn-group" role="group" >
                     <form th:action="@{'/room/' + ${room.path} + '/join'}" method="post" style="display: inline;">
                         <button class="btn btn-primary" type="submit">가입</button>
                     </form>
                     <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/members'}" th:text="${room.memberCount}">2</a>
                 </span>
 
-            <span sec:authorize="isAuthenticated()"  th:if="${room.active && !room.closed && room.isManagerOrMaster()}">
+            <span sec:authorize="isAuthenticated()"  th:if="${room.active && !room.closed && isMangerOrMaster}">
                     <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/new-event'}">
                         <i class="fa fa-plus"><</i> 모임 만들기
                     </a>

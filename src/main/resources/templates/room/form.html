@@ -13,7 +13,7 @@
     </div>
 
     <div class="row justify-content-center">
-        <form class="needs-validation col-sm-10" th:action="@{/new-room}" th:object="${roomReq}" method="post" novalidate>
+        <form class="needs-validation col-sm-10" th:action="@{/new-room}" th:object="${roomForm}" method="post" novalidate>
             <div class="form-group">
                 <label for="path">URL</label>
                 <input id="path" type="text" th:field="*{path}" class="form-control"

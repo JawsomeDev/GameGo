@@ -1,6 +1,6 @@
 package com.gamego.validator;
 
-import com.gamego.domain.room.dto.RoomReq;
+import com.gamego.domain.room.dto.RoomForm;
 import com.gamego.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,13 +17,13 @@ public class RoomValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return RoomReq.class.isAssignableFrom(clazz);
+        return RoomForm.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        RoomReq roomReq = (RoomReq) target;
-        if(roomRepository.existsByPath(roomReq.getPath())) {
+        RoomForm roomForm = (RoomForm) target;
+        if(roomRepository.existsByPath(roomForm.getPath())) {
             errors.rejectValue("path", "room.exists", "해당 경로값을 사용할 수 없습니다.");
         }
     }

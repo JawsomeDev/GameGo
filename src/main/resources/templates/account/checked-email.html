@@ -1,13 +1,11 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragment.html :: head}">
-
-</head>
+<head th:replace="~{fragment.html :: head}"></head>
 <body style="color: white;">
 <div>
     <div th:replace="~{fragment.html :: main-nav}"></div>
 
-    <div>
+    <div class="container">
         <div class="py-5 text-center" th:if="${error}">
             <p class="lead">겜할래 이메일 인증</p>
             <div class="alert alert-danger" role="alert">
@@ -28,5 +26,4 @@
     <div th:replace="~{fragment.html :: footer}"></div>
 </div>
 </body>
-
 </html>

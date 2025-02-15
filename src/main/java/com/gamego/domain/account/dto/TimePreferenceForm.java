@@ -4,7 +4,7 @@ package com.gamego.domain.account.dto;
 import lombok.Data;
 
 @Data
-public class TimePreferenceReq {
+public class TimePreferenceForm {
 
     private String timePreference;
 }

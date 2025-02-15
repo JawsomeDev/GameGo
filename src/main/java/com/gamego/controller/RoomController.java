@@ -3,15 +3,18 @@ package com.gamego.controller;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.room.dto.RoomReq;
-import com.gamego.domain.room.dto.RoomResp;
+import com.gamego.domain.room.Room;
+import com.gamego.domain.room.dto.RoomForm;
+import com.gamego.domain.roomaccount.RoomRole;
 import com.gamego.service.RoomQueryService;
 import com.gamego.service.RoomService;
 import com.gamego.validator.RoomValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +33,9 @@ public class RoomController {
     private final RoomService roomService;
     private final RoomValidator roomValidator;
     private final RoomQueryService roomQueryService;
+    private final ModelMapper modelMapper;
 
-    @InitBinder("roomReq")
+    @InitBinder("roomForm")
     public void roomFormInitBinder(WebDataBinder binder) {
         binder.addValidators(roomValidator);
     }
@@ -40,35 +44,43 @@ public class RoomController {
     @GetMapping("/new-room")
     public String newRoomForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
-        model.addAttribute(new RoomReq());
+        model.addAttribute(new RoomForm());
         return "room/form";
     }
 
     @PostMapping("/new-room")
-    public String newRoomUpdate(@CurrentAccount Account account, @Valid RoomReq roomReq,
-                                BindingResult bindingResult, Model model) {
+    public String newRoomUpdate(@CurrentAccount Account account, @Valid RoomForm roomForm,
+                                BindingResult bindingResult, Model model, ModelMap modelMap) {
         if(bindingResult.hasErrors()) {
             model.addAttribute(account);
             return "room/form";
         }
-        RoomResp newRoom = roomService.createNewRoom(roomReq, account);
-        return "redirect:/room/" + URLEncoder.encode(newRoom.getPath(), StandardCharsets.UTF_8);
+        Room newRoom = roomService.createNewRoom(modelMapper.map(roomForm, Room.class), account);
+        return "redirect:/room/" + newRoom.getEncodedPath();
     }
 
     @GetMapping("/room/{path}")
     public String viewRoom(@CurrentAccount Account account, @PathVariable String path, Model model) {
-        RoomResp roomResp = roomQueryService.getRoom(path, account);
+        Room room = roomQueryService.getRoom(path);
         model.addAttribute(account);
-        model.addAttribute("room", roomResp);
+        checkAuth(account, model, room);
+        model.addAttribute(room);
         return "room/view";
+    }
+
+    private void checkAuth(Account account, Model model, Room room) {
+        boolean isMaster = roomQueryService.isMaster(account, room);
+        model.addAttribute("isMaster", isMaster);
+        boolean isManagerOrMaster = roomQueryService.isManagerOrMaster(account, room);
+        model.addAttribute("isManagerOrMaster", isManagerOrMaster);
     }
 
     @GetMapping("/room/{path}/members")
     public String viewRoomMembers(@CurrentAccount Account account, @PathVariable String path, Model model) {
-        RoomResp roomResp = roomQueryService.getRoom(path, account);
+        Room room = roomQueryService.getRoom(path);
         model.addAttribute(account);
-        model.addAttribute("room", roomResp);
-
+        checkAuth(account, model, room);
+        model.addAttribute(room);
         return "room/members";
     }
 }

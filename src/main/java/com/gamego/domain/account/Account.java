@@ -70,9 +70,23 @@ public class Account {
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Game> games = new HashSet<>();
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RoomAccount> roomAccounts = new HashSet<>();
 
+    private String resetPasswordToken;
+
+    private LocalDateTime resetPasswordTokenExpiresAt;
+
+    public void generatePasswordToken(){
+        this.resetPasswordToken = UUID.randomUUID().toString();
+        this.resetPasswordTokenExpiresAt = LocalDateTime.now().plusHours(1);
+    }
+
+    public boolean isResetPasswordTokenValid(String token) {
+        return token.equals(this.resetPasswordToken)
+                && resetPasswordTokenExpiresAt != null
+                && LocalDateTime.now().isBefore(resetPasswordTokenExpiresAt);
+    }
 
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
@@ -109,5 +123,6 @@ public class Account {
     public void changeNickname(String nickname) {
         this.nickname = nickname;
     }
+
 
 }

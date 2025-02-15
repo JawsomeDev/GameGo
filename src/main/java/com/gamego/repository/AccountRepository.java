@@ -24,4 +24,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @EntityGraph(attributePaths = {"games"})
     Optional<Account> findAccountWithGamesById(Long id);
+
+    Account findByResetPasswordToken(String resetPasswordToken);
 }

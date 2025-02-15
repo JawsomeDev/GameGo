@@ -21,7 +21,7 @@
                 </button>
             </div>
             <form class="needs-validation" th:action="@{'/room/' + ${room.getPath()} + '/settings/description'}"
-                  th:object="${roomDescriptionReq}" method="post" novalidate>
+                  th:object="${roomDescriptionForm}" method="post" novalidate>
                 <div class="form-group">
                     <label for="shortDescription">짧은 소개</label>
                     <textarea id="shortDescription" th:field="*{shortDescription}" class="form-control"

@@ -7,10 +7,13 @@ import com.gamego.domain.roomaccount.RoomAccount;
 import com.gamego.domain.account.accountenum.TimePreference;
 import com.gamego.domain.event.Event;
 import com.gamego.domain.game.Game;
+import com.gamego.domain.roomaccount.RoomRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -88,4 +91,18 @@ public class Room {
     public void defaultImage() {
         this.image = null;
     }
+
+    public String getEncodedPath() {
+        return URLEncoder.encode(this.path, StandardCharsets.UTF_8);
+    }
+
+    public boolean isJoinAble(AccountUserDetails accountUserDetails) {
+        Account account = accountUserDetails.getAccount();
+        boolean alreadyJoined = roomAccounts.stream()
+                .anyMatch(roomAccount -> roomAccount.getAccount().equals(account));
+        return this.isActive() && this.isRecruiting() && !alreadyJoined;
+    }
+
+
+
 }

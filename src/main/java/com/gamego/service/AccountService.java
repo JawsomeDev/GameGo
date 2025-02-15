@@ -1,7 +1,6 @@
 package com.gamego.service;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gamego.config.AppProperties;
 import com.gamego.domain.account.dto.*;
@@ -9,7 +8,6 @@ import com.gamego.domain.game.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.account.accountenum.TimePreference;
-import com.gamego.domain.game.dto.GameListResp;
 import com.gamego.domain.game.dto.GameResp;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
@@ -28,9 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -58,11 +54,11 @@ public class AccountService {
     }
 
     // 회원가입
-    public void createAccount(@Valid AccountReq accountReq) {
+    public void createAccount(@Valid AccountForm accountForm) {
 
-        accountReq.setPassword(passwordEncoder.encode(accountReq.getPassword()));
+        accountForm.setPassword(passwordEncoder.encode(accountForm.getPassword()));
 
-        Account account = modelMapper.map(accountReq, Account.class);
+        Account account = modelMapper.map(accountForm, Account.class);
         accountRepository.save(account);
 
         sendVerificationEmail(account);
@@ -96,6 +92,23 @@ public class AccountService {
         emailService.sendEmail(emailMessage);
     }
 
+    public void sendResetPasswordEmail(Account account) {
+        // 예: Thymeleaf 템플릿 사용
+        Context context = new Context();
+        context.setVariable("token", account.getResetPasswordToken());
+        context.setVariable("host", appProperties.getHost());
+
+
+        String message = templateEngine.process("mail/password-link", context);
+        EmailMessage emailMessage = EmailMessage.builder()
+                .from("your-email@example.com")
+                .to(account.getEmail())
+                .subject("비밀번호 재설정 링크")
+                .message(message)
+                .build();
+        emailService.sendEmail(emailMessage);
+    }
+
     /*
         이메일 인증 성공
      */
@@ -114,8 +127,8 @@ public class AccountService {
 
 
 
-    public void updateAccount(Account account, @Valid ProfileReq profileReq) {
-        modelMapper.map(profileReq, account);
+    public void updateAccount(Account account, @Valid ProfileForm profileForm) {
+        modelMapper.map(profileForm, account);
         accountRepository.save(account);
     }
 
@@ -124,8 +137,8 @@ public class AccountService {
         accountRepository.save(account);
     }
 
-    public void updateMessages(Account account, @Valid MessageReq messageReq) {
-        modelMapper.map(messageReq, account);
+    public void updateMessages(Account account, @Valid MessageForm messageForm) {
+        modelMapper.map(messageForm, account);
         accountRepository.save(account);
     }
 
