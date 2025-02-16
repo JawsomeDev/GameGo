@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -36,7 +35,7 @@ public class AccountController {
 
     @InitBinder("passwordForm")
     public void initPasswordBinder(WebDataBinder binder) {
-        binder.setValidator(passwordValidator);
+        binder.addValidators(passwordValidator);
     }
 
     @InitBinder("accountForm")
@@ -121,7 +120,6 @@ public class AccountController {
        return "account/profile";
    }
 
-
    @GetMapping("/reset-password")
     public String resetPasswordForm(String token, Model model) {
         model.addAttribute("token", token);
@@ -156,13 +154,15 @@ public class AccountController {
    }
 
    @PostMapping("/reset-password/confirm")
-    public String processResetPasswordConfirm(@RequestParam("token") String token, @Valid PasswordForm passwordForm,BindingResult bindingResult,
-                                              Model model,RedirectAttributes attributes) {
+    public String processResetPasswordConfirm(@RequestParam("token") String token,
+                                              @Valid PasswordForm passwordForm,
+                                              BindingResult bindingResult,
+                                              Model model,
+                                              RedirectAttributes attributes) {
        Account account = accountRepository.findByResetPasswordToken(token);
        if(bindingResult.hasErrors()) {
            return "account/reset-password-confirm";
        }
-
 
         if(account ==null ||!account.isResetPasswordTokenValid(token)){
             model.addAttribute("error", "유효하지 않거나 만료된 토큰입니다.");
