@@ -105,4 +105,6 @@ public class RoomSettingsController {
         model.addAttribute("isManagerOrMaster", isManagerOrMaster);
     }
 
+
+
 }

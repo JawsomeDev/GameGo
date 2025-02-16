@@ -93,7 +93,7 @@ public class AccountService {
     }
 
     public void sendResetPasswordEmail(Account account) {
-        // 예: Thymeleaf 템플릿 사용
+
         Context context = new Context();
         context.setVariable("token", account.getResetPasswordToken());
         context.setVariable("host", appProperties.getHost());
@@ -109,12 +109,12 @@ public class AccountService {
         emailService.sendEmail(emailMessage);
     }
 
-    /*
-        이메일 인증 성공
-     */
+
     public void completeSignUp(Account account) {
         account.completeSignUp();
         login(account);
+        accountRepository.save(account);
+
     }
 
     private static void login(Account account) {
