@@ -1,8 +1,7 @@
 package com.gamego.domain.account.accountenum;
 
 public enum TimePreference {
-    WORKER("출근러"), MORNING("아침형"),
-    NIGHT("야행성"), TIME_RICH("시간부자");
+    MORNING("오전"), NIGHT("오후"), DAWN("새벽");
 
     private final String value;
 

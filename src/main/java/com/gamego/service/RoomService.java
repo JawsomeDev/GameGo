@@ -2,6 +2,8 @@ package com.gamego.service;
 
 
 import com.gamego.domain.account.Account;
+import com.gamego.domain.game.Game;
+import com.gamego.domain.game.dto.GameResp;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.room.dto.RoomDescriptionForm;
 import com.gamego.domain.room.dto.RoomForm;
@@ -42,7 +44,7 @@ public class RoomService {
         if (room == null) {
             throw new IllegalArgumentException("방을 찾을 수 없습니다.");
         }
-        modelMapper.map(room, room);
+        modelMapper.map(roomDescriptionForm, room);
     }
 
     public void updateRoomBanner(Room room, String image) {
@@ -78,4 +80,29 @@ public class RoomService {
 
     }
 
+    public GameResp addGame(Room room, Game game) {
+        Room findRoom = roomRepository.findRoomWithGamesById(room.getId());
+        if (findRoom == null) {
+            throw new IllegalArgumentException("방을 찾을 수 없습니다.");
+        }
+        findRoom.getGames().add(game);
+
+        GameResp response = new GameResp();
+        response.setStatus("add");
+        response.setGameTitle(game.getName());
+        return response;
+    }
+
+    public GameResp removeGame(Room room, Game game) {
+        Room findRoom = roomRepository.findRoomWithGamesById(room.getId());
+        if (findRoom == null) {
+            throw new IllegalArgumentException("방을 찾을 수 없습니다.");
+        }
+        findRoom.getGames().remove(game);
+
+        GameResp response = new GameResp();
+        response.setStatus("remove");
+        response.setGameTitle(game.getName());
+        return response;
+    }
 }

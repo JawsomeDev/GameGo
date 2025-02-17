@@ -20,11 +20,10 @@ public class RoomQueryService {
 
     public Room getRoom(String path){
         Room room = roomRepository.findByPath(path);
-        if (room == null) {
-            throw new IllegalArgumentException(path + "에 해당하는 방이 없습니다.");
-        }
+        checkExistRoom(path, room);
         return room;
     }
+
 
     public Room getRoomToUpdate(String path, Account account) {
         Room room = this.getRoom(path);
@@ -52,4 +51,20 @@ public class RoomQueryService {
                 .anyMatch(ra -> ra.getAccount().getId().equals(account.getId())
                 && (ra.getRole() == RoomRole.MASTER || ra.getRole().equals(RoomRole.MANAGER)));
     }
+
+    public Room getRoomToUpdateGame(String path, Account account) {
+        Room room = roomRepository.findRoomWithGamesByPath(path);
+        checkExistRoom(path, room);
+        checkIfMaster(account, room);
+        return room;
+    }
+
+
+
+    private static void checkExistRoom(String path, Room room) {
+        if (room == null) {
+            throw new IllegalArgumentException(path + "에 해당하는 방이 없습니다.");
+        }
+    }
+
 }

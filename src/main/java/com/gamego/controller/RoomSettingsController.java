@@ -1,8 +1,13 @@
 package com.gamego.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
+import com.gamego.domain.game.Game;
+import com.gamego.domain.game.dto.GameForm;
+import com.gamego.domain.game.dto.GameResp;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.room.dto.RoomDescriptionForm;
 import com.gamego.repository.GameRepository;
@@ -10,7 +15,9 @@ import com.gamego.service.RoomQueryService;
 import com.gamego.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +26,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,6 +38,7 @@ public class RoomSettingsController {
     private final RoomService roomService;
     private final ModelMapper modelMapper;
     private final GameRepository gameRepository;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/description")
     public String viewRoomSettings(@CurrentAccount Account account, @PathVariable String path, Model model) {
@@ -96,6 +106,50 @@ public class RoomSettingsController {
         roomService.useDefaultBanner(room);
         attributes.addFlashAttribute("message", "기본 배너로 변경했습니다.");
         return "redirect:/room/" + room.getEncodedPath() + "/settings/banner";
+    }
+
+    @GetMapping("/games")
+    public String updateGames(@CurrentAccount Account account, @PathVariable String path, Model model) throws JsonProcessingException {
+        Room room = roomQueryService.getRoomToUpdateGame(path, account);
+        checkAuth(account, model, room);
+        model.addAttribute(account);
+        model.addAttribute(room);
+        model.addAttribute("games", room.getGames().stream().map(Game :: toString).collect(Collectors.toList()));
+
+        List<String> allGames = gameRepository.findAll().stream().map(Game :: toString).collect(Collectors.toList());
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(allGames));
+
+        return "room/settings/games";
+    }
+
+    @PostMapping("/games/add")
+    @ResponseBody
+    public ResponseEntity<?> addGame(@CurrentAccount Account account, @PathVariable String path,
+                                     @RequestBody GameForm gameForm) {
+        Room room = roomQueryService.getRoomToUpdateGame(path, account);
+        Game game = gameRepository.findByName(gameForm.getGameName());
+
+        if (game == null) {
+            return ResponseEntity.badRequest()
+                    .body("{\"status\":\"error\",\"message\":\"등록된 게임만 선택 가능합니다.\"}");
+        }
+
+        GameResp response = roomService.addGame(room, game);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/games/remove")
+    @ResponseBody
+    public ResponseEntity<?> removeGame(@CurrentAccount Account account, @PathVariable String path,
+                                        @RequestBody GameForm gameForm) {
+        Room room = roomQueryService.getRoomToUpdateGame(path, account);
+        Game game = gameRepository.findByName(gameForm.getGameName());
+        if (game == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        GameResp response = roomService.removeGame(room, game);
+        return ResponseEntity.ok(response);
     }
 
     private void checkAuth(Account account, Model model, Room room) {

@@ -67,7 +67,7 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private AccountRole accountRole;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     private Set<Game> games = new HashSet<>();
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)

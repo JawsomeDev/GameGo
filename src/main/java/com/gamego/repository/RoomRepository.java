@@ -17,4 +17,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     @EntityGraph(attributePaths = {"games", "roomAccounts.account"})
     Room findRoomWithGamesByPath(String path);
+
+    @EntityGraph(attributePaths = {"games"})
+    Room findRoomWithGamesById(Long id);
 }

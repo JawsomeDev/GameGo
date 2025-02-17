@@ -7,63 +7,51 @@
 <body>
 
 <nav th:replace="~{fragment.html :: main-nav}"></nav>
-<div class="container">
-    <div class="row mt-5 justify-content-center">
+<div class="container mt-5  text-body-emphasis custom-room">
+    <div th:replace="~{fragment.html :: room-info}"></div>
+    <div th:replace="~{fragment.html::room-menu (roomMenu = 'games')}"></div>
+    <div class="row px-3 justify-content-center  bg-white" style="min-height: 100vh;">
         <div class="col-2">
-            <div th:replace="~{fragment.html :: settings-menu (currentMenu = 'times')}"></div>
+            <div th:replace="~{fragment.html :: room-settings-menu (currentMenu = 'games')}"></div>
         </div>
-        <div class="col-8  bg-body-secondary text-emphasis">
+        <div class="col-8">
             <div class="row">
-                <h2 class="col-12">주 플레이 시간</h2>
+                <h2 class="col-12 mt-3">주로 할 게임</h2>
             </div>
             <div class="row">
                 <div class="col-12">
                     <div class="alert alert-info" role="alert">
-                        주로 플레이하는 시간대를 등록하세요. 해당 시간대의 모집이 생기면 메시지를 받을 수 있습니다.<br/>
-                        시스템에 등록된 시간대만 선택할 수 있습니다.
+                        주로 플레이하거나 플레이 해보고 싶은 게임을 등록하세요. 해당 게임을 등록한 플레이어에게 메시지가 전송됩니다.<br/>
+                        시스템에 등록된 게임만 선택할 수 있습니다.
                     </div>
                     <div id="whitelist" th:text="${whitelist}" hidden></div>
-                    <input id="times" type="text" name="times"  th:value="${timePreference}"
-                           class="selectMode timebox" placeholder="시간대를 선택하세요." aria-describedby="tagHelp">
+                    <input id="games" type="text" name="games" th:value="${#strings.listJoin(games, ',')}"
+                           class="tagify-outside" placeholder="관심 게임을 입력하세요." aria-describedby="tagHelp">
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+<div th:replace="~{fragment.html::footer}"></div>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
-<script >
+<script type="application/javascript" th:inline="javascript">
+    const roomPath = /*[[${room.path}]]*/ 'defaultPath';
     document.addEventListener("DOMContentLoaded", function () {
+
         // CSRF 토큰과 헤더 값 가져오기
         const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
         const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
-        // 서버에서 최신 시간대 목록을 가져오는 함수
-        function refreshTagify() {
-            fetch("/settings/times", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    [csrfHeader]: csrfToken
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Updated Time Preferences:", data);
-                    tagify.removeAllTags(); // 기존 태그 삭제
-                    tagify.addTags(data); // 새 데이터 추가
-                })
-                .catch(error => console.error("Error fetching updated time preferences:", error));
-        }
+
         // 태그 추가/삭제 요청 함수
-        function tagRequest(url, timePreference, tagifyInstance) {
-            fetch("/settings/times" + url , {
+        function tagRequest(url, gameName, tagifyInstance) {
+            fetch(`/room/${roomPath}/settings/games` + url , {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     [csrfHeader]: csrfToken // CSRF 헤더 추가
                 },
-                body: JSON.stringify({ timePreference: timePreference})
+                body: JSON.stringify({ gameName: gameName})
             })
                 .then(response => {
                     if (!response.ok) {
@@ -76,10 +64,10 @@
                 })
                 .catch(error => {
                     console.error("Error:", error);
-                    alert("등록된 시간만 선택할 수 있습니다.");
+                    alert("등록된 게임만 선택할 수 있습니다.");
 
                     // 잘못된 태그를 자동으로 삭제
-                    const tagToRemove = tagifyInstance.value.find(tag => tag.value ===  timePreference);
+                    const tagToRemove = tagifyInstance.value.find(tag => tag.value ===  gameName);
                     if (tagToRemove) {
                         tagifyInstance.removetag(tagToRemove);
                     }
@@ -96,17 +84,18 @@
         }
 
         // Tagify 초기화
-        var tagInput = document.querySelector('input[name=times]');
+        var tagInput = document.querySelector('input[name=games]');
         var tagify = new Tagify(tagInput, {
             whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
-            mode: "select",
+            focusable: false,
+            enforceWhitelist: true, // 입력값이 whitelist에 없으면 추가 불가
             dropdown: {
-                maxItems: Infinity,
                 position: "input",
-                enabled: 0,
-                closeOnSelect: false,
+                enabled: 1, // 입력 시 태그 제안
+                maxItems: Infinity,
+                classname: "customSuggestionsList"
             },
-            enforceWhitelist: true,
+            delimiters: ",", // 태그 구분자
         });
 
         // Tagify 이벤트 추가
