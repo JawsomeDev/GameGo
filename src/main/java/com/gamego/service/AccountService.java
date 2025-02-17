@@ -94,6 +94,9 @@ public class AccountService {
 
     public void sendResetPasswordEmail(Account account) {
 
+        account.generatePasswordToken();
+        accountRepository.save(account);
+
         Context context = new Context();
         context.setVariable("token", account.getResetPasswordToken());
         context.setVariable("host", appProperties.getHost());

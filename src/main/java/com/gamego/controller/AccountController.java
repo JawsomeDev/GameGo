@@ -133,10 +133,12 @@ public class AccountController {
            model.addAttribute("error", "유효하지 않은 이메일입니다.");
            return "account/reset-password";
        }
-       account.generatePasswordToken();
-       accountRepository.save(account);
-       accountService.sendResetPasswordEmail(account);
+       if(!account.canSendPasswordResetEmail()){
+           model.addAttribute("error2", "비밀번호 찾기 링크는 1시간에 한 번만 전송할 수 있습니다.");
+           return "account/reset-password";
+       }
 
+       accountService.sendResetPasswordEmail(account);
        model.addAttribute("message", "입력하신 이메일로 비밀번호 재설정 링크를 전송했습니다.");
        return "account/reset-password";
    }
@@ -145,7 +147,7 @@ public class AccountController {
     public String resetPasswordConfirmForm(String token, Model model) {
        Account account = accountRepository.findByResetPasswordToken(token);
        if(account == null || !account.isResetPasswordTokenValid(token)){
-           model.addAttribute("error", "유효하지 않거나 만료된 토큰입니다.");
+           model.addAttribute("error", "유효하지 않거나 만료된 링크입니다.");
            return "account/reset-password-confirm";
        }
        model.addAttribute("token", token);

@@ -77,9 +77,12 @@ public class Account {
 
     private LocalDateTime resetPasswordTokenExpiresAt;
 
+    private LocalDateTime resetPasswordTokenGeneratedAt;
+
     public void generatePasswordToken(){
         this.resetPasswordToken = UUID.randomUUID().toString();
         this.resetPasswordTokenExpiresAt = LocalDateTime.now().plusHours(1);
+        this.resetPasswordTokenGeneratedAt = LocalDateTime.now();
     }
 
     public boolean isResetPasswordTokenValid(String token) {
@@ -101,6 +104,9 @@ public class Account {
         this.emailVerified = true;
         this.accountRole = AccountRole.USER;
         this.joinedAt = LocalDateTime.now();
+    }
+    public boolean canSendPasswordResetEmail(){
+        return this.resetPasswordTokenGeneratedAt == null || this.resetPasswordTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
     }
 
     public boolean canSendEmailAgain() {
