@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
+import com.gamego.domain.account.accountenum.TimePreference;
+import com.gamego.domain.account.dto.TimePreferenceForm;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.game.dto.GameForm;
 import com.gamego.domain.game.dto.GameResp;
@@ -26,8 +28,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequiredArgsConstructor
@@ -157,6 +162,49 @@ public class RoomSettingsController {
         model.addAttribute("isMaster", isMaster);
         boolean isManagerOrMaster = roomQueryService.isManagerOrMaster(account, room);
         model.addAttribute("isManagerOrMaster", isManagerOrMaster);
+    }
+
+    @GetMapping("/times")
+    public String updateTimes(@CurrentAccount Account account, @PathVariable String path, Model model) throws JsonProcessingException {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        model.addAttribute(account);
+        model.addAttribute(room);
+
+        String timePreference = roomQueryService.getTimePreference(room);
+        model.addAttribute("timePreference", timePreference);
+
+        List<String> whitelist = Stream.of(TimePreference.values())
+                .map(TimePreference :: getValue).toList();
+
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(whitelist));
+
+        return "room/settings/times";
+    }
+
+    @PostMapping("/times/add")
+    @ResponseBody
+    public ResponseEntity<?> addTimePreference(@CurrentAccount Account account,@PathVariable String path,
+                                               @RequestBody TimePreferenceForm form) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        String selectedTime = form.getTimePreference();
+        TimePreference timePreference = TimePreference.fromValue(selectedTime);
+
+        roomService.addTimePreference(room, timePreference);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "add");
+        response.put("timePreference", selectedTime);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/times/remove")
+    @ResponseBody
+    public ResponseEntity<?> removeTimePreference(@CurrentAccount Account account, @PathVariable String path,
+                                                  @RequestBody TimePreferenceForm form) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        roomService.removeTimePreference(room);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "remove");
+        return ResponseEntity.ok(response);
     }
 
 

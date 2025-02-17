@@ -14,7 +14,7 @@
         </div>
         <div class="col-8 bg-body-secondary text-emphasis">
             <div class="row">
-                <h2 class="col-12">관심 있는 게임</h2>
+                <h2 class="col-12 mt-3">관심 있는 게임</h2>
             </div>
             <div class="row">
                 <div class="col-12">
@@ -24,7 +24,7 @@
                     </div>
                     <div id="whitelist" th:text="${whitelist}" hidden></div>
                     <input id="games" type="text" name="games" th:value="${#strings.listJoin(games, ',')}"
-                           class="tagify-outside" placeholder="관심 게임을 입력하세요." aria-describedby="tagHelp">
+                           class="tagify-outside mb-5" placeholder="관심 게임을 입력하세요." aria-describedby="tagHelp">
                 </div>
             </div>
         </div>

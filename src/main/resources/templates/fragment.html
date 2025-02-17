@@ -178,9 +178,9 @@
                             <i class="fa fa-tag"></i> <span th:text="${game.name}">Game</span>
                         </a>
                     </span>
-                <span th:if="${room.timePreference != null}" class="font-weight-light text-monospace badge badge-primary mr-3">
+                <span th:if="${room.timePreference != null}" class="font-weight-light text-monospace badge text-bg-dark mr-3">
                             <a th:href="@{'/search/time/' + ${room.timePreference}}" class="text-decoration-none text-white">
-                                <i class="fa fa-globe"></i> <span th:text="${room.timePreference}">time</span>
+                               <i class="fa fa-clock"></i> <span th:text="${room.timePreference.getValue()}">time</span>
                             </a>
                     </span>
             </p>

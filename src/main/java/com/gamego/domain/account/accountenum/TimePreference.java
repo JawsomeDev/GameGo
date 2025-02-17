@@ -15,9 +15,7 @@ public enum TimePreference {
 
 
     /**
-     * 전달받은 value와 일치하는 TimePreference를 반환 한다.
-     * @param value
-     * @return
+     * 전달받은 value와 일치하는 TimePreference를 반환
      */
     public static TimePreference fromValue(String value) {
         if(value == null || value.trim().isEmpty()){

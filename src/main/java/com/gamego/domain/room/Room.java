@@ -104,5 +104,7 @@ public class Room {
     }
 
 
-
+    public void updateTimePreference(TimePreference timePreference) {
+        this.timePreference = timePreference;
+    }
 }

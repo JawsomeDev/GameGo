@@ -1,6 +1,7 @@
 package com.gamego.service;
 
 import com.gamego.domain.account.Account;
+import com.gamego.domain.account.accountenum.TimePreference;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.roomaccount.RoomRole;
 import com.gamego.repository.RoomRepository;
@@ -67,4 +68,9 @@ public class RoomQueryService {
         }
     }
 
+    public String getTimePreference(Room room) {
+        TimePreference timePreference = roomRepository.findById(room.getId())
+                .map(Room::getTimePreference).orElse(null);
+        return timePreference != null ? timePreference.getValue() : null;
+    }
 }

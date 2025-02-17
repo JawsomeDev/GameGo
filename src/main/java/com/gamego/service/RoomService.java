@@ -2,6 +2,7 @@ package com.gamego.service;
 
 
 import com.gamego.domain.account.Account;
+import com.gamego.domain.account.accountenum.TimePreference;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.game.dto.GameResp;
 import com.gamego.domain.room.Room;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -104,5 +106,16 @@ public class RoomService {
         response.setStatus("remove");
         response.setGameTitle(game.getName());
         return response;
+    }
+
+    public void addTimePreference(Room room, TimePreference timePreference) {
+        Optional<Room> byId = roomRepository.findById(room.getId());
+        byId.ifPresent(r ->
+                r.updateTimePreference(timePreference));
+    }
+
+    public void removeTimePreference(Room room) {
+        Optional<Room> byId = roomRepository.findById(room.getId());
+        byId.ifPresent(r -> r.updateTimePreference(null));
     }
 }

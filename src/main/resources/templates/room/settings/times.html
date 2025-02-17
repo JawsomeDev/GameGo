@@ -7,19 +7,21 @@
 <body>
 
 <nav th:replace="~{fragment.html :: main-nav}"></nav>
-<div class="container">
-    <div class="row mt-5 justify-content-center">
+<div class="container mt-5  text-body-emphasis custom-room">
+    <div th:replace="~{fragment.html :: room-info}"></div>
+    <div th:replace="~{fragment.html::room-menu (roomMenu = 'games')}"></div>
+    <div class="row px-3 justify-content-center  bg-white" style="min-height: 100vh;">
         <div class="col-2">
-            <div th:replace="~{fragment.html :: settings-menu (currentMenu = 'times')}"></div>
+            <div th:replace="~{fragment.html :: room-settings-menu (currentMenu = 'times')}"></div>
         </div>
-        <div class="col-8  bg-body-secondary text-emphasis">
+        <div class="col-8">
             <div class="row">
                 <h2 class="col-12 mt-3">주 플레이 시간</h2>
             </div>
             <div class="row">
                 <div class="col-12">
                     <div class="alert alert-info" role="alert">
-                        주로 플레이하는 시간대를 등록하세요. 해당 시간대의 모집이 생기면 메시지를 받을 수 있습니다.<br/>
+                        주로 플레이하는 시간대를 등록하세요. 해당 시간대를 선호하는 유저들에게 메시지가 전송됩니다.<br/>
                         시스템에 등록된 시간대만 선택할 수 있습니다.
                     </div>
                     <div id="whitelist" th:text="${whitelist}" hidden></div>
@@ -33,14 +35,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
-<script >
+<script th:inline="javascript">
+    const roomPath = /*[[${room.path}]]*/ 'defaultPath';
     document.addEventListener("DOMContentLoaded", function () {
         // CSRF 토큰과 헤더 값 가져오기
         const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
         const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
         // 서버에서 최신 시간대 목록을 가져오는 함수
         function refreshTagify() {
-            fetch("/settings/times", {
+            fetch(`/room/${roomPath}/settings/times`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -57,7 +60,7 @@
         }
         // 태그 추가/삭제 요청 함수
         function tagRequest(url, timePreference, tagifyInstance) {
-            fetch("/settings/times" + url , {
+            fetch(`/room/${roomPath}/settings/times` + url , {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
