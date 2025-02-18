@@ -20,11 +20,11 @@ public class RoomAccount {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
@@ -36,8 +36,9 @@ public class RoomAccount {
 
     private LocalDateTime joinedAt;
 
-    public RoomAccount(Room room, Account account, RoomRole role, LocalDateTime now) {
+    public RoomAccount(Room room, String nickname, Account account, RoomRole role, LocalDateTime now) {
         this.room = room;
+        this.nickname = nickname;
         this.account = account;
         this.role = role;
         this.joinedAt = now;

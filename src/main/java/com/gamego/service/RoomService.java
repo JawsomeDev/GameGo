@@ -34,7 +34,7 @@ public class RoomService {
 
     public Room createNewRoom(Room room, Account account) {
         Room savedRoom = roomRepository.save(room);
-        RoomAccount roomAccount = new RoomAccount(savedRoom, account, RoomRole.MASTER, LocalDateTime.now());
+        RoomAccount roomAccount = new RoomAccount(savedRoom, account.getNickname(), account, RoomRole.MASTER, LocalDateTime.now());
         roomAccountRepository.save(roomAccount);
 
         return savedRoom;

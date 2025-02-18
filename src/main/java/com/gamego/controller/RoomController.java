@@ -79,8 +79,8 @@ public class RoomController {
     public String viewRoomMembers(@CurrentAccount Account account, @PathVariable String path, Model model) {
         Room room = roomQueryService.getRoom(path);
         model.addAttribute(account);
-        checkAuth(account, model, room);
         model.addAttribute(room);
+        checkAuth(account, model, room);
         return "room/members";
     }
 }

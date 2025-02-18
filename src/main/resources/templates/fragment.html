@@ -173,12 +173,12 @@
     <div class="row justify-content-center">
         <div class="col-10">
             <p>
-                    <span th:each="game : ${room.games}" class="font-weight-light text-monospace badge text-bg-dark me-3">
+                    <span th:each="game : ${room.games}" class="font-weight-light text-monospace badge text-bg-info me-3">
                         <a th:href="@{'/search/tag/' + ${game.name}}" class="text-decoration-none text-white">
                             <i class="fa fa-tag"></i> <span th:text="${game.name}">Game</span>
                         </a>
                     </span>
-                <span th:if="${room.timePreference != null}" class="font-weight-light text-monospace badge text-bg-dark mr-3">
+                <span th:if="${room.timePreference != null}" class="font-weight-light text-monospace badge text-bg-info mr-3">
                             <a th:href="@{'/search/time/' + ${room.timePreference}}" class="text-decoration-none text-white">
                                <i class="fa fa-clock"></i> <span th:text="${room.timePreference.getValue()}">time</span>
                             </a>

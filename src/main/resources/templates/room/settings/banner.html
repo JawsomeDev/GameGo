@@ -41,7 +41,7 @@
                     <button class="btn btn-outline-primary btn-block" type="submit" aria-describedby="submitHelp">배너 사용하지 않기</button>
                 </div>
             </form>
-            <form th:if="${room.image != '/images/default_banner.png' && room.useBanner}"
+            <form th:if="${room.image != '/images/default_banner.jpg' && room.useBanner}"
                   th:action="@{'/room/' + ${room.getPath()} + '/settings/banner/default'}"
                   method="POST">
                 <div class="form-group">

@@ -18,7 +18,7 @@
                      width="64" height="64" alt="User Avatar" th:alt="${member !=null ? member.nickname : 'Default User'}">
                 <div class="ms-3">
                     <h5 class="mt-0 mb-1">
-                        <span th:text="${member.nickname}"></span>
+                        <span th:text="${member.getNickname()}" style="color: black">아아</span>
                         <span th:if="${member.isManager()}" class="badge badge-background">매니저</span>
                         <span th:if="${member.isMaster()}" class="badge badge-background">방장</span>
                         <span th:if="${member.isMember()}" class="badge badge-background">게스트</span>
