@@ -171,7 +171,7 @@ public class RoomSettingsController {
         Room room = roomQueryService.getRoomToUpdate(path, account);
         model.addAttribute(account);
         model.addAttribute(room);
-
+        checkAuth(account, model, room);
         String timePreference = roomQueryService.getTimePreference(room);
         model.addAttribute("timePreference", timePreference);
 
@@ -279,7 +279,7 @@ public class RoomSettingsController {
 
     @PostMapping("/room/path")
     public String updateRoomPath(@CurrentAccount Account account, @PathVariable String path, String newPath, Model model, RedirectAttributes attributes) {
-        Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
+        Room room = roomQueryService.getRoomToUpdate(path, account);
         if(!roomService.isValidPath(newPath)){
             model.addAttribute(account);
             model.addAttribute(room);
@@ -297,8 +297,8 @@ public class RoomSettingsController {
 
     @PostMapping("/room/title")
     public String updateRoomTitle(@CurrentAccount Account account, @PathVariable String path,String newTitle, Model model, RedirectAttributes attributes) {
-        Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
-        if(!roomService.isValidPath(newTitle)){
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        if(!roomService.isValidTitle(newTitle)){
             model.addAttribute(account);
             model.addAttribute(room);
             checkAuth(account, model, room);
