@@ -120,11 +120,15 @@ public class RoomService {
     }
 
     public void active(Room room) {
-        room.active();
+        Room findRoom = roomRepository.findById(room.getId())
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
+        findRoom.active();
     }
 
     public void close(Room room) {
-        room.close();
+        Room findRoom = roomRepository.findById(room.getId())
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
+        findRoom.close();
     }
 
     public void startRecruit(Room room) {
@@ -171,6 +175,9 @@ public class RoomService {
     }
 
     public void removeRoom(Room room) {
-        roomRepository.delete(room);
+        Room findRoom = roomRepository.findById(room.getId())
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
+
+        roomRepository.delete(findRoom);
     }
 }

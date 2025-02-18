@@ -65,6 +65,7 @@ public class Room {
     private boolean active;
     private boolean closed;
     private boolean useBanner;
+
     private int recruitmentChangeCountToday;
 
     @Column(nullable = false)
@@ -73,7 +74,7 @@ public class Room {
     @OneToMany
     private List<Event> event = new ArrayList<>();
 
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RoomAccount> roomAccounts = new HashSet<>();
 
     @ManyToMany
@@ -114,6 +115,7 @@ public class Room {
     public void active() {
         if(!this.closed && !this.active){
             this.active = true;
+            this.closed = false;
             this.activeDateTime = LocalDateTime.now();
         } else {
             throw new IllegalStateException("방이 이미 활성화 되어있거나 비활성화 되었습니다.");
@@ -122,7 +124,7 @@ public class Room {
 
     public void close(){
         if(this.active && !this.closed){
-            this.closed = true;
+            this.active = false;
             this.closedDateTime = LocalDateTime.now();
         } else {
             throw new IllegalStateException("방이 이미 비활성화되었거나 활성화 되어있지 않습니다.");

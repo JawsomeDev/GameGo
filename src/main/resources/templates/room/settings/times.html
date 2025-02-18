@@ -32,9 +32,10 @@
         </div>
     </div>
 </div>
-
+<div th:replace="~{fragment.html::footer}"></div>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+<script th:replace="~{fragment.html::tooltip}"></script>
 <script th:inline="javascript">
     const roomPath = /*[[${room.path}]]*/ 'defaultPath';
     document.addEventListener("DOMContentLoaded", function () {

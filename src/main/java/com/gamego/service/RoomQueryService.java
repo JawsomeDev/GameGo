@@ -73,4 +73,11 @@ public class RoomQueryService {
                 .map(Room::getTimePreference).orElse(null);
         return timePreference != null ? timePreference.getValue() : null;
     }
+
+    public Room getRoomToUpdateByStatus(String path, Account account) {
+        Room room = roomRepository.findRoomWithStatusByPath(path);
+        checkIfMaster(account, room);
+        checkExistRoom(path, room);
+        return room;
+    }
 }

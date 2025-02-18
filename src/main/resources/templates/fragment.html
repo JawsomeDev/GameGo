@@ -158,9 +158,9 @@
                     <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/members'}" th:text="${room.memberCount}">2</a>
                 </span>
 
-            <span sec:authorize="isAuthenticated()"  th:if="${room.active && !room.closed && isMangerOrMaster}">
+            <span sec:authorize="isAuthenticated()"  th:if="${room.active && !room.closed &&room.recruiting && isManagerOrMaster}">
                     <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/new-event'}">
-                        <i class="fa fa-plus"><</i> 팀원 모집
+                        <i class="fa fa-plus"></i> 팀원 모집
                     </a>
                 </span>
         </div>

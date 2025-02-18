@@ -13,6 +13,7 @@ import com.gamego.domain.game.dto.GameResp;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.room.dto.RoomDescriptionForm;
 import com.gamego.repository.GameRepository;
+import com.gamego.repository.RoomRepository;
 import com.gamego.service.RoomQueryService;
 import com.gamego.service.RoomService;
 import jakarta.validation.Valid;
@@ -44,6 +45,7 @@ public class RoomSettingsController {
     private final ModelMapper modelMapper;
     private final GameRepository gameRepository;
     private final ObjectMapper objectMapper;
+    private final RoomRepository roomRepository;
 
     @GetMapping("/description")
     public String viewRoomSettings(@CurrentAccount Account account, @PathVariable String path, Model model) {
@@ -115,7 +117,7 @@ public class RoomSettingsController {
 
     @GetMapping("/games")
     public String updateGames(@CurrentAccount Account account, @PathVariable String path, Model model) throws JsonProcessingException {
-        Room room = roomQueryService.getRoomToUpdateGame(path, account);
+        Room room = roomQueryService.getRoomToUpdate(path, account);
         checkAuth(account, model, room);
         model.addAttribute(account);
         model.addAttribute(room);
@@ -219,7 +221,11 @@ public class RoomSettingsController {
 
     @PostMapping("/room/active")
     public String activeRoom(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
-        Room room = roomQueryService.getRoomToUpdate(path, account);
+        Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
+        if(room.isRecruiting()){
+            attributes.addFlashAttribute("message", "팀원 모집 중엔 변경할 수 없습니다.");
+            return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+        }
         roomService.active(room);
         attributes.addFlashAttribute("message", "방이 활성화 되었습니다.");
         return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
@@ -227,7 +233,11 @@ public class RoomSettingsController {
 
     @PostMapping("/room/close")
     public String closeRoom(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
-        Room room = roomQueryService.getRoomToUpdate(path, account);
+        Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
+        if(room.isRecruiting()){
+            attributes.addFlashAttribute("message", "팀원 모집 중엔 변경할 수 없습니다.");
+            return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+        }
         roomService.close(room);
         attributes.addFlashAttribute("message", "방이 비활성화 되었습니다.");
         return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
@@ -235,7 +245,7 @@ public class RoomSettingsController {
 
     @PostMapping("/recruit/start")
     public String startRecruit(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
-        Room room = roomQueryService.getRoomToUpdate(path, account);
+        Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
         if(!room.canRecruitByTime()){
             attributes.addFlashAttribute("message", "모집 설정 이후 1시간 이내에는 상태 변경이 불가합니다.");
             return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
@@ -252,7 +262,7 @@ public class RoomSettingsController {
 
     @PostMapping("/recruit/stop")
     public String stopRecruit(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
-        Room room = roomQueryService.getRoomToUpdate(path, account);
+        Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
         if(!room.canRecruitByTime()){
             attributes.addFlashAttribute("message", "모집 설정 이후 1시간 이내에는 상태 변경이 불가합니다.");
             return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
@@ -269,7 +279,7 @@ public class RoomSettingsController {
 
     @PostMapping("/room/path")
     public String updateRoomPath(@CurrentAccount Account account, @PathVariable String path, String newPath, Model model, RedirectAttributes attributes) {
-        Room room = roomQueryService.getRoomToUpdate(path, account);
+        Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
         if(!roomService.isValidPath(newPath)){
             model.addAttribute(account);
             model.addAttribute(room);
@@ -279,13 +289,15 @@ public class RoomSettingsController {
         }
 
         roomService.updateRoomPath(room, newPath);
-        attributes.addFlashAttribute("message", "경로를 수저했습니다.");
-        return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+        Room updatedRoom = roomRepository.findById(room.getId())
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
+        attributes.addFlashAttribute("message", "경로를 수정했습니다.");
+        return "redirect:/room/" + updatedRoom.getEncodedPath() + "/settings/room";
     }
 
     @PostMapping("/room/title")
     public String updateRoomTitle(@CurrentAccount Account account, @PathVariable String path,String newTitle, Model model, RedirectAttributes attributes) {
-        Room room = roomQueryService.getRoomToUpdate(path, account);
+        Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
         if(!roomService.isValidPath(newTitle)){
             model.addAttribute(account);
             model.addAttribute(room);
@@ -300,8 +312,8 @@ public class RoomSettingsController {
 
     @PostMapping("/room/remove")
     public String removeRoom(@CurrentAccount Account account, @PathVariable String path, Model model) {
-        Room room = roomQueryService.getRoomToUpdate(path, account);
+        Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
         roomService.removeRoom(room);
-        return "redirect:/";
+        return "redirect:/main";
     }
 }

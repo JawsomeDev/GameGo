@@ -83,10 +83,11 @@
         </div>
     </div>
 </div>
-
+<div th:replace="~{fragment.html::footer}"></div>
 <!-- CropperJS 라이브러리 -->
 <link href="/node_modules/cropperjs/dist/cropper.min.css" rel="stylesheet">
 <script src="/node_modules/cropperjs/dist/cropper.min.js"></script>
+<script th:replace="~{fragment.html::tooltip}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         let cropper;

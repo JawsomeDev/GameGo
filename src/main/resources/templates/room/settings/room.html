@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html::head}">
+</head>
+<body>
+<nav th:replace="~{fragment.html :: main-nav}"></nav>
+
+<div class="container mt-5 text-body-emphasis custom-room" >
+    <div th:replace="~{fragment.html :: room-info}"></div>
+    <div th:replace="~{fragment.html::room-menu (roomMenu = 'settings')}"></div>
+    <div class="row px-3 justify-content-center bg-white" style="min-height: 100vh;">
+        <div class="col-2">
+            <div th:replace="~{fragment.html:: room-settings-menu (currentMenu = 'room')}"></div>
+        </div>
+        <div class="col-8 mt-3">
+            <div th:if="${message}" class="alert alert-primary alert-dismissible fade show mt-3" role="alert">
+                <span th:text="${message}">완료</span>
+                <button type="button" class="btn-close position-absolute top-50 end-0 translate-middle-y me-2" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="row">
+                <h5 class="col-sm-12">방 공개 및 비공개</h5>
+                <form class="col-sm-12" th:if="${!room.active && !room.closed}" th:action="@{'/room/' + ${room.getPath()} + '/settings/room/active'}"
+                      method="POST" novalidate>
+                    <div class="alert alert-info" role="alert">
+                        방을 공개하게 되면 다른 사용자들이 이 방을 확인 할 수 있으며,<br>
+                        주요 플레이할 게임과 시간대에 맞는 사용자들에게 메시지가 전송됩니다.
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">공개</button>
+                    </div>
+                </form>
+                <form class="col-sm-12" th:if="${room.active && !room.closed}" th:action="@{'/room/' + ${room.getPath()} + '/settings/room/close'}"
+                      method="POST" novalidate>
+                    <div class="alert alert-info" role="alert">
+                        방을 비공개하게 되면 다른 사용자들이 이 방을 확인 할 수 없습니다.<br>
+                        방에 참가했던 사용자들은 그대로 유지됩니다.
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">비공개</button>
+                    </div>
+                </form>
+                <div th:if="${!room.active && room.closed}" class="col-sm-12">
+                    <div class="alert alert-info" role="alert">
+                        이 방은 비공개 상태입니다.
+                    </div>
+                </div>
+            </div>
+            <hr th:if="${!room.closed && !room.recruiting && room.active}">
+            <div class="row" th:if="${!room.closed && !room.recruiting && room.active}">
+                <h5 class="col-sm-12">팀원 모집</h5>
+                <form class="col-sm-12" th:action="@{'/room/' + ${room.getPath()} + '/settings/recruit/start'}" method='POST' novalidate>
+                    <div class="alert alert-info" role="alert">
+                        팀원을 모집합니다.<br>
+                        팀원 모집은 1시간에 한번, 하루에 3번까지 변경 가능합니다.
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">팀원 모집</button>
+                    </div>
+                </form>
+            </div>
+            <hr th:if="${!room.closed && room.recruiting && room.active}">
+            <div class="row" th:if="${!room.closed && room.recruiting && room.active}">
+                <h5 class="col-sm-12">팀원 모집</h5>
+                <form class="col-sm-12" th:action="@{'/room/' + ${room.getPath()} + '/settings/recruit/stop'}" method='POST' novalidate>
+                    <div class="alert alert-info" role="alert">
+                        팀원 모집을 중단합니다.<br>
+                        팀원 모집은 1시간에 한번, 하루에 3번까지 변경 가능합니다.
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">팀원 모집 중단</button>
+                    </div>
+                </form>
+            </div>
+
+            <hr th:if="${!room.closed}">
+            <div class="row" th:if="${!room.closed}">
+                <h5 class="col-sm-12">경로 설정</h5>
+                <form class="col-sm-12 needs-validation" th:action="@{'/room/' + ${room.getPath()} + '/settings/room/path'}"
+                      method="POST" novalidate>
+                    <div class="alert alert-warning" role="alert">
+                        경로를 수정하면 이전 경로는 사용할 수 없습니다.
+                    </div>
+                    <div class="form-group">
+                        <label for="path">URL</label>
+                        <input id="path" type="text" name="newPath" th:value="${room.path}" class="form-control"
+                               placeholder="예) room-path" aria-describedby="submitHelp" required>
+                        <small id="submitHelp" class="form-text text-muted">
+                            공백없이 문자, 숫자, 대시(-), 언더바(_)만 2자 이상 20자 이내로 입력하세요. 게임 모집 주소에 사용합니다.
+                            예) /room/<b>room-path</b>
+                        </small>
+                        <small class="invalid-feedback">게임 방 경로를 입력하세요.</small>
+                        <small class="form-text text-danger" th:if="${roomPathError}" th:text="${roomPathError}">
+                            Path Error
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-success" type="submit" aria-describedby="submitHelp">
+                            경로 수정
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <hr th:if="${!room.closed}">
+            <div class="row" th:if="${!room.closed}">
+                <h5 class="col-sm-12">방 이름</h5>
+                <form class="needs-validation col-12" th:action="@{'/room/' + ${room.getPath()} + '/settings/room/title'}"
+                      method="POST" novalidate>
+                    <div class="alert alert-warning" role="alert">
+                        방 이름을 수정합니다.
+                    </div>
+                    <div class="form-group">
+                        <label for="title">방 이름</label>
+                        <input id="title" type="text" name="newTitle" th:value="${room.title}" class="form-control"
+                        placeholder="방 이름" aria-describedby="titleHelp" required>
+                        <small id="titleHelp" class="form-text text-muted">
+                            방 이름을 50자 이내로 입력하세요.
+                        </small>
+                        <small class="invalid-feedback">방 이름을 입력하세요.</small>
+                        <small class="form-text text-danger" th:if="${roomTitleError}" th:text="${roomTitleError}">
+                            Title Error
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-success" type="submit" aria-describedby="submitHelp">
+                            방 이름 수정
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <hr/>
+            <div class="row">
+                <h5 class="col-sm-12 text-danger">방 삭제</h5>
+                <form class="col-sm-12" th:action="@{'/room/' + ${room.getPath()} + '/settings/room/remove'}"
+                      method="POST" novalidate>
+                    <div class="alert alert-danger" role="alert">
+                        방을 삭제하면 방 관련 모든 데이터가 삭제되며 복구할 수 없습니다.<br>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-danger mb-5" type="submit" aria-describedby="submitHelp">
+                            방 삭제
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragment.html :: footer}"></div>
+<script th:replace="~{fragment.html::tooltip}"></script>
+<script th:replace="~{fragment.html :: validators}"></script>
+</body>
+</html>
