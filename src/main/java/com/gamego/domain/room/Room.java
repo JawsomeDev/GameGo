@@ -14,6 +14,7 @@ import lombok.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -58,11 +59,13 @@ public class Room {
     private LocalDateTime activeDateTime;
     private LocalDateTime closedDateTime;
     private LocalDateTime recruitingUpdatedDateTime;
+    private LocalDate recruitmentChangeDate;
 
     private boolean recruiting;
     private boolean active;
     private boolean closed;
     private boolean useBanner;
+    private int recruitmentChangeCountToday;
 
     @Column(nullable = false)
     private int memberCount;
@@ -107,4 +110,71 @@ public class Room {
     public void updateTimePreference(TimePreference timePreference) {
         this.timePreference = timePreference;
     }
+
+    public void active() {
+        if(!this.closed && !this.active){
+            this.active = true;
+            this.activeDateTime = LocalDateTime.now();
+        } else {
+            throw new IllegalStateException("방이 이미 활성화 되어있거나 비활성화 되었습니다.");
+        }
+    }
+
+    public void close(){
+        if(this.active && !this.closed){
+            this.closed = true;
+            this.closedDateTime = LocalDateTime.now();
+        } else {
+            throw new IllegalStateException("방이 이미 비활성화되었거나 활성화 되어있지 않습니다.");
+        }
+    }
+
+    // 1시간에 한번만
+    public boolean canRecruitByTime() {
+        if(this.recruitingUpdatedDateTime == null){
+            return this.active;
+        }else {
+            return this.recruitingUpdatedDateTime.isBefore(LocalDateTime.now().minusHours(1));
+        }
+    }
+
+    public boolean canRecruitByDay() {
+        LocalDate today = LocalDate.now();
+        // 오늘 변경 기록이 없거나, 기록된 날짜가 오늘이 아니라면 (즉, 오늘 처음 변경하는 경우)
+        if (this.recruitmentChangeDate == null || !this.recruitmentChangeDate.equals(today)) {
+            return true;
+        }
+        // 오늘 변경한 횟수가 3회 미만이면 변경 가능
+        return this.recruitmentChangeCountToday < 3;
+    }
+
+    public void updateRecruitmentChangeTracking(){
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate today = now.toLocalDate();
+        if (this.recruitmentChangeDate == null || !this.recruitmentChangeDate.equals(today)) {
+            this.recruitmentChangeDate = today;
+            this.recruitmentChangeCountToday = 1;
+        }else {
+            this.recruitmentChangeCountToday++;
+        }
+        this.recruitingUpdatedDateTime = now;
+    }
+
+    public void changeRecruiting(boolean recruiting) {
+        this.recruiting = recruiting;
+    }
+
+    public void changeRecruitmentChangeCountToday(int recruitmentChangeCountToday) {
+        this.recruitmentChangeCountToday = recruitmentChangeCountToday;
+    }
+
+    public void changePath(String newPath) {
+        this.path = newPath;
+    }
+
+    public void changeTitle(String newTitle) {
+        this.title = newTitle;
+    }
+
+
 }

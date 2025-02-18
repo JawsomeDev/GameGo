@@ -207,6 +207,101 @@ public class RoomSettingsController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/room")
+    public String updateRoom(@CurrentAccount Account account, @PathVariable String path, Model model) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        model.addAttribute(account);
+        model.addAttribute(room);
+        checkAuth(account, model, room);
 
+        return "room/settings/room";
+    }
 
+    @PostMapping("/room/active")
+    public String activeRoom(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        roomService.active(room);
+        attributes.addFlashAttribute("message", "방이 활성화 되었습니다.");
+        return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+    }
+
+    @PostMapping("/room/close")
+    public String closeRoom(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        roomService.close(room);
+        attributes.addFlashAttribute("message", "방이 비활성화 되었습니다.");
+        return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+    }
+
+    @PostMapping("/recruit/start")
+    public String startRecruit(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        if(!room.canRecruitByTime()){
+            attributes.addFlashAttribute("message", "모집 설정 이후 1시간 이내에는 상태 변경이 불가합니다.");
+            return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+        }
+        if(!room.canRecruitByDay()){
+            attributes.addFlashAttribute("message", "하루 모집 설정은 3번까지만 가능합니다.");
+            return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+        }
+        roomService.startRecruit(room);
+        attributes.addFlashAttribute("message", "팀원 모집을 시작합니다.");
+
+        return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+    }
+
+    @PostMapping("/recruit/stop")
+    public String stopRecruit(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        if(!room.canRecruitByTime()){
+            attributes.addFlashAttribute("message", "모집 설정 이후 1시간 이내에는 상태 변경이 불가합니다.");
+            return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+        }
+        if(!room.canRecruitByDay()){
+            attributes.addFlashAttribute("message", "하루 모집 설정은 3번까지만 가능합니다.");
+            return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+        }
+        roomService.stopRecruit(room);
+        attributes.addFlashAttribute("message", "팀원 모집을 종료합니다.");
+
+        return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+    }
+
+    @PostMapping("/room/path")
+    public String updateRoomPath(@CurrentAccount Account account, @PathVariable String path, String newPath, Model model, RedirectAttributes attributes) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        if(!roomService.isValidPath(newPath)){
+            model.addAttribute(account);
+            model.addAttribute(room);
+            checkAuth(account, model, room);
+            model.addAttribute("roomPathError", "해당 경로값을 사용할 수 없습니다.");
+            return "room/settings/room";
+        }
+
+        roomService.updateRoomPath(room, newPath);
+        attributes.addFlashAttribute("message", "경로를 수저했습니다.");
+        return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+    }
+
+    @PostMapping("/room/title")
+    public String updateRoomTitle(@CurrentAccount Account account, @PathVariable String path,String newTitle, Model model, RedirectAttributes attributes) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        if(!roomService.isValidPath(newTitle)){
+            model.addAttribute(account);
+            model.addAttribute(room);
+            checkAuth(account, model, room);
+            model.addAttribute("roomTitleError", "방 이름을 다시 입력하세요.");
+            return "room/settings/room";
+        }
+        roomService.updateRoomTitle(room, newTitle);
+        attributes.addFlashAttribute("message", "방 이름을 수정했습니다.");
+        return "redirect:/room/" + room.getEncodedPath() + "/settings/room";
+    }
+
+    @PostMapping("/room/remove")
+    public String removeRoom(@CurrentAccount Account account, @PathVariable String path, Model model) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        roomService.removeRoom(room);
+        return "redirect:/";
+    }
 }

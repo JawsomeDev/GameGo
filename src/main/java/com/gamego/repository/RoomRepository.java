@@ -12,7 +12,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     boolean existsByPath(String path);
 
-    @EntityGraph(attributePaths = {"games", "timePreference", "roomAccounts.account"})
+    @EntityGraph(attributePaths = {"games", "roomAccounts.account"})
     Room findByPath(String path);
 
     @EntityGraph(attributePaths = {"games", "roomAccounts.account"})

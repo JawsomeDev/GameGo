@@ -9,9 +9,10 @@ import org.hibernate.validator.constraints.Length;
 @Data
 public class RoomForm {
 
+
     @NotBlank
     @Length(min = 2, max = 20)
-    @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]{2,20}")
+    @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]{2,20}$")
     private String path;
 
     @NotBlank

@@ -118,4 +118,59 @@ public class RoomService {
         Optional<Room> byId = roomRepository.findById(room.getId());
         byId.ifPresent(r -> r.updateTimePreference(null));
     }
+
+    public void active(Room room) {
+        room.active();
+    }
+
+    public void close(Room room) {
+        room.close();
+    }
+
+    public void startRecruit(Room room) {
+        Room findRoom = roomRepository.findById(room.getId())
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
+
+        findRoom.changeRecruiting(true);
+        // 시간 횟수 업데이트 로직
+        findRoom.updateRecruitmentChangeTracking();
+    }
+
+    public void stopRecruit(Room room) {
+        Room findRoom = roomRepository.findById(room.getId())
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
+
+        findRoom.changeRecruiting(false);
+
+        findRoom.updateRecruitmentChangeTracking();
+    }
+
+    public boolean isValidPath(String newPath) {
+        if(!newPath.matches("^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]{2,20}$")){
+            return false;
+        }
+        return !roomRepository.existsByPath(newPath);
+    }
+
+    public void updateRoomPath(Room room, String newPath) {
+        Room findRoom = roomRepository.findById(room.getId())
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
+
+        findRoom.changePath(newPath);
+    }
+
+    public boolean isValidTitle(String newTitle) {
+        return newTitle.length() <= 50;
+    }
+
+    public void updateRoomTitle(Room room, String newTitle) {
+        Room findRoom = roomRepository.findById(room.getId())
+                .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
+
+        findRoom.changeTitle(newTitle);
+    }
+
+    public void removeRoom(Room room) {
+        roomRepository.delete(room);
+    }
 }
