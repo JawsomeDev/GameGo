@@ -12,6 +12,7 @@
     <div th:replace="~{fragment.html::room-menu (roomMenu = 'members')}"></div>
     <div class="row px-3 justify-content-center bg-white" style="min-height: 100vh;">
         <ul class="list-unstyled col-10">
+
             <li class="d-flex align-items-center mt-3" th:each="member : ${room.roomAccounts}">
                 <img th:src="${member != null && !#strings.isEmpty(member?.getAccount().profileImage) && member.getAccount().profileImage != '' ? member.getAccount().profileImage : '/images/default.png'}"
                      class="img-fluid rounded-circle img-thumbnail profile-image"

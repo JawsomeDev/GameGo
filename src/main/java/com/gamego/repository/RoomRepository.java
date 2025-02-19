@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface RoomRepository extends JpaRepository<Room, Long> {
@@ -15,6 +16,9 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @EntityGraph(attributePaths = {"games", "roomAccounts.account"})
     Room findByPath(String path);
 
+    @EntityGraph(attributePaths = {"roomAccounts", "roomAccounts.account"})
+    Room findRoomWithMemberByPath(String path);
+
     @EntityGraph(attributePaths = {"games", "roomAccounts.account"})
     Room findRoomWithGamesByPath(String path);
 
@@ -23,4 +27,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     @EntityGraph(attributePaths = {"roomAccounts.account"})
     Room findRoomWithStatusByPath(String path);
+
+    @EntityGraph(attributePaths = {"roomAccounts", "roomAccounts.account"})
+    Room findRoomWithMemberById(Long id);
 }

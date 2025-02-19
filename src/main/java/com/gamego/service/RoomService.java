@@ -54,7 +54,7 @@ public class RoomService {
         if (findRoom == null) {
             throw new IllegalArgumentException("방을 찾을 수 없습니다.");
         }
-        room.updateBanner(image);
+        findRoom.updateBanner(image);
     }
 
     public void disableRoomBanner(Room room) {
@@ -179,5 +179,17 @@ public class RoomService {
                 .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
 
         roomRepository.delete(findRoom);
+    }
+
+    public Room addMember(String path, Account account) {
+        Room findRoom = roomRepository.findRoomWithMemberByPath(path);
+        findRoom.addMember(account);
+        return findRoom;
+    }
+
+    public Room removeMember(String path, Account account) {
+        Room findRoom = roomRepository.findRoomWithMemberByPath(path);
+        findRoom.removeMember(account);
+        return findRoom;
     }
 }

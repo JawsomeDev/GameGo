@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class RoomAccount {
 
@@ -61,5 +61,7 @@ public class RoomAccount {
     public boolean isManagerOrMaster() {
         return this.role == RoomRole.MANAGER || this.role == RoomRole.MASTER;
     }
+
+
 }
 

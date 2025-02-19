@@ -179,4 +179,18 @@ public class Room {
     }
 
 
+    public void addMember(Account account) {
+        RoomAccount roomAccount = RoomAccount.builder()
+                .room(this)
+                .account(account)
+                .nickname(account.getNickname())
+                .role(RoomRole.MEMBER)
+                .joinedAt(LocalDateTime.now())
+                .build();
+        this.roomAccounts.add(roomAccount);
+    }
+
+    public void removeMember(Account account) {
+        this.roomAccounts.removeIf(ra -> ra.getAccount().equals(account));
+    }
 }

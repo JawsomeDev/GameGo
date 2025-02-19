@@ -153,7 +153,14 @@
 
             <span sec:authorize="isAuthenticated()" th:if="${room.isJoinAble(#authentication.principal)}" class="btn-group" role="group" >
                     <form th:action="@{'/room/' + ${room.path} + '/join'}" method="post" style="display: inline;">
-                        <button class="btn btn-primary" type="submit">가입</button>
+                        <button class="btn btn-primary" type="submit">참가</button>
+                    </form>
+                    <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/members'}" th:text="${room.memberCount}">2</a>
+                </span>
+
+            <span sec:authorize="isAuthenticated()" th:if="${!room.closed && isMemberOrManager}" class="btn-group" role="group" >
+                    <form th:action="@{'/room/' + ${room.path} + '/leave'}" method="post" style="display: inline;">
+                        <button class="btn btn-primary" type="submit">탈퇴</button>
                     </form>
                     <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/members'}" th:text="${room.memberCount}">2</a>
                 </span>

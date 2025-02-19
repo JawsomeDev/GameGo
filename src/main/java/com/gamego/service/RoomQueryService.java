@@ -47,12 +47,6 @@ public class RoomQueryService {
         }
     }
 
-    public boolean isManagerOrMaster(Account account, Room room) {
-        return room.getRoomAccounts().stream()
-                .anyMatch(ra -> ra.getAccount().getId().equals(account.getId())
-                && (ra.getRole() == RoomRole.MASTER || ra.getRole().equals(RoomRole.MANAGER)));
-    }
-
     public Room getRoomToUpdateGame(String path, Account account) {
         Room room = roomRepository.findRoomWithGamesByPath(path);
         checkExistRoom(path, room);
@@ -79,5 +73,17 @@ public class RoomQueryService {
         checkIfMaster(account, room);
         checkExistRoom(path, room);
         return room;
+    }
+
+    public boolean isMemberOrManager(Account account, Room room) {
+        return room.getRoomAccounts().stream()
+                .anyMatch(ra-> ra.getAccount().getId().equals(account.getId())
+                && (ra.getRole() == RoomRole.MEMBER || ra.getRole() == RoomRole.MANAGER));
+    }
+
+    public boolean isManagerOrMaster(Account account, Room room) {
+        return room.getRoomAccounts().stream()
+                .anyMatch(ra -> ra.getAccount().getId().equals(account.getId())
+                        && (ra.getRole() == RoomRole.MASTER || ra.getRole()== RoomRole.MANAGER));
     }
 }

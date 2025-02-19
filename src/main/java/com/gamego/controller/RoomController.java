@@ -3,9 +3,11 @@ package com.gamego.controller;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
+import com.gamego.domain.room.QRoom;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.room.dto.RoomForm;
 import com.gamego.domain.roomaccount.RoomRole;
+import com.gamego.repository.RoomRepository;
 import com.gamego.service.RoomQueryService;
 import com.gamego.service.RoomService;
 import com.gamego.validator.RoomValidator;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import static com.gamego.domain.room.QRoom.room;
+
 @Controller
 @RequiredArgsConstructor
 public class RoomController {
@@ -34,6 +38,7 @@ public class RoomController {
     private final RoomValidator roomValidator;
     private final RoomQueryService roomQueryService;
     private final ModelMapper modelMapper;
+    private final RoomRepository roomRepository;
 
     @InitBinder("roomForm")
     public void roomFormInitBinder(WebDataBinder binder) {
@@ -73,6 +78,8 @@ public class RoomController {
         model.addAttribute("isMaster", isMaster);
         boolean isManagerOrMaster = roomQueryService.isManagerOrMaster(account, room);
         model.addAttribute("isManagerOrMaster", isManagerOrMaster);
+        boolean isMemberOrManager = roomQueryService.isMemberOrManager(account, room);
+        model.addAttribute("isMemberOrManager", isMemberOrManager);
     }
 
     @GetMapping("/room/{path}/members")
@@ -82,5 +89,17 @@ public class RoomController {
         model.addAttribute(room);
         checkAuth(account, model, room);
         return "room/members";
+    }
+
+    @PostMapping("/room/{path}/join")
+    public String joinRoom(@CurrentAccount Account account, @PathVariable String path) {
+        Room room = roomService.addMember(path, account);
+        return "redirect:/room/" + room.getEncodedPath() + "/members";
+    }
+
+    @PostMapping("/room/{path}/leave")
+    public String leaveRoom(@CurrentAccount Account account, @PathVariable String path) {
+        Room room = roomService.removeMember(path, account);
+        return "redirect:/room/" + room.getEncodedPath() + "/members";
     }
 }
