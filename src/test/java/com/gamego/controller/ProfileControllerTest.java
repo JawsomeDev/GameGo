@@ -255,7 +255,7 @@ class ProfileControllerTest {
     @DisplayName("시간대 제거 성공")
     @WithAccount("testuser")
     void testRemoveTimePreference() throws Exception {
-.
+
         TimePreferenceForm form = new TimePreferenceForm();
         form.setTimePreference("오전");
         String json = objectMapper.writeValueAsString(form);
@@ -274,5 +274,54 @@ class ProfileControllerTest {
 
         Account account = accountRepository.findByNickname("testuser");
         Assertions.assertThat(account.getTimePreference()).isNull();
+    }
+
+
+    @Test
+    @DisplayName("계정 설정 뷰")
+    @WithAccount("shark")
+    void testGetAccountToUpdate() throws Exception {
+        mockMvc.perform(get("/settings/account").with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("settings/account"))
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("nicknameForm"));
+    }
+
+    @Test
+    @DisplayName("닉네임 수정 성공")
+    @WithAccount("shark")
+    void testUpdateAccountNicknameSuccess() throws Exception {
+        String newNickname = "sharkNew";
+        // POST 요청 시 form 데이터로 보내는 필드 이름은 NicknameForm의 프로퍼티명과 일치해야 합니다.
+        // 여기서는 form의 필드명이 "nickname"이라고 가정합니다.
+        mockMvc.perform(post("/settings/account")
+                        .param("nickname", newNickname)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/settings/account"))
+                .andExpect(flash().attribute("message", "닉네임을 수정했습니다."));
+
+        // DB에서 변경된 계정을 조회하여 닉네임이 업데이트 되었는지 확인합니다.
+        Account updated = accountRepository.findByNickname(newNickname);
+        assertNotNull(updated, "새로운 닉네임으로 계정이 존재해야 합니다.");
+    }
+
+    @Test
+    @DisplayName("계정 삭제 성공")
+    @WithAccount("shark")
+    void testDeleteAccount() throws Exception {
+        // deleteAccount 요청 전, 계정이 존재하는지 확인
+        Account accountBefore = accountRepository.findByNickname("shark");
+        assertNotNull(accountBefore, "삭제 전 계정은 존재해야 합니다.");
+
+        mockMvc.perform(post("/settings/account/delete")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
+
+        // 삭제 후 DB에서 계정을 조회하여 null이어야 합니다.
+        Account deleted = accountRepository.findByNickname("shark");
+        assertNull(deleted, "계정 삭제 후 계정이 존재하면 안 됩니다.");
     }
 }

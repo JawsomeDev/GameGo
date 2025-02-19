@@ -216,7 +216,7 @@ public class ProfileController {
     public String deleteAccount(@CurrentAccount Account account, HttpServletRequest request, HttpServletResponse response){
         accountService.deleteAccount(account);
 
-        // 삭제되면 로그아웃, 쿠키 삭제, 세션만료
+
         request.getSession().invalidate();
 
         Cookie cookie = new Cookie("JSESSIONID", null);
