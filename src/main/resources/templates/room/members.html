@@ -12,17 +12,34 @@
     <div th:replace="~{fragment.html::room-menu (roomMenu = 'members')}"></div>
     <div class="row px-3 justify-content-center bg-white" style="min-height: 100vh;">
         <ul class="list-unstyled col-10">
-
+            <div th:if="${message}" class="alert alert-primary alert-dismissible fade show mt-3" role="alert">
+                <span th:text="${message}">완료</span>
+                <button type="button" class="btn-close position-absolute top-50 end-0 translate-middle-y me-2" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
             <li class="d-flex align-items-center mt-3" th:each="member : ${room.roomAccounts}">
                 <img th:src="${member != null && !#strings.isEmpty(member?.getAccount().profileImage) && member.getAccount().profileImage != '' ? member.getAccount().profileImage : '/images/default.png'}"
                      class="img-fluid rounded-circle img-thumbnail profile-image"
                      width="64" height="64" alt="User Avatar" th:alt="${member !=null ? member.nickname : 'Default User'}">
                 <div class="ms-3">
                     <h5 class="mt-0 mb-1">
-                        <span th:text="${member.getNickname()}" style="color: black">아아</span>
+                        <a th:href="@{'/profile/' + ${member.getNickname()}}" style="color: black; text-decoration: none" >
+                            <span th:text="${member.getNickname()}" style="color: black">아아</span>
+                        </a>
                         <span th:if="${member.isManager()}" class="badge badge-background">매니저</span>
                         <span th:if="${member.isMaster()}" class="badge badge-background">방장</span>
                         <span th:if="${member.isMember()}" class="badge badge-background">게스트</span>
+                        <span th:if="${isMaster and member.isMember()}">
+                            <form th:action="@{'/room/' + ${room.path} + '/promote?targetAccountId=' + ${member.account.id}}" method="post">
+                                <button type="submit" class="btn btn-outline-success btn-sm">승급</button>
+                            </form>
+                        </span>
+                        <span th:if="${isMaster and member.isManager()}">
+                            <form th:action="@{'/room/' + ${room.path} + '/demote?targetAccountId=' + ${member.account.id}}" method="post">
+                                <button type="submit" class="btn btn-outline-success btn-sm">강등</button>
+                            </form>
+                        </span>
                     </h5>
                 </div>
             </li>

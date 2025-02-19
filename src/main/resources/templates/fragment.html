@@ -143,35 +143,54 @@
                     <button class="btn btn-secondary btn-sm" style="pointer-events: none;" type="button" disabled>준비중</button>
                 </span>
 
-            <span th:if="${room.closed}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="비활성화">
+                <span th:if="${room.closed}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="비활성화">
                     <button class="btn btn-secondary btn-sm" style="pointer-events: none;" type="button" disabled>CLOSED</button>
                 </span>
 
-            <span th:if="${!room.recruiting}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="팀원 모집 중 아님">
+                <span th:if="${!room.recruiting}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="팀원 모집 중 아님">
                     <button class="btn btn-secondary btn-sm" style="pointer-events: none;" type="button" disabled>OFF</button>
                 </span>
 
-            <span sec:authorize="isAuthenticated()" th:if="${room.isJoinAble(#authentication.principal)}" class="btn-group" role="group" >
+                <span sec:authorize="isAuthenticated()" th:if="${room.isJoinAble(#authentication.principal)}" class="btn-group" role="group" >
                     <form th:action="@{'/room/' + ${room.path} + '/join'}" method="post" style="display: inline;">
                         <button class="btn btn-primary" type="submit">참가</button>
                     </form>
                     <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/members'}" th:text="${room.memberCount}">2</a>
                 </span>
 
-            <span sec:authorize="isAuthenticated()" th:if="${!room.closed && isMemberOrManager}" class="btn-group" role="group" >
-                    <form th:action="@{'/room/' + ${room.path} + '/leave'}" method="post" style="display: inline;">
-                        <button class="btn btn-primary" type="submit">탈퇴</button>
-                    </form>
+                <span sec:authorize="isAuthenticated()" th:if="${!room.closed && isMemberOrManager}" class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        탈퇴
+                    </button>
                     <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/members'}" th:text="${room.memberCount}">2</a>
                 </span>
-
-            <span sec:authorize="isAuthenticated()"  th:if="${room.active && !room.closed && isManagerOrMaster}">
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">방 탈퇴</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body " style="text-align: left">정말로 방을 탈퇴하시겠습니까?<br>
+                            탈퇴 후, 다시 참가하면 기존 권한이 아닌 게스트 권한으로 참가됩니다.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                            <form th:action="@{'/room/' + ${room.path} + '/leave'}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-danger" >탈퇴</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <span sec:authorize="isAuthenticated()"  th:if="${room.active && !room.closed && isManagerOrMaster}">
                     <a class="btn btn-outline-primary icon-blue" th:href="@{'/room/' + ${room.path} + '/new-event'}">
                         <i class="fa fa-plus icon-blue"></i> 파티원 모집
                     </a>
                 </span>
         </div>
     </div>
+
     <div class="row justify-content-center">
         <div class="col-10">
             <p class="lead room-content"  th:text="${room.shortDescription}"></p>

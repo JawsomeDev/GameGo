@@ -193,4 +193,22 @@ public class Room {
     public void removeMember(Account account) {
         this.roomAccounts.removeIf(ra -> ra.getAccount().equals(account));
     }
+
+    public void promoteMember(Account account) {
+        for(RoomAccount ra : this.roomAccounts){
+            if(ra.getAccount().equals(account) && ra.getRole().equals(RoomRole.MEMBER)){
+                ra.promoteMember();
+                break;
+            }
+        }
+    }
+
+    public void demoteMember(Account account) {
+        for(RoomAccount ra : this.roomAccounts){
+            if(ra.getAccount().equals(account) && ra.getRole().equals(RoomRole.MANAGER)){
+                ra.demoteMember();
+                break;
+            }
+        }
+    }
 }

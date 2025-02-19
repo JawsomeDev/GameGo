@@ -31,6 +31,7 @@ public class RoomService {
     private final RoomAccountRepository roomAccountRepository;
     private final ModelMapper modelMapper;
     private final GameService gameService;
+    private final RoomQueryService roomQueryService;
 
     public Room createNewRoom(Room room, Account account) {
         Room savedRoom = roomRepository.save(room);
@@ -191,5 +192,29 @@ public class RoomService {
         Room findRoom = roomRepository.findRoomWithMemberByPath(path);
         findRoom.removeMember(account);
         return findRoom;
+    }
+
+    public Room promoteMember(String path, Long targetAccountId, Account account) {
+        Room room = roomRepository.findRoomWithMemberByPath(path);
+        if(!roomQueryService.isMaster(account, room)){
+            throw new IllegalStateException("권한이 없습니다.");
+        }
+        RoomAccount targetRoomAccount = room.getRoomAccounts().stream()
+                .filter(ra -> ra.getAccount().getId().equals(targetAccountId) && ra.getRole() == RoomRole.MEMBER)
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("대상 회원을 찾을 수 없습니다."));
+        targetRoomAccount.promoteMember();
+        return room;
+    }
+
+    public Room demoteMember(String path, Long targetAccountId, Account account) {
+        Room room = roomRepository.findRoomWithMemberByPath(path);
+        if(!roomQueryService.isMaster(account, room)){
+            throw new IllegalStateException("권한이 없습니다.");
+        }
+        RoomAccount targetRoomAccount = room.getRoomAccounts().stream()
+                .filter(ra -> ra.getAccount().getId().equals(targetAccountId) && ra.getRole() == RoomRole.MANAGER)
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("대상 회원을 찾을 수 없습니다."));
+        targetRoomAccount.demoteMember();
+        return room;
     }
 }

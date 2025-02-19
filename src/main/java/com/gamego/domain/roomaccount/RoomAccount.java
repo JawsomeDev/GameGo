@@ -62,6 +62,16 @@ public class RoomAccount {
         return this.role == RoomRole.MANAGER || this.role == RoomRole.MASTER;
     }
 
+    public void promoteMember(){
+        if(this.role == RoomRole.MEMBER){
+            this.role = RoomRole.MANAGER;
+        }
+    }
+    public void demoteMember(){
+        if(this.role == RoomRole.MANAGER){
+            this.role = RoomRole.MEMBER;
+        }
+    }
 
 }
 

@@ -19,10 +19,8 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -100,6 +98,24 @@ public class RoomController {
     @PostMapping("/room/{path}/leave")
     public String leaveRoom(@CurrentAccount Account account, @PathVariable String path) {
         Room room = roomService.removeMember(path, account);
+        return "redirect:/room/" + room.getEncodedPath() + "/members";
+    }
+
+    @PostMapping("/room/{path}/promote")
+    public String promoteMember(@CurrentAccount Account account, @PathVariable String path,
+                                @RequestParam("targetAccountId") Long targetAccountId,
+                                RedirectAttributes attributes) {
+        Room room = roomService.promoteMember(path, targetAccountId, account);
+        attributes.addFlashAttribute("message","매니저로 승급이 완료되었습니다..");
+        return "redirect:/room/" + room.getEncodedPath() + "/members";
+    }
+
+    @PostMapping("/room/{path}/demote")
+    public String demoteMember(@CurrentAccount Account account, @PathVariable String path,
+                               @RequestParam("targetAccountId") Long targetAccountId,
+                               RedirectAttributes attributes) {
+        Room room = roomService.demoteMember(path, targetAccountId, account);
+        attributes.addFlashAttribute("message", "게스트로 강등이 완료되었습니다.");
         return "redirect:/room/" + room.getEncodedPath() + "/members";
     }
 }
