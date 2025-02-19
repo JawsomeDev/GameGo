@@ -163,6 +163,7 @@ public class AccountController {
                                               RedirectAttributes attributes) {
        Account account = accountRepository.findByResetPasswordToken(token);
        if(bindingResult.hasErrors()) {
+           model.addAttribute("token", token);
            return "account/reset-password-confirm";
        }
 

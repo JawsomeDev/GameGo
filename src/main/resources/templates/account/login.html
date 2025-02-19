@@ -45,6 +45,14 @@
 
 <!-- 푸터 -->
 <footer th:replace="~{fragment.html :: footer}"></footer>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var message = /*[[${message}]]*/ "";
+    if(message) {
+        window.alert(message);
+    }
+    /*]]>*/
+</script>
 <script th:replace="~{fragment.html :: validators}"></script>
 </body>
 </html>

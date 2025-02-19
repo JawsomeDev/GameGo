@@ -141,9 +141,29 @@
                         방을 삭제하면 방 관련 모든 데이터가 삭제되며 복구할 수 없습니다.<br>
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-danger mb-5" type="submit" aria-describedby="submitHelp">
+                        <button type="button" class="btn btn-danger mb-5" data-bs-toggle="modal" data-bs-target="#deleteRoomModal">
                             방 삭제
                         </button>
+                        <div class="modal fade" id="deleteRoomModal" tabindex="-1" aria-labelledby="deleteRoomModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteRoomModalLabel">방 삭제 확인</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        정말로 이 방을 삭제하시겠습니까? 이 작업은 복구할 수 없습니다.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                        <!-- 실제 삭제 폼 -->
+                                        <form th:action="@{'/room/' + ${room.getPath()} + '/settings/room/remove'}" method="POST">
+                                            <button type="submit" class="btn btn-danger">삭제</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -153,5 +173,13 @@
 <div th:replace="~{fragment.html :: footer}"></div>
 <script th:replace="~{fragment.html::tooltip}"></script>
 <script th:replace="~{fragment.html :: validators}"></script>
+<script>
+    const myModal = document.getElementById('exampleModal')
+    const myInput = document.getElementById('myInput')
+
+    myModal.addEventListener('shown.bs.modal', () => {
+        myInput.focus()
+    })
+</script>
 </body>
 </html>
