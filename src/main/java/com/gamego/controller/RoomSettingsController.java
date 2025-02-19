@@ -164,6 +164,8 @@ public class RoomSettingsController {
         model.addAttribute("isMaster", isMaster);
         boolean isManagerOrMaster = roomQueryService.isManagerOrMaster(account, room);
         model.addAttribute("isManagerOrMaster", isManagerOrMaster);
+        boolean isMemberOrManager = roomQueryService.isMemberOrManager(account, room);
+        model.addAttribute("isMemberOrManager", isMemberOrManager);
     }
 
     @GetMapping("/times")

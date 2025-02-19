@@ -31,12 +31,12 @@
                         <span th:if="${member.isMaster()}" class="badge badge-background">방장</span>
                         <span th:if="${member.isMember()}" class="badge badge-background">게스트</span>
                         <span th:if="${isMaster and member.isMember()}">
-                            <form th:action="@{'/room/' + ${room.path} + '/promote?targetAccountId=' + ${member.account.id}}" method="post">
+                            <form th:action="@{'/room/' + ${room.path} + '/promote?targetAccountId=' + ${member.account.id}}" style="display: inline" method="post">
                                 <button type="submit" class="btn btn-outline-success btn-sm">승급</button>
                             </form>
                         </span>
                         <span th:if="${isMaster and member.isManager()}">
-                            <form th:action="@{'/room/' + ${room.path} + '/demote?targetAccountId=' + ${member.account.id}}" method="post">
+                            <form th:action="@{'/room/' + ${room.path} + '/demote?targetAccountId=' + ${member.account.id}}" style="display: inline" method="post">
                                 <button type="submit" class="btn btn-outline-success btn-sm">강등</button>
                             </form>
                         </span>
