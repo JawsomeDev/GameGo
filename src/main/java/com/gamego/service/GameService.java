@@ -48,7 +48,7 @@ public class GameService {
         );
         gameList.addAll(koreaGames);
 
-        // 🛠️ 게임 리스트 -> Game 엔티티로 변환 후 DB 저장
+
         List<Game> games = gameList.stream()
                 .map(name -> Game.builder().name(name).build())
                 .toList();

@@ -58,7 +58,7 @@ public class AccountController {
     }
 
     @PostMapping("/sign-up")
-    public String signupSubmit(@Valid @ModelAttribute("accountReq") AccountForm accountForm,
+    public String signupSubmit(@Valid @ModelAttribute("accountForm") AccountForm accountForm,
                                BindingResult bindingResult,Model model) {
         if(bindingResult.hasErrors()) {
             model.addAttribute("accountForm", accountForm);
