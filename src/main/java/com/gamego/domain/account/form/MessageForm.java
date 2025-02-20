@@ -1,4 +1,4 @@
-package com.gamego.domain.account.dto;
+package com.gamego.domain.account.form;
 
 import lombok.Data;
 

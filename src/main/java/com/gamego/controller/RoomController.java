@@ -3,12 +3,10 @@ package com.gamego.controller;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.room.QRoom;
 import com.gamego.domain.room.Room;
-import com.gamego.domain.room.dto.RoomForm;
-import com.gamego.domain.roomaccount.RoomRole;
+import com.gamego.domain.room.form.RoomForm;
 import com.gamego.repository.RoomRepository;
-import com.gamego.service.RoomQueryService;
+import com.gamego.service.query.RoomQueryService;
 import com.gamego.service.RoomService;
 import com.gamego.validator.RoomValidator;
 import jakarta.validation.Valid;
@@ -21,11 +19,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
-import static com.gamego.domain.room.QRoom.room;
 
 @Controller
 @RequiredArgsConstructor

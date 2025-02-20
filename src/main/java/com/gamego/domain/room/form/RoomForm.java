@@ -1,4 +1,4 @@
-package com.gamego.domain.room.dto;
+package com.gamego.domain.room.form;
 
 
 import jakarta.validation.constraints.NotBlank;

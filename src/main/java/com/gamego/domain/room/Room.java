@@ -71,9 +71,6 @@ public class Room {
     @Column(nullable = false)
     private int memberCount;
 
-    @OneToMany
-    private List<Event> event = new ArrayList<>();
-
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RoomAccount> roomAccounts = new HashSet<>();
 

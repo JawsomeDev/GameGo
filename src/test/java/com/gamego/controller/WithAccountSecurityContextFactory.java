@@ -1,6 +1,6 @@
 package com.gamego.controller;
 
-import com.gamego.domain.account.dto.AccountForm;
+import com.gamego.domain.account.form.AccountForm;
 import com.gamego.repository.AccountRepository;
 import com.gamego.service.AccountService;
 import com.gamego.service.CustomUserService;

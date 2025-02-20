@@ -3,12 +3,12 @@ package com.gamego.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gamego.config.AppProperties;
-import com.gamego.domain.account.dto.*;
+import com.gamego.domain.account.form.*;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.account.accountenum.TimePreference;
-import com.gamego.domain.game.dto.GameResp;
+import com.gamego.domain.game.form.GameResp;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
 import com.gamego.repository.AccountRepository;

@@ -1,4 +1,4 @@
-package com.gamego.service;
+package com.gamego.service.query;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.accountenum.TimePreference;

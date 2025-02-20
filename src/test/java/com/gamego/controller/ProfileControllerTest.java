@@ -3,25 +3,21 @@ package com.gamego.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.accountenum.TimePreference;
-import com.gamego.domain.account.dto.AccountForm;
-import com.gamego.domain.account.dto.TimePreferenceForm;
+import com.gamego.domain.account.form.TimePreferenceForm;
 import com.gamego.domain.game.Game;
-import com.gamego.domain.game.dto.GameForm;
+import com.gamego.domain.game.form.GameForm;
 import com.gamego.email.EmailService;
 import com.gamego.repository.AccountRepository;
 import com.gamego.repository.GameRepository;
 import com.gamego.service.AccountService;
 import jakarta.persistence.EntityManager;
-import lombok.With;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -305,6 +301,23 @@ class ProfileControllerTest {
         // DB에서 변경된 계정을 조회하여 닉네임이 업데이트 되었는지 확인합니다.
         Account updated = accountRepository.findByNickname(newNickname);
         assertNotNull(updated, "새로운 닉네임으로 계정이 존재해야 합니다.");
+    }
+
+    @Test
+    @DisplayName("닉네임 수정 실패")
+    @WithAccount("shark")
+    void testUpdateAccountNickname_fail() throws Exception {
+        String newNickname = "s";
+
+        mockMvc.perform(post("/settings/account")
+                        .param("nickname", newNickname)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("settings/account"))
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().hasErrors());
+
+        Assertions.assertThat(accountRepository.findByNickname(newNickname)).isNull();
     }
 
     @Test

@@ -3,10 +3,10 @@ package com.gamego.controller;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.account.dto.AccountForm;
-import com.gamego.domain.account.dto.PasswordForm;
+import com.gamego.domain.account.form.AccountForm;
+import com.gamego.domain.account.form.PasswordForm;
 import com.gamego.repository.AccountRepository;
-import com.gamego.service.AccountQueryService;
+import com.gamego.service.query.AccountQueryService;
 import com.gamego.service.AccountService;
 import com.gamego.validator.AccountValidator;
 import com.gamego.validator.PasswordValidator;
@@ -19,8 +19,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @Slf4j
 @Controller

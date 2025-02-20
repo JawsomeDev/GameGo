@@ -4,15 +4,15 @@ package com.gamego.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gamego.domain.account.accountenum.*;
-import com.gamego.domain.account.dto.*;
+import com.gamego.domain.account.form.*;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.game.dto.GameListResp;
-import com.gamego.domain.game.dto.GameForm;
-import com.gamego.domain.game.dto.GameResp;
+import com.gamego.domain.game.form.GameListResp;
+import com.gamego.domain.game.form.GameForm;
+import com.gamego.domain.game.form.GameResp;
 import com.gamego.repository.GameRepository;
-import com.gamego.service.AccountQueryService;
+import com.gamego.service.query.AccountQueryService;
 import com.gamego.service.AccountService;
 import com.gamego.validator.NicknameValidator;
 import com.gamego.validator.PasswordValidator;
@@ -51,7 +51,7 @@ public class ProfileController {
 
     @InitBinder("nicknameForm")
     public void initBinder1(WebDataBinder binder){
-        binder.setValidator(nicknameValidator);
+        binder.addValidators(nicknameValidator);
     }
 
     @InitBinder("passwordForm")

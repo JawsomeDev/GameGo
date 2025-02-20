@@ -1,7 +1,7 @@
 package com.gamego.validator;
 
 import com.gamego.domain.account.Account;
-import com.gamego.domain.account.dto.NicknameForm;
+import com.gamego.domain.account.form.NicknameForm;
 import com.gamego.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
