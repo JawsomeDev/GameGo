@@ -60,10 +60,11 @@
                 <li class="nav-item dropdown ms-4" sec:authorize="isAuthenticated()">
                     <a class="nav-link dropdown-toggle p-0" id="userDropdown" role="button"
                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img th:src="${currentAccount != null and !#strings.isEmpty(currentAccount.profileImage) ? currentAccount.profileImage : '/images/default.png'}"
+                        <img th:src="${currentAccount != null && !#strings.isEmpty(currentAccount.profileImage) ? currentAccount.profileImage : '/images/default.png'}"
                              class="img-fluid rounded-circle profile-image"
                              width="32" height="32"
-                             alt="User Avatar" th:alt="${currentAccount != null ? currentAccount.nickname : 'Default User'}" />
+                             alt="User Avatar"
+                             th:alt="${currentAccount != null ? currentAccount.nickname : 'Default User'}" />
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <h6 class="dropdown-header">
@@ -112,10 +113,10 @@
             <i class="fa fa-info-circle icon-blue"></i> 소개
         </a>
         <a class="nav-item nav-link icon-blue" href="#" th:classappend="${roomMenu == 'members'}? active" th:href="@{'/room/' + ${room.path} + '/members'}">
-            <i class="fa fa-user icon-blue"></i> 구성원
+            <i class="fa fa-users icon-blue"></i> 멤버
         </a>
         <a class="nav-item nav-link icon-blue" th:classappend="${roomMenu == 'events'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/events'}">
-            <i class="fa fa-calendar icon-blue"></i> 모임
+            <i class="fa fa-calendar icon-blue"></i> 모집
         </a>
         <a sec:authorize="isAuthenticated()"  th:if="${isMaster}"
            class="nav-item nav-link icon-blue" th:classappend="${roomMenu == 'settings'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/settings/description'}">

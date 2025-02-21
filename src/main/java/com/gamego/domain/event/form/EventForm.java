@@ -29,7 +29,7 @@ public class EventForm {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endedAt;
 
-    @Size(min = 2)
+    @Min(2)
     private Integer limitOfNumbers = 2;
 
     private String description;

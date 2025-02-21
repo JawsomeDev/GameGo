@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html::head}">
+</head>
+<body>
+<nav th:replace="~{fragment.html :: main-nav}"></nav>
+<div class="container mt-5  text-body-emphasis custom-room">
+    <div th:replace="~{fragment.html :: room-info}"></div>
+    <div th:replace="~{fragment.html::room-menu (roomMenu = 'events')}"></div>
+    <div class="row px-3 justify-content-center bg-white" style="min-height: 100vh;">
+        <!-- 실제 내용 영역 -->
+        <div class="row px-3 justify-content-center bg-white" style="min-height: 100vh;">
+            <!-- 왼쪽 사이드 (카테고리/상태 구분) -->
+            <div class="col-2">
+                <div class="list-group mt-3">
+                    <!-- “전체 파티” -->
+                    <a th:href="@{'/room/' + ${room.path} + '/events?type=all'}"
+                       class="list-group-item list-group-item-action list-group-item-secondary"
+                       th:classappend="${type} == 'all' ? ' active'">
+                        전체 파티
+                    </a>
+                    <!-- “시작 예정 파티” -->
+                    <a th:href="@{'/room/' + ${room.path} + '/events?type=new'}"
+                       class="list-group-item list-group-item-action"
+                       th:classappend="${type} == 'new' ? ' active'">
+                        시작 예정 파티
+                    </a>
+                    <!-- “종료된 파티” -->
+                    <a th:href="@{'/room/' + ${room.path} + '/events?type=old'}"
+                       class="list-group-item list-group-item-action"
+                       th:classappend="${type} == 'old' ? ' active'">
+                        종료된 파티
+                    </a>
+                </div>
+            </div>
+
+            <!-- 오른쪽 메인 (카드 뷰로 파티 목록 표시) -->
+            <div class="col-10">
+                <!-- “시작 예정 파티” 리스트 -->
+                <div th:if="${type} == 'new' or type == 'all'}">
+                    <h4 class="mb-3">시작 예정 파티</h4>
+                    <div class="row row-cols-1 row-cols-md-2 g-4">
+                        <div class="col" th:each="event : ${newEvents}">
+                            <div class="card h-100">
+                                <!-- 카드 이미지가 필요하면 여기에 추가 -->
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${event.title}">이벤트 제목</h5>
+                                    <p class="card-text" th:text="${event.description}">이벤트 내용</p>
+                                    <p class="card-text">
+                                        시작:
+                                        <span th:text="${#temporals.format(event.startedAt, 'yyyy-MM-dd HH:mm')}"></span>
+                                    </p>
+                                    <p class="card-text">
+                                        종료:
+                                        <span th:text="${#temporals.format(event.endedAt, 'yyyy-MM-dd HH:mm')}"></span>
+                                    </p>
+                                    <a th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id}}" class="btn btn-primary">
+                                        상세 보기
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 구분선 -->
+                <hr class="my-4"/>
+
+                <!-- “종료된 파티” 리스트 -->
+                <div th:if="${type} == 'old' or type == 'all'}">
+                    <h4 class="mb-3">종료된 파티</h4>
+                    <div class="row row-cols-1 row-cols-md-2 g-4">
+                        <div class="col" th:each="event : ${oldEvents}">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${event.title}">이벤트 제목</h5>
+                                    <p class="card-text" th:text="${event.description}">이벤트 내용</p>
+                                    <p class="card-text">
+                                        시작:
+                                        <span th:text="${#temporals.format(event.startedAt, 'yyyy-MM-dd HH:mm')}"></span>
+                                    </p>
+                                    <p class="card-text">
+                                        종료:
+                                        <span th:text="${#temporals.format(event.endedAt, 'yyyy-MM-dd HH:mm')}"></span>
+                                    </p>
+                                    <a th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id}}" class="btn btn-secondary">
+                                        상세 보기
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+<div th:replace="~{fragment.html::footer}"></div>
+<script th:replace="~{fragment.html :: tooltip}"></script>
+</body>
+</html>
