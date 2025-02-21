@@ -98,6 +98,9 @@ public class Event {
         return this.enrolls.stream().filter(Enroll::isAccepted).count();
     }
 
+    public Long getNumbersOfRemainingEnrollments(){
+        return this.limitOfNumbers - getNumbersOfAcceptedEnrollments();
+    }
 
     public boolean isAcceptable(Enroll enroll) {
         return this.eventType == EventType.APPROVAL

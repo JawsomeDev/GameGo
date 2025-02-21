@@ -82,18 +82,15 @@ public class EventController {
     }
 
     @GetMapping("/events")
-    public String viewRoomEvents(@CurrentAccount Account account, @PathVariable String path,
-                                 @RequestParam(required = false, defaultValue = "all") String type,
-                                 @PageableDefault(size = 6, sort = "startedAt") Pageable pageable, Model model) {
+    public String viewRoomEvents(@CurrentAccount Account account, @PathVariable String path, Model model) {
         Room room = roomQueryService.getRoom(path);
         model.addAttribute(account);
         model.addAttribute(room);
-        model.addAttribute(type);
         checkAuth(account, model, room);
 
-        Map<String, List<Event>> eventsByTime = eventService.classifyEventsByTime(room);
-        model.addAttribute("newEvents", eventsByTime.get("newEvents"));
-        model.addAttribute("oldEvents", eventsByTime.get("oldEvents"));
+        List<Event> upcomingEvents = eventQueryService.getUpcomingEvents(room);
+        model.addAttribute("events", upcomingEvents);
+
 
         return "room/events";
     }

@@ -18,4 +18,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @EntityGraph(attributePaths = {"enrolls"})
     List<Event> findByRoomOrderByStartedAt(Room room);
+
+    List<Event> findByRoomAndStartedAtAfterOrderByStartedAt(Room room, LocalDateTime startedAtAfter);
 }

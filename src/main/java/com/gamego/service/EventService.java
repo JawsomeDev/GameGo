@@ -40,15 +40,6 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    public Map<String, List<Event>> classifyEventsByTime(Room room){
-        List<Event> events = eventRepository.findByRoomOrderByStartedAt(room);
 
-        Map<Boolean, List<Event>> partitioned = events.stream()
-                .collect(Collectors.partitioningBy(e -> !e.getEndedAt().isBefore(LocalDateTime.now())));
 
-        Map<String, List<Event>> result = new HashMap<>();
-        result.put("newEvents", partitioned.get(true));
-        result.put("oldEvents", partitioned.get(false));
-        return result;
-    }
 }
