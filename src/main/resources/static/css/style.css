@@ -176,3 +176,17 @@ main h2 span::after{
     width: 100%;
     max-height: 300px;
 }
+
+.pagination .page-item.active .page-link {
+    background-color: #1B1F3A;
+    border-color: #1B1F3A !important;
+    color: #fff !important;
+}
+
+.pagination .page-link{
+    color: #1B1F3A;
+}
+
+.note-editable p{
+    margin-bottom: 0.5rem !important;
+}

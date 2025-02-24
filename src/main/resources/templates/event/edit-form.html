@@ -11,12 +11,12 @@
         <h2>
             <a class="text-black" th:href="@{'/room/' + ${room.path}}" style="text-decoration: none;">
                 <span th:text="${room.title}">방</span>
-            </a> / 새 파티원 모집
+            </a> / <span th:text="${event.title}"></span>
         </h2>
     </div>
     <div class="row justify-content-center">
         <form class="needs-validation col-sm-10"
-              th:action="@{'/room/' + ${room.path} + '/new-event'}"
+              th:action="@{'/room/' + ${room.path} + '/events/' + ${event.id} + '/edit'}"
               th:object="${eventForm}" method="post" novalidate>
             <!-- 모집 제목 -->
             <div class="form-group">
@@ -31,22 +31,6 @@
                     Error
                 </small>
             </div>
-            <!-- 모집 방법 -->
-            <div class="form-group">
-                <label for="eventType">모집 방법</label>
-                <select th:field="*{eventType}" class="form-select mb-2" id="eventType"
-                        aria-describedby="eventTypeHelp" required>
-                    <option th:value="FCFS">선착순</option>
-                    <option th:value="APPROVAL">관리자 승인</option>
-                </select>
-                <small id="eventTypeHelp" class="form-text text-muted">
-                    두 가지 모집 방법 중 하나를 선택하세요.<br>
-                    <strong>선착순</strong>으로 모집하는 경우, 모집하는 인원 이내의 참가 신청에 대하여 자동으로 수락이 되며,
-                    모집 인원을 초과하는 신청은 대기 상태가 됩니다.<br>
-                    <strong>관리자 승인</strong>으로 모집하는 경우, 모집 관리자가 직접 확정 여부를 정할 수 있습니다.
-                </small>
-            </div>
-
             <!-- 두 열(row)로 나누어 왼쪽에 모집 인원/마감일시, 오른쪽에 시작/종료 시간을 배치 -->
             <div class="row">
                 <!-- 왼쪽 열 -->
@@ -132,7 +116,7 @@
             <!-- 제출 버튼 -->
             <div class="form-group">
                 <button class="btn btn-outline-success btn-block mb-5" type="submit" aria-describedby="submitHelp">
-                    파티원 모집하기
+                    수정 하기
                 </button>
             </div>
         </form>

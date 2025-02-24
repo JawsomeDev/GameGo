@@ -163,12 +163,12 @@
                 </dd>
                 <dt class="font-weight-light">모집 마감 일시</dt>
                 <dd>
-                    <span th:text="${event.endEnrolledAt}"></span>
+                    <span id="endEnroll" th:text="${event.endEnrolledAt}"></span>
                 </dd>
                 <dt class="font-weight-light">플레이 시간</dt>
                 <dd>
-                    <span th:text="${event.startedAt}"></span> -
-                    <span th:text="${event.endedAt}"></span>
+                    <span id="startDate" th:text="${event.startedAt}"></span> -
+                    <span id="endDate" th:text="${event.endedAt}"></span>
                 </dd>
                 <dt class="font-weight-light">파티장</dt>
                 <dd>
@@ -216,8 +216,28 @@
         </div>
     </div>
 </div>
-
 <div th:replace="~{fragment.html::footer}"></div>
 <script th:replace="~{fragment.html :: tooltip}"></script>
+<script src="/node_modules/dayjs/dayjs.min.js"></script>
+<script src="/node_modules/dayjs/locale/ko.js"></script>
+<script>
+    dayjs.locale('ko');
+    const endDate = document.getElementById('endDate');
+    const rawDate = endDate.innerText.trim();
+    if(rawDate){
+        endDate.innerText = dayjs(rawDate).format('YYYY년 MM월 DD일 dddd HH:mm');
+    }
+    const startDate = document.getElementById('startDate');
+    const rawDate1 = startDate.innerText.trim();
+    if(rawDate1){
+        startDate.innerText = dayjs(rawDate1).format('YYYY년 MM월 DD일 dddd HH:mm');
+    }
+
+    const endEnroll = document.getElementById('endEnroll');
+    const rawDate2 = endEnroll.innerText.trim();
+    if(rawDate2){
+        endEnroll.innerText = dayjs(rawDate2).format('YYYY년 MM월 DD일 dddd HH:mm');
+    }
+</script>
 </body>
 </html>

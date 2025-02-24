@@ -28,6 +28,4 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @EntityGraph(attributePaths = {"roomAccounts.account"})
     Room findRoomWithStatusByPath(String path);
 
-    @EntityGraph(attributePaths = {"roomAccounts", "roomAccounts.account"})
-    Room findRoomWithMemberById(Long id);
 }

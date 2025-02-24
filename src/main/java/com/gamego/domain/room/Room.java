@@ -68,7 +68,7 @@ public class Room {
 
     private int recruitmentChangeCountToday;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "integer default 0")
     private int memberCount;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -184,11 +184,13 @@ public class Room {
                 .role(RoomRole.MEMBER)
                 .joinedAt(LocalDateTime.now())
                 .build();
+        this.memberCount++;
         this.roomAccounts.add(roomAccount);
     }
 
     public void removeMember(Account account) {
         this.roomAccounts.removeIf(ra -> ra.getAccount().equals(account));
+        this.memberCount--;
     }
 
     public void promoteMember(Account account) {

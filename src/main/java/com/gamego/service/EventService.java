@@ -5,6 +5,7 @@ import com.gamego.domain.event.Event;
 import com.gamego.domain.event.form.EventForm;
 import com.gamego.domain.room.Room;
 import com.gamego.repository.EventRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -41,5 +42,9 @@ public class EventService {
     }
 
 
+    public void updateEvent(String path, Long id, Account account, @Valid EventForm eventForm) {
+        Event event = eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found"));
 
+        modelMapper.map(eventForm, event);
+    }
 }

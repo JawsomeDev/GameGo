@@ -9,27 +9,81 @@
 <div class="container mt-5  text-body-emphasis custom-room">
     <div th:replace="~{fragment.html :: room-info}"></div>
     <div th:replace="~{fragment.html::room-menu (roomMenu = 'events')}"></div>
-    <div class="row px-3 justify-content-center bg-white" style="min-height: 100vh;">
-        <div class="col-md-4 mb-4" th:each="event : ${events}">
-            <div class="card mt-3 h-100">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${event.title}">Event Title</h5>
-
-
-                    <p class="card-text">
-                        시작 시간: <span th:text="${#temporals.format(event.startedAt, 'yyyy-MM-dd HH:mm')}">Start Time</span>
-                    </p>
-                    <p class="card-text" th:utext="${event.description}">Event description</p>
-                </div>
-                <div class="card-footer text-end">
-                    <a th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id}}"
-                       class="btn btn-primary btn-sm">상세보기</a>
+    <div class="row py-3 px-3 justify-content-center bg-white">
+        <div class="col-10 row">
+            <div id="event-list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <div class="col" th:each="event : ${events}">
+                    <div class="card text-white" style="max-width: 18rem; background-color: #1B1F3A">
+                        <div class="card-header">
+                            <span th:text="${event.title}">모임 제목</span>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <i class="fa fa-calendar"></i>
+                                <span  class="calendar start-date" th:text="${event.startedAt}">2025-03-01 10:00</span> 게임 시작
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fa fa-hourglass-end"></i>
+                                <span  class="fromNow end-date" th:text="${event.endEnrolledAt}">2025-02-25 23:59</span> 모집 마감,
+                                <span th:if="${event.limitOfNumbers != 0}">
+                                    <span th:text="${event.limitOfNumbers}">30</span>명 모집 중
+                                    (<span th:text="${event.getNumbersOfRemainingEnrollments()}">10</span> 자리 남음)
+                                </span>
+                            </li>
+                            <li class="list-group-item text-center">
+                                <a th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id}}"
+                                   class="btn d-inline-flex align-items-center justify-content-center text-white"
+                                   style="gap: 0.4rem; border-radius: 9999px; background-color: #1B1F3A">
+                                    <span>자세히 보기</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
+        <nav aria-label="Page navigation example ">
+            <ul class="pagination mt-5 justify-content-center">
+                <!-- 이전 버튼: 첫 페이지면 비활성화 -->
+                <li class="page-item" th:classappend="${events.first} ? 'disabled'">
+                    <a class="page-link" th:href="@{|/room/${room.path}/events?page=${events.number - 1}|}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <!-- 페이지 번호: 0부터 totalPages-1까지의 번호를 생성하고, 현재 페이지에는 active 클래스 추가 -->
+                <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, events.totalPages - 1)}"
+                    th:classappend="${pageNum == events.number} ? 'active'">
+                    <a class="page-link" th:href="@{|/room/${room.path}/events?page=${pageNum}|}"
+                       th:text="${pageNum + 1}">1</a>
+                </li>
+                <!-- 다음 버튼: 마지막 페이지면 비활성화 -->
+                <li class="page-item" th:classappend="${events.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{|/room/${room.path}/events?page=${events.number + 1}|}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 <div th:replace="~{fragment.html::footer}"></div>
 <script th:replace="~{fragment.html :: tooltip}"></script>
+<script src="/node_modules/dayjs/dayjs.min.js"></script>
+<script src="/node_modules/dayjs/locale/ko.js"></script>
+<script>
+    dayjs.locale('ko');
+    document.querySelectorAll('.start-date').forEach(elem => {
+        const rawText = elem.innerText.trim();
+        if(rawText){
+            elem.innerText = dayjs(rawText).format('YYYY년 MM월 DD일 dddd HH:mm');
+        }
+    });
+    document.querySelectorAll('.end-date').forEach(elem => {
+        const rawText = elem.innerText.trim();
+        if(rawText){
+            elem.innerText = dayjs(rawText).format('YYYY년 MM월 DD일 dddd HH:mm');
+        }
+    });
+</script>
 </body>
 </html>

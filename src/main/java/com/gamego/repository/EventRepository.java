@@ -2,6 +2,8 @@ package com.gamego.repository;
 
 import com.gamego.domain.event.Event;
 import com.gamego.domain.room.Room;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +19,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findEnrollById(Long id);
 
     @EntityGraph(attributePaths = {"enrolls"})
-    List<Event> findByRoomOrderByStartedAt(Room room);
-
-    List<Event> findByRoomAndStartedAtAfterOrderByStartedAt(Room room, LocalDateTime startedAtAfter);
+    Page<Event> findByRoomAndStartedAtAfterOrderByStartedAt(Room room, LocalDateTime startedAtAfter, Pageable pageable);
 }
