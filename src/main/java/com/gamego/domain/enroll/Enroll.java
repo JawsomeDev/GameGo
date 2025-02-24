@@ -3,15 +3,12 @@ package com.gamego.domain.enroll;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.event.Event;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity  @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor @Builder
 @Getter @EqualsAndHashCode(of = "id")
 public class Enroll {
 
@@ -29,4 +26,8 @@ public class Enroll {
     private boolean accepted;
 
     private boolean attended;
+
+    public void addEvent(Event event) {
+        this.event = event;
+    }
 }

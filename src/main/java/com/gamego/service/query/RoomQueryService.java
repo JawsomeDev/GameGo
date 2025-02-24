@@ -86,4 +86,10 @@ public class RoomQueryService {
                 .anyMatch(ra -> ra.getAccount().getId().equals(account.getId())
                         && (ra.getRole() == RoomRole.MASTER || ra.getRole()== RoomRole.MANAGER));
     }
+
+    public Room getRoomToEnroll(String path) {
+        Room room = roomRepository.findRoomOnlyByPath(path);
+        checkExistRoom(path, room);
+        return room;
+    }
 }

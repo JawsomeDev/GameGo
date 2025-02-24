@@ -91,8 +91,9 @@ public class Event {
         return this.endEnrolledAt.isAfter(LocalDateTime.now());
     }
 
-
-
+    public boolean isAbleToAcceptWaitingEnroll(){
+        return this.eventType == EventType.FCFS && this.limitOfNumbers > this.getNumbersOfAcceptedEnrollments();
+    }
 
     public Long getNumbersOfAcceptedEnrollments(){
         return this.enrolls.stream().filter(Enroll::isAccepted).count();
@@ -105,5 +106,10 @@ public class Event {
     public boolean isAcceptable(Enroll enroll) {
         return this.eventType == EventType.APPROVAL
                 && !enroll.isAttended() && !enroll.isAccepted();
+    }
+
+    public void addEnroll(Enroll enroll) {
+        this.enrolls.add(enroll);
+        enroll.addEvent(this);
     }
 }

@@ -3,12 +3,14 @@ package com.gamego.service;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.accountenum.TimePreference;
+import com.gamego.domain.event.Event;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.game.form.GameResp;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.room.form.RoomDescriptionForm;
 import com.gamego.domain.roomaccount.RoomAccount;
 import com.gamego.domain.roomaccount.RoomRole;
+import com.gamego.repository.EventRepository;
 import com.gamego.repository.RoomAccountRepository;
 import com.gamego.repository.RoomRepository;
 import com.gamego.service.query.RoomQueryService;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,6 +35,7 @@ public class RoomService {
     private final ModelMapper modelMapper;
     private final GameService gameService;
     private final RoomQueryService roomQueryService;
+    private final EventRepository eventRepository;
 
     public Room createNewRoom(Room room, Account account) {
         Room savedRoom = roomRepository.save(room);
@@ -178,7 +182,8 @@ public class RoomService {
     public void removeRoom(Room room) {
         Room findRoom = roomRepository.findById(room.getId())
                 .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
-
+        List<Event> events = eventRepository.findByRoom(findRoom);
+        eventRepository.deleteAll(events);
         roomRepository.delete(findRoom);
     }
 
