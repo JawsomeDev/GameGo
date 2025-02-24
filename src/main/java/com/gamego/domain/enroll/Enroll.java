@@ -30,4 +30,12 @@ public class Enroll {
     public void addEvent(Event event) {
         this.event = event;
     }
+
+    public void removeEvent(Event event) {
+        this.event = null;
+    }
+
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
+    }
 }

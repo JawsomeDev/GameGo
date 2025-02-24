@@ -15,7 +15,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @EntityGraph(attributePaths = {"enrolls", "createBy"})
+    @EntityGraph(attributePaths = {"enrolls", "enrolls.account", "createBy"})
     Optional<Event> findEnrollById(Long id);
 
     @EntityGraph(attributePaths = {"enrolls"})

@@ -140,11 +140,21 @@ public class EventController {
         return "redirect:/room/" + room.getEncodedPath() + "/events";
     }
 
-    @GetMapping("/events/{id}/enroll")
-    public String newEnrollView(@CurrentAccount Account account, @PathVariable String path, @PathVariable("id") Event event, Model model) {
+    @PostMapping("/events/{id}/enroll")
+    public String newEnrollView(@CurrentAccount Account account, @PathVariable String path, @PathVariable("id") Long eventId) {
         Room room = roomQueryService.getRoomToEnroll(path);
-        eventService.newEnroll(event, account);
-        return "redirect:/room/" + room.getEncodedPath() + "/events/" + event.getId();
+        eventService.newEnroll(eventId, account);
+
+        return "redirect:/room/" + room.getEncodedPath() + "/events/" + eventId;
+    }
+
+    @PostMapping("/events/{id}/disenroll")
+    public String newEnroll(@CurrentAccount Account account, @PathVariable String path,
+                            @PathVariable("id") Long eventId){
+        Room room = roomQueryService.getRoomToEnroll(path);
+        eventService.cancelEnroll(eventId, account);
+
+        return "redirect:/room/" + room.getEncodedPath() + "/events/" + eventId;
     }
 
 

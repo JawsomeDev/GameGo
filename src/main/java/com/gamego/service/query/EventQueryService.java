@@ -2,6 +2,7 @@ package com.gamego.service.query;
 
 
 import com.gamego.domain.account.Account;
+import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.event.Event;
 import com.gamego.domain.event.form.EventForm;
 import com.gamego.domain.event.form.EventUpdateForm;
@@ -51,4 +52,8 @@ public class EventQueryService {
 
         return new EventUpdateForm(room, event, eventForm);
     }
+
+
+
+
 }

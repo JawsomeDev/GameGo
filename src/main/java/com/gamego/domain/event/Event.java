@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
@@ -50,7 +51,7 @@ public class Event {
     @Column(nullable = false)
     private Integer limitOfNumbers;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<Enroll> enrolls = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -103,13 +104,39 @@ public class Event {
         return this.limitOfNumbers - getNumbersOfAcceptedEnrollments();
     }
 
+
     public boolean isAcceptable(Enroll enroll) {
         return this.eventType == EventType.APPROVAL
                 && !enroll.isAttended() && !enroll.isAccepted();
     }
 
+    public boolean isRejectable(Enroll enroll) {
+        return this.eventType== EventType.APPROVAL
+                && !enroll.isAttended() && enroll.isAccepted();
+    }
+
     public void addEnroll(Enroll enroll) {
         this.enrolls.add(enroll);
         enroll.addEvent(this);
+    }
+
+    public void removeEnroll(Enroll enroll) {
+        this.enrolls.remove(enroll);
+        enroll.removeEvent(null);
+    }
+
+    public void acceptNextWaitingEnroll() {
+        if(this.isAbleToAcceptWaitingEnroll()){
+            Enroll enrollToAccept = this.getTheFirstWaitingEnroll();
+            if(enrollToAccept != null){
+                enrollToAccept.setAccepted(true);
+            }
+        }
+    }
+
+    public Enroll getTheFirstWaitingEnroll() {
+        return enrolls.stream()
+                .filter(enroll -> !enroll.isAccepted()).min(Comparator.comparing(Enroll::getEnrolledAt))
+                .orElse(null);
     }
 }

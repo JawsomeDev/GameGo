@@ -98,7 +98,7 @@
                 <dd th:utext="${event.description}"></dd>
                 <dt class="font-weight-light">참가 신청 (<span th:text="${event.enrolls.size()}"></span>)</dt>
                 <dd>
-                    <table class="table table-borderless table-sm" th::if="${event.enrolls.size() > 0}">
+                    <table class="table table-borderless   table-dark table-hover table-sm " th::if="${event.enrolls.size() > 0}">
                         <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -116,13 +116,13 @@
                                 <a th:href="@{'/profile/' + ${enroll.account.nickname}}"
                                    class="text-decoration-none text-black">
                                     <img th:src="${enroll.account != null && !#strings.isEmpty(enroll.account?.profileImage) && enroll.account?.profileImage != ''
-                                    ? enroll.account?.profileImage : '/images/default.png'}" class="img-fluid rounded img-thumbnail profile-image"
+                                    ? enroll.account?.profileImage : '/images/default.png'}" class="img-fluid rounded-circle profile-image"
                                          width="24" height="24" th:alt="${enroll.account != null ? enroll.account.nickname : ''}">
-                                    <span th:text="${enroll.account.nickname}"></span>
+                                    <span th:text="${enroll.account.nickname}" class="text-white"></span>
                                 </a>
                             </td>
                             <td>
-                                <span th:text="${enroll.enrolledAt}"></span>
+                                <span class="end-date" th:text="${enroll.enrolledAt}"></span>
                             </td>
                             <td>
                                 <span th:if="${enroll.accepted}">확정</span>
@@ -139,10 +139,10 @@
                                 </a>
                             </td>
                             <td th:if="${isManagerOrMaster}">
-                                <a th:if="${enroll.accepted && !enroll.attended}" class="text-decoration-none"
+                                <a th:if="${enroll.accepted && !enroll.attended}" class="text-decoration-none text-white"
                                    th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id} + '/enroll/' + ${enroll.id} + '/checkin'}">체크인
                                 </a>
-                                <a th:if="${enroll.accepted && enroll.attended}" class="text-decoration-none"
+                                <a th:if="${enroll.accepted && enroll.attended}" class="text-decoration-none text-white"
                                    th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id} + '/enroll/' + ${enroll.id} + '/checkout'}">체크인 취소
                                 </a>
                             </td>
@@ -238,6 +238,12 @@
     if(rawDate2){
         endEnroll.innerText = dayjs(rawDate2).format('YYYY년 MM월 DD일 dddd HH:mm');
     }
+    document.querySelectorAll('.end-date').forEach(elem => {
+        const rawText = elem.innerText.trim();
+        if(rawText){
+            elem.innerText = dayjs(rawText).format('YYYY년 MM월 DD일 dddd HH:mm');
+        }
+    });
 </script>
 </body>
 </html>

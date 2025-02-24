@@ -1,6 +1,7 @@
 package com.gamego.service;
 
 import com.gamego.domain.account.Account;
+import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.enroll.Enroll;
 import com.gamego.domain.event.Event;
 import com.gamego.domain.event.form.EventForm;
@@ -58,17 +59,27 @@ public class EventService {
         eventRepository.delete(event);
     }
 
-    public void newEnroll(Event event, Account account) {
+    public void newEnroll(Long eventId, Account account) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new IllegalArgumentException("해당 모집이 없습니다."));
         boolean alreadyEnrolled = enrollRepository.existsByEventAndAccount(event, account);
         if (alreadyEnrolled) {
             throw new IllegalStateException("이미 신청된 사용자 입니다.");
         }
-        Enroll enroll = new Enroll().builder()
+        Enroll enroll = Enroll.builder()
                 .enrolledAt(LocalDateTime.now())
                 .accepted(event.isAbleToAcceptWaitingEnroll())
                 .account(account)
                 .build();
         event.addEnroll(enroll);
+    }
 
+    public void cancelEnroll(Long eventId, Account account) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new IllegalArgumentException("해당 모집이 없습니다."));
+        Enroll enroll = enrollRepository.findByEventAndAccount(event, account);
+        if(!enroll.isAttended()) {
+            event.removeEnroll(enroll);
+            enrollRepository.delete(enroll);
+            event.acceptNextWaitingEnroll();
+        }
     }
 }
