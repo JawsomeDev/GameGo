@@ -51,7 +51,7 @@ public class Event {
     @Column(nullable = false)
     private Integer limitOfNumbers;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Enroll> enrolls = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -138,5 +138,17 @@ public class Event {
         return enrolls.stream()
                 .filter(enroll -> !enroll.isAccepted()).min(Comparator.comparing(Enroll::getEnrolledAt))
                 .orElse(null);
+    }
+
+    public void accept(Enroll enroll) {
+        if(this.eventType == EventType.APPROVAL && this.limitOfNumbers > this.getNumbersOfAcceptedEnrollments()){
+            enroll.setAccepted(true);
+        }
+    }
+
+    public void reject(Enroll enroll) {
+        if(this.eventType == EventType.APPROVAL){
+            enroll.setAccepted(false);
+        }
     }
 }

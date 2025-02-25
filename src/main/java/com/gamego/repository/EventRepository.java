@@ -22,4 +22,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findByRoomAndStartedAtAfterOrderByStartedAt(Room room, LocalDateTime startedAtAfter, Pageable pageable);
 
     List<Event> findByRoom(Room room);
+
+    List<Event> findAllByRoomId(Long id);
 }

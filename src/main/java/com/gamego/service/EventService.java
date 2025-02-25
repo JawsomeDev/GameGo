@@ -9,6 +9,7 @@ import com.gamego.domain.room.Room;
 import com.gamego.repository.EnrollRepository;
 import com.gamego.repository.EventRepository;
 import com.gamego.repository.RoomRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -48,7 +49,7 @@ public class EventService {
     }
 
 
-    public void updateEvent(String path, Long id, Account account, @Valid EventForm eventForm) {
+    public void updateEvent(Long id, @Valid EventForm eventForm) {
         Event event = eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found"));
 
         modelMapper.map(eventForm, event);
@@ -81,5 +82,17 @@ public class EventService {
             enrollRepository.delete(enroll);
             event.acceptNextWaitingEnroll();
         }
+    }
+
+    public void acceptEnroll(Long eventId, Long enrollId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new IllegalArgumentException("파티가 없습니다."));
+        Enroll enroll = enrollRepository.findById(enrollId).orElseThrow(() -> new IllegalArgumentException("잘못된 등록입니다."));
+        event.accept(enroll);
+    }
+
+    public void rejectEnroll(Long eventId, Long enrollId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new IllegalArgumentException("파티가 없습니다."));
+        Enroll enroll = enrollRepository.findById(enrollId).orElseThrow(() -> new IllegalArgumentException("잘못된 등록입니다."));
+        event.reject(enroll);
     }
 }

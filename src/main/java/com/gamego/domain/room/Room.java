@@ -193,6 +193,10 @@ public class Room {
         this.memberCount--;
     }
 
+    public void bannedMember(Account account) {
+        this.memberCount--;
+    }
+
     public void promoteMember(Account account) {
         for(RoomAccount ra : this.roomAccounts){
             if(ra.getAccount().equals(account) && ra.getRole().equals(RoomRole.MEMBER)){

@@ -10,8 +10,13 @@
     box-sizing: border-box;
 }
 
+.strong-orange{
+    color: orange;
+}
+
 body{
     background-color: #1B1F3A;
+    padding-top: 56px;
 }
 
 main{
@@ -189,4 +194,12 @@ main h2 span::after{
 
 .note-editable p{
     margin-bottom: 0.5rem !important;
+}
+
+.table-custom{
+    background-color: rgba(68,68,68,0.52);
+}
+
+.badge-custom{
+    background-color: #1B1F3A;
 }

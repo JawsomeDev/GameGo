@@ -98,7 +98,7 @@
                 <dd th:utext="${event.description}"></dd>
                 <dt class="font-weight-light">참가 신청 (<span th:text="${event.enrolls.size()}"></span>)</dt>
                 <dd>
-                    <table class="table table-borderless   table-dark table-hover table-sm " th::if="${event.enrolls.size() > 0}">
+                    <table class="table table-secondary table-borderless table-hover table-sm" th::if="${event.enrolls.size() > 0}" >
                         <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -118,7 +118,7 @@
                                     <img th:src="${enroll.account != null && !#strings.isEmpty(enroll.account?.profileImage) && enroll.account?.profileImage != ''
                                     ? enroll.account?.profileImage : '/images/default.png'}" class="img-fluid rounded-circle profile-image"
                                          width="24" height="24" th:alt="${enroll.account != null ? enroll.account.nickname : ''}">
-                                    <span th:text="${enroll.account.nickname}" class="text-white"></span>
+                                    <span th:text="${enroll.account.nickname}" class="text-black"></span>
                                 </a>
                             </td>
                             <td>
@@ -139,10 +139,10 @@
                                 </a>
                             </td>
                             <td th:if="${isManagerOrMaster}">
-                                <a th:if="${enroll.accepted && !enroll.attended}" class="text-decoration-none text-white"
+                                <a th:if="${enroll.accepted && !enroll.attended}" class="text-decoration-none text-black"
                                    th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id} + '/enroll/' + ${enroll.id} + '/checkin'}">체크인
                                 </a>
-                                <a th:if="${enroll.accepted && enroll.attended}" class="text-decoration-none text-white"
+                                <a th:if="${enroll.accepted && enroll.attended}" class="text-decoration-none text-black"
                                    th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id} + '/enroll/' + ${enroll.id} + '/checkout'}">체크인 취소
                                 </a>
                             </td>
@@ -181,7 +181,7 @@
                 </dd>
                 <dt th:if="${isManagerOrMaster}" class="font-weight-light">파티 관리</dt>
                 <dd th:if="${isManagerOrMaster}">
-                    <a class="btn btn-outline-primary btn-sm my-1"
+                    <a class="btn btn-outline-primary icon-blue btn-sm my-1"
                        th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id} + '/edit'}">
                         수정
                     </a><br>

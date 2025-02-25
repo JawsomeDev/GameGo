@@ -111,4 +111,13 @@ public class RoomController {
         attributes.addFlashAttribute("message", "게스트로 강등이 완료되었습니다.");
         return "redirect:/room/" + room.getEncodedPath() + "/members";
     }
+
+    @PostMapping("/room/{path}/banned")
+    public String banMember(@CurrentAccount Account account, @PathVariable String path,
+                            @RequestParam("targetAccountId") Long targetAccountId,
+                            RedirectAttributes attributes) {
+        Room room = roomService.banMember(path, targetAccountId, account);
+        attributes.addFlashAttribute("message", "추방하였습니다.");
+        return "redirect:/room/" + room.getEncodedPath() + "/members";
+    }
 }

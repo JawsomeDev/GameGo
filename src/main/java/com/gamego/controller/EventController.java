@@ -50,7 +50,7 @@ public class EventController {
     @GetMapping("/new-event")
     public String newEventView(@CurrentAccount Account account, @PathVariable String path, Model model) {
 
-        Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
+        Room room = roomQueryService.getRoomToMakePartyByStatus(path, account);
         model.addAttribute("room", room);
         model.addAttribute(account);
         checkAuth(account, model, room);
@@ -61,7 +61,7 @@ public class EventController {
     @PostMapping("/new-event")
     public String newEvent(@CurrentAccount Account account, @PathVariable String path,
                            @Valid EventForm eventForm, BindingResult bindingResult, Model model) {
-        Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
+        Room room = roomQueryService.getRoomToMakePartyByStatus(path, account);
         if(bindingResult.hasErrors()) {
             model.addAttribute(account);
             model.addAttribute(room);
@@ -125,7 +125,7 @@ public class EventController {
             model.addAttribute("event", form.getEvent());
             return "event/edit-form";
         }
-        eventService.updateEvent(path, id, account, eventForm);
+        eventService.updateEvent(id, eventForm);
 
         Room room = roomQueryService.getRoom(path);
 
@@ -154,6 +154,22 @@ public class EventController {
         Room room = roomQueryService.getRoomToEnroll(path);
         eventService.cancelEnroll(eventId, account);
 
+        return "redirect:/room/" + room.getEncodedPath() + "/events/" + eventId;
+    }
+
+    @GetMapping("/events/{id}/enroll/{enrollId}/accept")
+    public String acceptEnroll(@CurrentAccount Account account, @PathVariable String path,
+                               @PathVariable("id") Long eventId, @PathVariable("enrollId") Long enrollId) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        eventService.acceptEnroll(eventId, enrollId);
+        return "redirect:/room/" + room.getEncodedPath() + "/events/" + eventId;
+    }
+
+    @GetMapping("/events/{id}/enroll/{enrollId}/reject")
+    public String rejectEnroll(@CurrentAccount Account account, @PathVariable String path,
+                               @PathVariable("id") Long eventId, @PathVariable("enrollId") Long enrollId) {
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        eventService.rejectEnroll(eventId, enrollId);
         return "redirect:/room/" + room.getEncodedPath() + "/events/" + eventId;
     }
 

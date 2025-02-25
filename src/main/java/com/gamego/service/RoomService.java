@@ -8,8 +8,11 @@ import com.gamego.domain.game.Game;
 import com.gamego.domain.game.form.GameResp;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.room.form.RoomDescriptionForm;
+import com.gamego.domain.roomaccount.BanHistory;
 import com.gamego.domain.roomaccount.RoomAccount;
 import com.gamego.domain.roomaccount.RoomRole;
+import com.gamego.exception.BannedMemberJoinException;
+import com.gamego.repository.BanHistoryRepository;
 import com.gamego.repository.EventRepository;
 import com.gamego.repository.RoomAccountRepository;
 import com.gamego.repository.RoomRepository;
@@ -17,6 +20,7 @@ import com.gamego.service.query.RoomQueryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +40,7 @@ public class RoomService {
     private final GameService gameService;
     private final RoomQueryService roomQueryService;
     private final EventRepository eventRepository;
+    private final BanHistoryRepository banHistoryRepository;
 
     public Room createNewRoom(Room room, Account account) {
         Room savedRoom = roomRepository.save(room);
@@ -189,6 +194,10 @@ public class RoomService {
 
     public Room addMember(String path, Account account) {
         Room findRoom = roomRepository.findRoomWithMemberByPath(path);
+        boolean isBanned = banHistoryRepository.existsByRoomIdAndAccountId(findRoom.getId(), account.getId());
+        if(isBanned){
+            throw new BannedMemberJoinException("추방된 회원은 재가입할 수 없습니다.");
+        }
         findRoom.addMember(account);
         return findRoom;
     }
@@ -202,7 +211,7 @@ public class RoomService {
     public Room promoteMember(String path, Long targetAccountId, Account account) {
         Room room = roomRepository.findRoomWithMemberByPath(path);
         if(!roomQueryService.isMaster(account, room)){
-            throw new IllegalStateException("권한이 없습니다.");
+            throw new AccessDeniedException("권한이 없습니다.");
         }
         RoomAccount targetRoomAccount = room.getRoomAccounts().stream()
                 .filter(ra -> ra.getAccount().getId().equals(targetAccountId) && ra.getRole() == RoomRole.MEMBER)
@@ -214,12 +223,43 @@ public class RoomService {
     public Room demoteMember(String path, Long targetAccountId, Account account) {
         Room room = roomRepository.findRoomWithMemberByPath(path);
         if(!roomQueryService.isMaster(account, room)){
-            throw new IllegalStateException("권한이 없습니다.");
+            throw new AccessDeniedException("권한이 없습니다.");
         }
         RoomAccount targetRoomAccount = room.getRoomAccounts().stream()
                 .filter(ra -> ra.getAccount().getId().equals(targetAccountId) && ra.getRole() == RoomRole.MANAGER)
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("대상 회원을 찾을 수 없습니다."));
         targetRoomAccount.demoteMember();
+        return room;
+    }
+
+    public Room banMember(String path, Long targetAccountId, Account account) {
+        Room room = roomRepository.findRoomWithMemberByPath(path);
+        if(!roomQueryService.isMaster(account, room)){
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
+
+        RoomAccount targetRoomAccount = room.getRoomAccounts().stream()
+                .filter(ra -> ra.getAccount().getId().equals(targetAccountId))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("대상 회원을 찾을 수 없습니다."));
+
+
+
+        room.getRoomAccounts().remove(targetRoomAccount);
+        room.bannedMember(account);
+        roomAccountRepository.delete(targetRoomAccount);
+
+        List<Event> events = eventRepository.findAllByRoomId(room.getId());
+        for (Event event : events) {
+            event.getEnrolls().removeIf(enroll -> enroll.getAccount().getId().equals(targetAccountId));
+            eventRepository.save(event);
+        }
+        BanHistory banHistory = BanHistory.builder()
+                .roomId(room.getId())
+                .accountId(targetAccountId)
+                .bannedAt(LocalDateTime.now())
+                .build();
+        banHistoryRepository.save(banHistory);
         return room;
     }
 }

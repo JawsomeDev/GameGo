@@ -30,7 +30,6 @@ public class RoomAccount {
 
     private String nickname;
 
-
     @Enumerated(EnumType.STRING)
     private RoomRole role; // 방장, 매니저, 일반
 
@@ -72,6 +71,5 @@ public class RoomAccount {
             this.role = RoomRole.MEMBER;
         }
     }
-
 }
 

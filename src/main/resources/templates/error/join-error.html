@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html :: head}"></head>
+<body>
+<div th:replace="~{fragment.html :: main-nav}"></div>
+<div class="container mt-5">
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">가입 오류</h4>
+        <p th:text="${errorMessage}">추방된 회원은 재가입할 수 없습니다.</p>
+    </div>
+    <a class="btn btn-outline-primary" th:href="@{/}">홈으로 돌아가기</a>
+</div>
+</body>
+</html>
