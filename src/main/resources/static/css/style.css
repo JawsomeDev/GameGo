@@ -203,3 +203,24 @@ main h2 span::after{
 .badge-custom{
     background-color: #1B1F3A;
 }
+
+.star-rating {
+    position: relative;
+    display: inline-block;
+    font-size: 1.5rem; /* 별 크기 조절 */
+    line-height: 1;
+}
+
+.star-rating-top {
+    color: #ffc107; /* 채워진 별 색상 */
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.star-rating-bottom {
+    color: #ddd; /* 빈 별 색상 */
+}

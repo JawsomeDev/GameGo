@@ -118,6 +118,9 @@
         <a class="nav-item nav-link icon-blue" th:classappend="${roomMenu == 'events'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/events'}">
             <i class="fa fa-calendar icon-blue"></i> 모집
         </a>
+        <a class="nav-item nav-link icon-blue" th:classappend="${roomMenu == 'reviews'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/reviews'}">
+            <i class="fa fa-star-half-stroke icon-blue"></i> 리뷰
+        </a>
         <a sec:authorize="isAuthenticated()"  th:if="${isMaster}"
            class="nav-item nav-link icon-blue" th:classappend="${roomMenu == 'settings'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/settings/description'}">
             <i class="fa fa-cog icon-blue"></i> 설정

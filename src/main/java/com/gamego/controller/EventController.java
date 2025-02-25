@@ -174,6 +174,8 @@ public class EventController {
     }
 
 
+
+
     private void checkAuth(Account account, Model model, Room room) {
         boolean isMaster = roomQueryService.isMaster(account, room);
         model.addAttribute("isMaster", isMaster);

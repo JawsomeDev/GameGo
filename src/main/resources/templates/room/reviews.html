@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html::head}"></head>
+<body>
+<nav th:replace="~{fragment.html :: main-nav}"></nav>
+
+<div class="container mt-5 text-body-emphasis custom-room">
+    <!-- 상단: Room 정보 및 메뉴 -->
+    <div th:replace="~{fragment.html :: room-info}"></div>
+    <div th:replace="~{fragment.html :: room-menu (roomMenu = 'reviews')}"></div>
+
+    <div class="row px-3 justify-content-center bg-white">
+        <div class="col-10 mt-4">
+
+            <div th:if="${message}" class="alert alert-primary alert-dismissible fade show mt-3" role="alert">
+                <span th:text="${message}">완료</span>
+                <button type="button" class="btn-close position-absolute top-50 end-0 translate-middle-y me-2" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <h4>리뷰</h4>
+                <div class="star-rating">
+                    <div class="star-rating-top" th:style="'width:' + (${averageRating} / 5 * 100) + '%'">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="star-rating-bottom">
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                </div>
+                    <strong th:if="${averageRating != null}"
+                            th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">0</strong>/5
+                    <span th:if="${averageRating == null}">아직 리뷰가 없습니다.</span>
+
+            </div>
+
+            <!-- 리뷰 작성 폼 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>리뷰 작성하기</strong>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{'/room/' + ${room.path} + '/reviews'}" method="post">
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">별점 (1~5)</label>
+                            <select id="rating" name="rating" class="form-select" required>
+                                <option value="">-- 선택 --</option>
+                                <option value="1">1점</option>
+                                <option value="2">2점</option>
+                                <option value="3">3점</option>
+                                <option value="4">4점</option>
+                                <option value="5">5점</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="content" class="form-label">리뷰 내용</label>
+                            <textarea id="content" name="content" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary icon-blue">등록</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 리뷰 목록 -->
+            <div th:if="${reviews != null and !reviews.isEmpty()}">
+                <div th:each="review : ${reviews}">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <!-- 리뷰 작성자 닉네임 -->
+                            <h5 class="card-title" th:text="${review.account.nickname}">작성자</h5>
+                            <!-- 별점 표시 -->
+                            <p class="card-subtitle mb-2 text-muted" th:if="${review.rating != null}">
+                                별점:
+                                <span th:text="${review.rating}">3</span>/5
+                            </p>
+                            <!-- 리뷰 내용 -->
+                            <p class="card-text" th:text="${review.content}">리뷰 내용</p>
+                            <!-- 작성일 -->
+                            <p class="card-text">
+                                <small class="text-muted"
+                                       th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">
+                                    2025-02-25 17:00
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${reviews == null || reviews.isEmpty() == 0}">
+                <p>아직 작성된 리뷰가 없습니다.</p>
+            </div>
+        </div>
+    <nav aria-label="Page navigation example bg-white">
+        <ul class="pagination my-5 justify-content-center">
+            <!-- 이전 버튼: 첫 페이지면 비활성화 -->
+            <li class="page-item" th:classappend="${reviews.first} ? 'disabled'">
+                <a class="page-link" th:href="@{|/room/${room.path}/reviews?page=${reviews.number - 1}|}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <!-- 페이지 번호: 0부터 totalPages-1까지의 번호를 생성하고, 현재 페이지에는 active 클래스 추가 -->
+            <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, reviews.totalPages - 1)}"
+                th:classappend="${pageNum == reviews.number} ? 'active'">
+                <a class="page-link" th:href="@{|/room/${room.path}/reviews?page=${pageNum}|}"
+                   th:text="${pageNum + 1}">1</a>
+            </li>
+            <!-- 다음 버튼: 마지막 페이지면 비활성화 -->
+            <li class="page-item" th:classappend="${reviews.last} ? 'disabled'">
+                <a class="page-link" th:href="@{|/room/${room.path}/reviews?page=${reviews.number + 1}|}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    </div>
+
+</div>
+
+<div th:replace="~{fragment.html::footer}"></div>
+<script th:replace="~{fragment.html :: tooltip}"></script>
+</body>
+</html>
