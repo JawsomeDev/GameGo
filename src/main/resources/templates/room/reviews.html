@@ -93,7 +93,10 @@
 
                             <!-- (A) 읽기 전용 모드 -->
                             <div th:if="${editReviewId} != ${review.id}">
-                                <h5 th:text="${review.account.nickname}">작성자</h5>
+                                <div class="d-flex align-items-center">
+                                    <img th:src="${review.account.profileImage} ?: '/images/default.png'" alt="Profile Picture" class="rounded-circle me-2" style="width:36px; height:36px;">
+                                    <h5 th:text="${review.account.nickname}">작성자</h5>
+                                </div>
                                 <p th:text="'별점: ' + ${review.rating} + '/5'">별점:3/5</p>
                                 <p th:text="${review.content}">리뷰 내용</p>
                                 <small th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">2025-02-25 17:00</small>
