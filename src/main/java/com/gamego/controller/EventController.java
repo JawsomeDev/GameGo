@@ -173,6 +173,21 @@ public class EventController {
         return "redirect:/room/" + room.getEncodedPath() + "/events/" + eventId;
     }
 
+    @GetMapping("/events/{id}/enroll/{enrollId}/checkin")
+    public String checkInEnroll(@CurrentAccount Account account, @PathVariable String path,
+                                @PathVariable("id") Long eventId, @PathVariable("enrollId") Long enrollId){
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        eventService.checkInEnroll(enrollId);
+        return "redirect:/room/" + room.getEncodedPath() + "/events/" + eventId;
+    }
+
+    @GetMapping("/events/{id}/enroll/{enrollId}/checkout")
+    public String checkOutEnroll(@CurrentAccount Account account, @PathVariable String path,
+                                 @PathVariable("id") Long eventId, @PathVariable("enrollId") Long enrollId){
+        Room room = roomQueryService.getRoomToUpdate(path, account);
+        eventService.cancelCheckInEnroll(enrollId);
+        return "redirect:/room/" + room.getEncodedPath() + "/events/" + eventId;
+    }
 
 
 

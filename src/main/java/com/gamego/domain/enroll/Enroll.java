@@ -38,4 +38,12 @@ public class Enroll {
     public void setAccepted(boolean accepted) {
         this.accepted = accepted;
     }
+
+    public void checkIn(Enroll enroll) {
+        this.attended = true;
+    }
+
+    public void cancelCheckIn(Enroll enroll) {
+        this.attended = false;
+    }
 }

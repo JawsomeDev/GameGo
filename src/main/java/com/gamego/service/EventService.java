@@ -95,4 +95,14 @@ public class EventService {
         Enroll enroll = enrollRepository.findById(enrollId).orElseThrow(() -> new IllegalArgumentException("잘못된 등록입니다."));
         event.reject(enroll);
     }
+
+    public void checkInEnroll(Long enrollId) {
+        Enroll enroll = enrollRepository.findById(enrollId).orElseThrow(() -> new IllegalArgumentException("잘못된 등록입니다."));
+        enroll.checkIn(enroll);
+    }
+
+    public void cancelCheckInEnroll(Long enrollId) {
+        Enroll enroll = enrollRepository.findById(enrollId).orElseThrow(() -> new IllegalArgumentException("잘못된 등록입니다."));
+        enroll.cancelCheckIn(enroll);
+    }
 }
