@@ -25,7 +25,7 @@ public class ReviewService {
     private final ModelMapper modelMapper;
 
 
-    public void addReview(String path, Account account, @Valid ReviewForm reviewForm) {
+    public void addReview(String path, Account account, ReviewForm reviewForm) {
         Room room = roomRepository.findByPath(path);
         if (room == null) {
             throw new IllegalArgumentException("방이 존재하지 않습니다.");
@@ -40,5 +40,16 @@ public class ReviewService {
                 .build();
 
         reviewRepository.save(review);
+    }
+
+    public void updateReview(Room room, Account account, ReviewForm reviewForm) {
+        Review review = reviewRepository.findByRoomAndAccount(room, account).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+        review.changeRating(reviewForm.getRating());
+        review.changeContent(reviewForm.getContent());
+    }
+
+    public void deleteReview(Room room, Account account) {
+        Review review = reviewRepository.findByRoomAndAccount(room, account).orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+        reviewRepository.delete(review);
     }
 }

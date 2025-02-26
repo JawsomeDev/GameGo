@@ -7,7 +7,7 @@
 <nav th:replace="~{fragment.html :: main-nav}"></nav>
 
 <div class="container mt-5 text-body-emphasis custom-room">
-    <!-- 상단: Room 정보 및 메뉴 -->
+
     <div th:replace="~{fragment.html :: room-info}"></div>
     <div th:replace="~{fragment.html :: room-menu (roomMenu = 'reviews')}"></div>
 
@@ -23,38 +23,40 @@
 
             <div class="mb-4">
                 <h4>리뷰</h4>
-                <div class="star-rating">
-                    <div class="star-rating-top" th:style="'width:' + (${averageRating} / 5 * 100) + '%'">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                <div th:if="${averageRating != null}">
+                    <div class="star-rating">
+                        <div class="star-rating-top" th:style="'width:' + (${averageRating} / 5 * 100) + '%'">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="star-rating-bottom">
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
                     </div>
-                    <div class="star-rating-bottom">
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                    </div>
+                    <strong th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">0</strong>/5
                 </div>
-                    <strong th:if="${averageRating != null}"
-                            th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">0</strong>/5
-                    <span th:if="${averageRating == null}">아직 리뷰가 없습니다.</span>
-
+                <div th:if="${averageRating == null}">
+                    <span>아직 리뷰가 없습니다.</span>
+                </div>
             </div>
 
             <!-- 리뷰 작성 폼 -->
-            <div class="card mb-4">
-                <div class="card-header">
+            <div class="card mb-4" th:if="${!hasReview}">
+                <div class="card-header" >
                     <strong>리뷰 작성하기</strong>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{'/room/' + ${room.path} + '/reviews'}" method="post">
+                    <form class="needs-validation" th:object="${reviewForm}" th:action="@{'/room/' + ${room.path} + '/reviews'}" method="post" novalidate>
                         <div class="mb-3">
                             <label for="rating" class="form-label">별점 (1~5)</label>
-                            <select id="rating" name="rating" class="form-select" required>
+                            <select id="rating" th:field="*{rating}" class="form-select" >
                                 <option value="">-- 선택 --</option>
                                 <option value="1">1점</option>
                                 <option value="2">2점</option>
@@ -62,37 +64,92 @@
                                 <option value="4">4점</option>
                                 <option value="5">5점</option>
                             </select>
+                            <small class="text-danger form-text" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}">리뷰 내용은 100자를 넘을 수 없습니다.</small>
+                            <small class="invalid-feedback">리뷰 내용을 100자 이내로 간단히 입력해주세요.</small>
                         </div>
                         <div class="mb-3">
                             <label for="content" class="form-label">리뷰 내용</label>
-                            <textarea id="content" name="content" class="form-control" rows="3" required></textarea>
+                            <textarea id="content"  th:field="*{content}" class="form-control" rows="3"></textarea>
+                            <small class="text-danger form-text" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">리뷰 내용은 100자를 넘을 수 없습니다.</small>
+                            <small class="invalid-feedback">리뷰 내용을 100자 이내로 간단히 입력해주세요.</small>
                         </div>
                         <button type="submit" class="btn btn-outline-primary icon-blue">등록</button>
                     </form>
                 </div>
             </div>
 
+            <div class="alert alert-info" th:if="${hasReview}">
+                이미 리뷰를 작성하셨습니다.
+            </div>
+
             <!-- 리뷰 목록 -->
             <div th:if="${reviews != null and !reviews.isEmpty()}">
+                <!-- 리뷰 목록 루프 -->
                 <div th:each="review : ${reviews}">
                     <div class="card mb-3">
                         <div class="card-body">
-                            <!-- 리뷰 작성자 닉네임 -->
-                            <h5 class="card-title" th:text="${review.account.nickname}">작성자</h5>
-                            <!-- 별점 표시 -->
-                            <p class="card-subtitle mb-2 text-muted" th:if="${review.rating != null}">
-                                별점:
-                                <span th:text="${review.rating}">3</span>/5
-                            </p>
-                            <!-- 리뷰 내용 -->
-                            <p class="card-text" th:text="${review.content}">리뷰 내용</p>
-                            <!-- 작성일 -->
-                            <p class="card-text">
-                                <small class="text-muted"
-                                       th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">
-                                    2025-02-25 17:00
-                                </small>
-                            </p>
+
+                            <!-- (A) '읽기 전용' 부분 vs (B) '수정 폼' 부분을 조건 분기 -->
+
+                            <!-- (A) 읽기 전용 모드 -->
+                            <div th:if="${editReviewId} != ${review.id}">
+                                <h5 th:text="${review.account.nickname}">작성자</h5>
+                                <p th:text="'별점: ' + ${review.rating} + '/5'">별점:3/5</p>
+                                <p th:text="${review.content}">리뷰 내용</p>
+                                <small th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">2025-02-25 17:00</small>
+
+                                <!-- 수정/삭제 버튼 (본인 리뷰일 때만) -->
+                                <div th:if="${review.account.id} == ${account.id}">
+                                    <!-- 수정 -->
+                                    <a class="btn btn-outline-primary btn-sm"
+                                       th:href="@{|/room/${room.path}/reviews?editReviewId=${review.id}|}">
+                                        수정
+                                    </a>
+                                    <!-- 삭제 -->
+                                    <form th:action="@{|/room/${room.path}/reviews/delete|}" method="post" style="display:inline">
+                                        <input type="hidden" name="reviewId" th:value="${review.id}"/>
+                                        <button class="btn btn-outline-danger btn-sm">삭제</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- (B) 수정 모드 -->
+                            <div th:if="${editReviewId} == ${review.id}">
+                                <form class="needs-validation" th:object="${reviewForm}" th:action="@{|/room/${room.path}/reviews/edit|}" method="post" novalidate>
+
+                                    <input type="hidden" name="reviewId" th:value="${review.id}"/>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">별점 (1~5)</label>
+                                        <select th:field="*{rating}" class="form-select">
+                                            <option value="1" >1점</option>
+                                            <option value="2" >2점</option>
+                                            <option value="3" >3점</option>
+                                            <option value="4" >4점</option>
+                                            <option value="5" >5점</option>
+                                        </select>
+                                        <small class="text-danger form-text" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}">리뷰 내용은 100자를 넘을 수 없습니다.</small>
+                                        <small class="invalid-feedback">리뷰 내용을 100자 이내로 간단히 입력해주세요.</small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">리뷰 내용</label>
+                                        <textarea name="content" class="form-control" rows="3"
+                                                  th:field="*{content}">기존내용</textarea>
+                                        <small class="text-danger form-text" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">리뷰 내용은 100자를 넘을 수 없습니다.</small>
+                                        <small class="invalid-feedback">리뷰 내용을 100자 이내로 간단히 입력해주세요.</small>
+                                    </div>
+
+                                    <!-- 수정/취소 버튼 -->
+                                    <button class="btn btn-primary btn-sm">수정 완료</button>
+                                    <!-- 취소 → editReviewId 없이 목록 재표시 -->
+                                    <a class="btn btn-secondary btn-sm"
+                                       th:href="@{|/room/${room.path}/reviews|}">
+                                        취소
+                                    </a>
+                                </form>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -128,6 +185,7 @@
 </div>
 
 <div th:replace="~{fragment.html::footer}"></div>
+<script th:replace="~{fragment.html :: validators}"></script>
 <script th:replace="~{fragment.html :: tooltip}"></script>
 </body>
 </html>

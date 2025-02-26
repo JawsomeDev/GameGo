@@ -76,14 +76,7 @@ public class RoomController {
         return "room/view";
     }
 
-    private void checkAuth(Account account, Model model, Room room) {
-        boolean isMaster = roomQueryService.isMaster(account, room);
-        model.addAttribute("isMaster", isMaster);
-        boolean isManagerOrMaster = roomQueryService.isManagerOrMaster(account, room);
-        model.addAttribute("isManagerOrMaster", isManagerOrMaster);
-        boolean isMemberOrManager = roomQueryService.isMemberOrManager(account, room);
-        model.addAttribute("isMemberOrManager", isMemberOrManager);
-    }
+
 
     @GetMapping("/room/{path}/members")
     public String viewRoomMembers(@CurrentAccount Account account, @PathVariable String path, Model model) {
@@ -132,32 +125,13 @@ public class RoomController {
         attributes.addFlashAttribute("message", "추방하였습니다.");
         return "redirect:/room/" + room.getEncodedPath() + "/members";
     }
-
-    @GetMapping("/room/{path}/reviews")
-    public String reviewRoom(@CurrentAccount Account account, @PathVariable String path,
-                             @PageableDefault(size=12, sort = "createdAt") Pageable pageable, Model model) {
-        Room room = roomQueryService.getRoom(path);
-        Page<Review> reviews = reviewQueryService.getReviews(room.getId(), pageable);
-        Double averageRating = reviewQueryService.calculateAverageRating(reviews);
-        model.addAttribute(account);
-        model.addAttribute(room);
-        model.addAttribute("reviews", reviews);
-        model.addAttribute("averageRating", averageRating);
-        checkAuth(account, model, room);
-        return "room/reviews";
+    private void checkAuth(Account account, Model model, Room room) {
+        boolean isMaster = roomQueryService.isMaster(account, room);
+        model.addAttribute("isMaster", isMaster);
+        boolean isManagerOrMaster = roomQueryService.isManagerOrMaster(account, room);
+        model.addAttribute("isManagerOrMaster", isManagerOrMaster);
+        boolean isMemberOrManager = roomQueryService.isMemberOrManager(account, room);
+        model.addAttribute("isMemberOrManager", isMemberOrManager);
     }
 
-    @PostMapping("/room/{path}/reviews")
-    public String postReview(@CurrentAccount Account account, @PathVariable String path,
-                             @Valid ReviewForm reviewForm, BindingResult bindingResult, Model model,
-                             RedirectAttributes attributes) {
-        Room room = roomQueryService.getRoom(path);
-        if(bindingResult.hasErrors()){
-            model.addAttribute(account);
-            return "room/reviews";
-        }
-        reviewService.addReview(path, account, reviewForm);
-        attributes.addFlashAttribute("message", "리뷰가 등록되었습니다.");
-        return "redirect:/room/" + room.getEncodedPath() + "/reviews";
-    }
 }
