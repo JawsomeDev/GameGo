@@ -7,6 +7,7 @@ import com.gamego.domain.event.Event;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.game.form.GameResp;
 import com.gamego.domain.room.Room;
+import com.gamego.domain.room.event.RoomCreatedEvent;
 import com.gamego.domain.room.form.RoomDescriptionForm;
 import com.gamego.domain.roomaccount.BanHistory;
 import com.gamego.domain.roomaccount.RoomAccount;
@@ -20,6 +21,7 @@ import com.gamego.service.query.RoomQueryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,16 +39,16 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final RoomAccountRepository roomAccountRepository;
     private final ModelMapper modelMapper;
-    private final GameService gameService;
     private final RoomQueryService roomQueryService;
     private final EventRepository eventRepository;
     private final BanHistoryRepository banHistoryRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Room createNewRoom(Room room, Account account) {
         Room savedRoom = roomRepository.save(room);
         RoomAccount roomAccount = new RoomAccount(savedRoom, account.getNickname(), account, RoomRole.MASTER, LocalDateTime.now());
         roomAccountRepository.save(roomAccount);
-
+        eventPublisher.publishEvent(new RoomCreatedEvent(savedRoom));
         return savedRoom;
     }
 

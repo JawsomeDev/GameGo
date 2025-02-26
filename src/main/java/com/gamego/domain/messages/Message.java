@@ -30,4 +30,10 @@ public class Message {
 
     @Enumerated(EnumType.STRING)
     private MessageType messageType;
+
+
+
+    public void changeChecked(boolean checked) {
+        this.checked = checked;
+    }
 }
