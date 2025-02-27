@@ -6,7 +6,7 @@ import com.gamego.domain.account.Account;
 import com.gamego.domain.account.accountenum.TimePreference;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.game.form.GameListResp;
-import com.gamego.repository.AccountRepository;
+import com.gamego.repository.account.AccountRepository;
 import com.gamego.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

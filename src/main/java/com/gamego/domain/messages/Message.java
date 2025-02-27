@@ -5,10 +5,11 @@ import com.gamego.domain.account.Account;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity @Setter
 @Getter @EqualsAndHashCode(of = "id")
 public class Message {
 

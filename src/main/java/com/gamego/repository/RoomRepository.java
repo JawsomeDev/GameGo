@@ -30,4 +30,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     @EntityGraph(attributePaths = {"path"})
     Room findRoomOnlyByPath(String path);
+
+    @EntityGraph(attributePaths = {"games"})
+    Room findRoomWithGamesAndTimePreferenceById(Long id);
 }

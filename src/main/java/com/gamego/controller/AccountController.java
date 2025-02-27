@@ -5,7 +5,7 @@ import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
 import com.gamego.domain.account.form.AccountForm;
 import com.gamego.domain.account.form.PasswordForm;
-import com.gamego.repository.AccountRepository;
+import com.gamego.repository.account.AccountRepository;
 import com.gamego.service.query.AccountQueryService;
 import com.gamego.service.AccountService;
 import com.gamego.validator.AccountValidator;

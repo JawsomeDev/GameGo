@@ -11,7 +11,7 @@ import com.gamego.domain.account.accountenum.TimePreference;
 import com.gamego.domain.game.form.GameResp;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
-import com.gamego.repository.AccountRepository;
+import com.gamego.repository.account.AccountRepository;
 import com.gamego.repository.GameRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -48,7 +48,7 @@ public class RoomService {
         Room savedRoom = roomRepository.save(room);
         RoomAccount roomAccount = new RoomAccount(savedRoom, account.getNickname(), account, RoomRole.MASTER, LocalDateTime.now());
         roomAccountRepository.save(roomAccount);
-        eventPublisher.publishEvent(new RoomCreatedEvent(savedRoom));
+
         return savedRoom;
     }
 
@@ -135,6 +135,7 @@ public class RoomService {
         Room findRoom = roomRepository.findById(room.getId())
                 .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
         findRoom.active();
+        eventPublisher.publishEvent(new RoomCreatedEvent(findRoom));
     }
 
     public void close(Room room) {

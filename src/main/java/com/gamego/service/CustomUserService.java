@@ -2,9 +2,8 @@ package com.gamego.service;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.AccountUserDetails;
-import com.gamego.repository.AccountRepository;
+import com.gamego.repository.account.AccountRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

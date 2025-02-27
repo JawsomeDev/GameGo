@@ -1,17 +1,15 @@
-package com.gamego.repository;
+package com.gamego.repository.account;
 
 import com.gamego.domain.account.Account;
-import com.gamego.domain.account.accountenum.TimePreference;
-import jakarta.persistence.Entity;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
-public interface AccountRepository extends JpaRepository<Account, Long> {
+public interface AccountRepository extends JpaRepository<Account, Long>, AccountRepositoryCustom {
 
 
     boolean existsByEmail(String email);
