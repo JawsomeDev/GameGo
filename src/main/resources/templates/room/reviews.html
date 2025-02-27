@@ -47,7 +47,6 @@
                 </div>
             </div>
 
-            <!-- 리뷰 작성 폼 -->
             <div class="card mb-4" th:if="${!hasReview}">
                 <div class="card-header" >
                     <strong>리뷰 작성하기</strong>
@@ -89,26 +88,27 @@
                     <div class="card mb-3">
                         <div class="card-body">
 
-                            <!-- (A) '읽기 전용' 부분 vs (B) '수정 폼' 부분을 조건 분기 -->
 
-                            <!-- (A) 읽기 전용 모드 -->
                             <div th:if="${editReviewId} != ${review.id}">
                                 <div class="d-flex align-items-center">
                                     <img th:src="${review.account.profileImage} ?: '/images/default.png'" alt="Profile Picture" class="rounded-circle me-2" style="width:36px; height:36px;">
-                                    <h5 th:text="${review.account.nickname}">작성자</h5>
+                                    <h5>
+                                        <a th:href="@{'/profile/' + ${review.account.nickname}}" style="color: black; text-decoration: none" >
+                                            <span th:text="${review.account.nickname}" style="color: black">아아</span>
+                                        </a></h5>
                                 </div>
                                 <p th:text="'별점: ' + ${review.rating} + '/5'">별점:3/5</p>
                                 <p th:text="${review.content}">리뷰 내용</p>
                                 <small th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">2025-02-25 17:00</small>
 
-                                <!-- 수정/삭제 버튼 (본인 리뷰일 때만) -->
+
                                 <div th:if="${review.account.id} == ${account.id}">
-                                    <!-- 수정 -->
+
                                     <a class="btn btn-outline-primary btn-sm"
                                        th:href="@{|/room/${room.path}/reviews?editReviewId=${review.id}|}">
                                         수정
                                     </a>
-                                    <!-- 삭제 -->
+
                                     <form th:action="@{|/room/${room.path}/reviews/delete|}" method="post" style="display:inline">
                                         <input type="hidden" name="reviewId" th:value="${review.id}"/>
                                         <button class="btn btn-outline-danger btn-sm">삭제</button>
@@ -116,7 +116,7 @@
                                 </div>
                             </div>
 
-                            <!-- (B) 수정 모드 -->
+
                             <div th:if="${editReviewId} == ${review.id}">
                                 <form class="needs-validation" th:object="${reviewForm}" th:action="@{|/room/${room.path}/reviews/edit|}" method="post" novalidate>
 
@@ -143,9 +143,8 @@
                                         <small class="invalid-feedback">리뷰 내용을 100자 이내로 간단히 입력해주세요.</small>
                                     </div>
 
-                                    <!-- 수정/취소 버튼 -->
                                     <button class="btn btn-primary btn-sm">수정 완료</button>
-                                    <!-- 취소 → editReviewId 없이 목록 재표시 -->
+
                                     <a class="btn btn-secondary btn-sm"
                                        th:href="@{|/room/${room.path}/reviews|}">
                                         취소
@@ -163,19 +162,19 @@
         </div>
     <nav aria-label="Page navigation example bg-white">
         <ul class="pagination my-5 justify-content-center">
-            <!-- 이전 버튼: 첫 페이지면 비활성화 -->
+
             <li class="page-item" th:classappend="${reviews.first} ? 'disabled'">
                 <a class="page-link" th:href="@{|/room/${room.path}/reviews?page=${reviews.number - 1}|}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            <!-- 페이지 번호: 0부터 totalPages-1까지의 번호를 생성하고, 현재 페이지에는 active 클래스 추가 -->
+
             <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, reviews.totalPages - 1)}"
                 th:classappend="${pageNum == reviews.number} ? 'active'">
                 <a class="page-link" th:href="@{|/room/${room.path}/reviews?page=${pageNum}|}"
                    th:text="${pageNum + 1}">1</a>
             </li>
-            <!-- 다음 버튼: 마지막 페이지면 비활성화 -->
+
             <li class="page-item" th:classappend="${reviews.last} ? 'disabled'">
                 <a class="page-link" th:href="@{|/room/${room.path}/reviews?page=${reviews.number + 1}|}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>

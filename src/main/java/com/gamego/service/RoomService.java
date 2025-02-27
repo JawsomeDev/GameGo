@@ -135,7 +135,7 @@ public class RoomService {
         Room findRoom = roomRepository.findById(room.getId())
                 .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
         findRoom.active();
-        eventPublisher.publishEvent(new RoomCreatedEvent(findRoom));
+
     }
 
     public void close(Room room) {
@@ -147,10 +147,10 @@ public class RoomService {
     public void startRecruit(Room room) {
         Room findRoom = roomRepository.findById(room.getId())
                 .orElseThrow(() -> new IllegalArgumentException("방을 찾을 수 없습니다."));
-
         findRoom.changeRecruiting(true);
         // 시간 횟수 업데이트 로직
         findRoom.updateRecruitmentChangeTracking();
+        eventPublisher.publishEvent(new RoomCreatedEvent(findRoom));
     }
 
     public void stopRecruit(Room room) {

@@ -22,7 +22,7 @@ public class Message {
 
     private String message;
 
-    private boolean checked;
+    private boolean checked=false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Account account;

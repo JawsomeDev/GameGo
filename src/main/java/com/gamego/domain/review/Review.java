@@ -4,10 +4,6 @@ package com.gamego.domain.review;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.room.Room;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;

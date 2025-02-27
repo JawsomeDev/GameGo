@@ -24,32 +24,33 @@ public class MessageController {
 
     @GetMapping("/messages")
     public String getMessages(@CurrentAccount Account account, Model model) {
-        List<Message> messages = messageRepository.findByAccountAndCheckedOrderByCreatedDateTime(account, false);
+        List<Message> messages = messageRepository.findByAccountAndCheckedOrderByCreatedDateTimeDesc(account, false);
         long numberOfChecked = messageRepository.countByAccountAndChecked(account, true);
         putCategorizedMessages(messages, numberOfChecked, messages.size(), model);
         model.addAttribute(account);
-        model.addAttribute("isNew", false);
+        model.addAttribute("isNew", true);
         messageService.markAsRead(messages);
         return "message/list";
     }
 
     @GetMapping("/messages/old")
     public String getOldMessages(@CurrentAccount Account account, Model model) {
-        List<Message> messages = messageRepository.findByAccountAndCheckedOrderByCreatedDateTime(account, true);
-        long numberOfChecked = messageRepository.countByAccountAndChecked(account, false);
-        putCategorizedMessages(messages, numberOfChecked, messages.size(), model);
+        List<Message> messages = messageRepository.findByAccountAndCheckedOrderByCreatedDateTimeDesc(account, true);
+        long numberOfNotChecked = messageRepository.countByAccountAndChecked(account, false);
+        putCategorizedMessages(messages, messages.size(), numberOfNotChecked, model);
         model.addAttribute(account);
         model.addAttribute("isNew", false);
         return "message/list";
     }
 
-    @PostMapping("/messages")
+    @PostMapping("/messages/delete")
     public String deleteMessages(@CurrentAccount Account account) {
         messageRepository.deleteByAccountAndChecked(account, true);
         return "redirect:/messages";
     }
 
-    private void putCategorizedMessages(List<Message> messages, long numberOfChecked, long numberOfNotChecked, Model model) {
+    private void putCategorizedMessages(List<Message> messages, long numberOfChecked,
+                                        long numberOfNotChecked, Model model) {
         List<Message> newRoomMessages = new ArrayList<>();
         List<Message> eventEnrollMessages = new ArrayList<>();
         List<Message> updateRoomMessages = new ArrayList<>();

@@ -47,9 +47,9 @@
                     <a class="nav-link text-white" th:href="@{/sign-up}">가입</a>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link text-white" th:href="@{/messageForm}">
-                        <i class="fa-regular text-white fa-xl fa-envelope-open"></i>
-<!--                        <i class="fa-regular fa-envelope"></i>-->
+                    <a class="nav-link text-white" th:href="@{/messages}">
+                        <i th:if="${!hasMessage}" class="fa-regular fa-xl fa-envelope-open" style="color: #FFD43B"></i>
+                        <i th:if="${hasMessage}" class="fa-regular fa-xl fa-bounce fa-envelope" style="color: #FFD43B"></i>
                     </a>
                 </li>
                 <li class="nav-item ms-4" sec:authorize="isAuthenticated()">
@@ -157,16 +157,16 @@
 
                 <span sec:authorize="isAuthenticated()" th:if="${room.isJoinAble(#authentication.principal)}" class="btn-group" role="group" >
                     <form th:action="@{'/room/' + ${room.path} + '/join'}" method="post" style="display: inline;">
-                        <button class="btn btn-primary" type="submit">참가</button>
+                        <button class="btn btn-outline-primary icon-blue" type="submit">참가</button>
                     </form>
                     <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/members'}" th:text="${room.memberCount}">2</a>
                 </span>
 
                 <span sec:authorize="isAuthenticated()" th:if="${!room.closed && isMemberOrManager}" class="btn-group" role="group">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button type="button" class="btn btn-outline-primary icon-blue" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         탈퇴
                     </button>
-                    <a class="btn btn-outline-primary" th:href="@{'/room/' + ${room.path} + '/members'}" th:text="${room.memberCount}">2</a>
+                    <a class="btn btn-outline-primary icon-blue" th:href="@{'/room/' + ${room.path} + '/members'}" th:text="${room.memberCount}">2</a>
                 </span>
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -268,6 +268,19 @@
 
     });
 </script>
+
+
+<ul th:fragment="message-list (messages)" class="list-group list-group-flush">
+    <a th:href="@{${mes.link}}" th:each="mes: ${messages}"
+       class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <small class="text-muted" th:text="${mes.title}">Message Title</small>
+            <small class="text-muted" th:text="${mes.createdDateTime}">3일전</small>
+        </div>
+        <p th:text="${mes.message}" class="text-left mb-0 mt-1">message</p>
+    </a>
+</ul>
+
 
 <footer th:fragment="footer" class="footer text-white text-center py-3">
     <div class="container d-flex justify-content-center align-items-center">
