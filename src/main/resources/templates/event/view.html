@@ -105,8 +105,8 @@
                             <th scope="col">참석자</th>
                             <th scope="col">참가 신청 일시</th>
                             <th scope="col">참가 상태</th>
-                            <th th:if="${isManagerOrMaster}" scope="col">참가 신청 관리</th>
-                            <th th:if="${isManagerOrMaster}" scope="col">출석 체크</th>
+                            <th th:if="${isEventOwner}" scope="col">참가 신청 관리</th>
+                            <th th:if="${isEventOwner}" scope="col">출석 체크</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -128,7 +128,7 @@
                                 <span th:if="${enroll.accepted}">확정</span>
                                 <span th:if="${!enroll.accepted}">대기중</span>
                             </td>
-                            <td th:if="${isManagerOrMaster}">
+                            <td th:if="${isEventOwner}">
                                 <a th:if="${event.isAcceptable(enroll)}" class="text-decoration-none"
                                    th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id} + '/enroll/' + ${enroll.id} + '/accept'}">
                                     수락
@@ -138,7 +138,7 @@
                                     거절
                                 </a>
                             </td>
-                            <td th:if="${isManagerOrMaster}">
+                            <td th:if="${isEventOwner}">
                                 <a th:if="${enroll.accepted && !enroll.attended}" class="text-decoration-none text-black"
                                    th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id} + '/enroll/' + ${enroll.id} + '/checkin'}">체크인
                                 </a>
@@ -179,8 +179,8 @@
                         <span th:text="${event.createBy?.nickname}"></span>
                     </a>
                 </dd>
-                <dt th:if="${isManagerOrMaster}" class="font-weight-light">파티 관리</dt>
-                <dd th:if="${isManagerOrMaster}">
+                <dt th:if="${isEventOwner}" class="font-weight-light">파티 관리</dt>
+                <dd th:if="${isEventOwner}">
                     <a class="btn btn-outline-primary icon-blue btn-sm my-1"
                        th:href="@{'/room/' + ${room.path} + '/events/' + ${event.id} + '/edit'}">
                         수정

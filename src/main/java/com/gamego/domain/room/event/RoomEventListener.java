@@ -6,6 +6,7 @@ import com.gamego.domain.account.Account;
 import com.gamego.domain.messages.Message;
 import com.gamego.domain.messages.MessageType;
 import com.gamego.domain.room.Room;
+import com.gamego.domain.roomaccount.RoomAccount;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
 import com.gamego.repository.account.AccountRepository;
@@ -21,7 +22,10 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -46,36 +50,63 @@ public class RoomEventListener {
 
         accounts.forEach(account -> {
             if(account.isGameCreatedByEmail()){
-                Context context = new Context();
-                context.setVariable("link", "/room/" + room.getEncodedPath());
-                context.setVariable("nickname", account.getNickname());
-                context.setVariable("linkName", room.getTitle());
-                context.setVariable("message", "새로운 방이 생겼습니다.");
-                context.setVariable("host", appProperties.getHost());
-
-                String message = templateEngine.process("mail/simple-link", context);
-
-                EmailMessage emailMessage = EmailMessage.builder()
-                        .from("hyuk2000s@gmail.com")
-                        .to(account.getEmail())
-                        .subject("겜할래, '" + room.getTitle() + "' 방이 생겼습니다.")
-                        .message(message)
-                        .build();
-
-                emailService.sendEmail(emailMessage);
+                sendEmail(account, room,
+                        "새로운 방이 생겼습니다.", "겜할래, '" + room.getTitle() + "' 방이 생겼습니다.");
             }
             if(account.isGameCreatedByWeb()){
-                Message message = new Message();
-                message.setTitle(room.getTitle());
-                message.setLink("/room/" + room.getEncodedPath());
-                message.setChecked(false);
-                message.setCreatedDateTime(LocalDateTime.now());
-                message.setMessage(room.getShortDescription());
-                message.setAccount(account);
-                message.setMessageType(MessageType.CREATED);
-                messageRepository.save(message);
+                sendMessage(account, room, MessageType.CREATED);
             }
         });
+    }
+
+    @EventListener
+    public void handleRoomUpdateEvent(RoomUpdateEvent roomUpdateEvent){
+        Room room = roomRepository.findRoomWithMemberById(roomUpdateEvent.getRoom().getId());
+        Set<Account> accounts = room.getRoomAccounts().stream()
+                .map(RoomAccount::getAccount).collect(Collectors.toSet());
+
+        accounts.forEach(account -> {
+            if(account.isGameUpdatedByEmail()){
+                sendEmail(account, room, "새로운 파티를 모집중입니다." ,
+                        "참가하신 방 " + room.getTitle() + "에 새로운 파티를 모집중입니다."
+                );
+            }
+            if(account.isGameUpdatedByWeb()){
+                sendMessage(account, room, MessageType.UPDATED);
+            }
+        });
+    }
+
+    private void sendMessage(Account account, Room room, MessageType messageType) {
+        Message message = new Message();
+        message.setTitle(room.getTitle());
+        message.setLink("/room/" + room.getEncodedPath());
+        message.setChecked(false);
+        message.setCreatedDateTime(LocalDateTime.now());
+        message.setMessage(room.getShortDescription());
+        message.setAccount(account);
+        message.setMessageType(messageType);
+        messageRepository.save(message);
+    }
+
+    private void sendEmail(Account account, Room room, String contextMessage, String emailSubject) {
+        Context context = new Context();
+        context.setVariable("link", "/room/" + room.getEncodedPath());
+        context.setVariable("nickname", account.getNickname());
+        context.setVariable("linkName", room.getTitle());
+        context.setVariable("message", contextMessage);
+        context.setVariable("host", appProperties.getHost());
+
+        String message = templateEngine.process("mail/simple-link", context);
+
+        EmailMessage emailMessage = EmailMessage.builder()
+                .from("hyuk2000s@gmail.com")
+                .to(account.getEmail())
+                .subject(emailSubject)
+                .message(message)
+                .build();
+
+        emailService.sendEmail(emailMessage);
     }
 }
 

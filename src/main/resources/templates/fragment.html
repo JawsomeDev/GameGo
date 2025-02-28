@@ -275,7 +275,7 @@
        class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">
             <small class="text-muted" th:text="${mes.title}">Message Title</small>
-            <small class="text-muted" th:text="${mes.createdDateTime}">3일전</small>
+            <small class="text-muted send-date" th:text="${mes.createdDateTime}">3일전</small>
         </div>
         <p th:text="${mes.message}" class="text-left mb-0 mt-1">message</p>
     </a>

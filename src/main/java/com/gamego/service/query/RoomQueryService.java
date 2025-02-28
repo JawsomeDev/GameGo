@@ -2,8 +2,10 @@ package com.gamego.service.query;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.accountenum.TimePreference;
+import com.gamego.domain.event.Event;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.roomaccount.RoomRole;
+import com.gamego.repository.EventRepository;
 import com.gamego.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -18,6 +20,7 @@ public class RoomQueryService {
 
     private final RoomRepository roomRepository;
     private final ModelMapper modelMapper;
+    private final EventRepository eventRepository;
 
     public Room getRoom(String path){
         Room room = roomRepository.findByPath(path);
@@ -107,5 +110,10 @@ public class RoomQueryService {
         Room room = roomRepository.findRoomOnlyByPath(path);
         checkExistRoom(path, room);
         return room;
+    }
+
+    public boolean isEventOwner(Event event, Account account) {
+        Event findEvent = eventRepository.findById(event.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 파티입니다."));
+        return findEvent.getCreateBy().equals(account);
     }
 }

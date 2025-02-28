@@ -76,9 +76,12 @@ public class EventController {
     @GetMapping("/events/{id}")
     public String getEventView(@CurrentAccount Account account, @PathVariable String path, @PathVariable Long id, Model model) {
         Room room = roomQueryService.getRoom(path);
+        Event event = eventQueryService.getEventWithEnrolls(id);
         model.addAttribute(account);
         model.addAttribute(room);
-        model.addAttribute(eventQueryService.getEventWithEnrolls(id));
+        boolean isEventOwner = roomQueryService.isEventOwner(event, account);
+        model.addAttribute("isEventOwner", isEventOwner);
+        model.addAttribute(event);
         checkAuth(account, model, room);
         return "event/view";
     }
@@ -192,6 +195,7 @@ public class EventController {
 
 
     private void checkAuth(Account account, Model model, Room room) {
+
         boolean isMaster = roomQueryService.isMaster(account, room);
         model.addAttribute("isMaster", isMaster);
         boolean isManagerOrMaster = roomQueryService.isManagerOrMaster(account, room);

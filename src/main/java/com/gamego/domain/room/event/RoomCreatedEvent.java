@@ -3,14 +3,12 @@ package com.gamego.domain.room.event;
 import com.gamego.domain.room.Room;
 import lombok.Data;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEvent;
 
 @Getter
+@RequiredArgsConstructor
 public class RoomCreatedEvent {
 
-    private Room room;
-
-    public RoomCreatedEvent(Room room) {
-        this.room = room;
-    }
+    private final Room room;
 }

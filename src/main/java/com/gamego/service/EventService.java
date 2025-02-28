@@ -3,9 +3,12 @@ package com.gamego.service;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.enroll.Enroll;
+import com.gamego.domain.enroll.EnrollAcceptedEvent;
+import com.gamego.domain.enroll.EnrollRejectedEvent;
 import com.gamego.domain.event.Event;
 import com.gamego.domain.event.form.EventForm;
 import com.gamego.domain.room.Room;
+import com.gamego.domain.room.event.RoomUpdateEvent;
 import com.gamego.repository.EnrollRepository;
 import com.gamego.repository.EventRepository;
 import com.gamego.repository.RoomRepository;
@@ -13,6 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +33,8 @@ public class EventService {
 
     private final ModelMapper modelMapper;
     private final EventRepository eventRepository;
-    private final RoomRepository roomRepository;
     private final EnrollRepository enrollRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Event createEvent(Room room, Account account, EventForm eventForm) {
         Event event = Event.builder()
@@ -45,7 +49,9 @@ public class EventService {
                 .limitOfNumbers(eventForm.getLimitOfNumbers())
                 .eventType(eventForm.getEventType())
                 .build();
+        eventPublisher.publishEvent(new RoomUpdateEvent(event.getRoom(), "'" + event.getTitle() + "' 파티 모집중입니다."));
         return eventRepository.save(event);
+
     }
 
 
@@ -88,12 +94,14 @@ public class EventService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new IllegalArgumentException("파티가 없습니다."));
         Enroll enroll = enrollRepository.findById(enrollId).orElseThrow(() -> new IllegalArgumentException("잘못된 등록입니다."));
         event.accept(enroll);
+        eventPublisher.publishEvent(new EnrollAcceptedEvent(enroll));
     }
 
     public void rejectEnroll(Long eventId, Long enrollId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new IllegalArgumentException("파티가 없습니다."));
         Enroll enroll = enrollRepository.findById(enrollId).orElseThrow(() -> new IllegalArgumentException("잘못된 등록입니다."));
         event.reject(enroll);
+        eventPublisher.publishEvent(new EnrollRejectedEvent(enroll));
     }
 
     public void checkInEnroll(Long enrollId) {

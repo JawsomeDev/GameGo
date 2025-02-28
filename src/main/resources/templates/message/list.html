@@ -6,7 +6,7 @@
 <body>
 <nav th:replace="~{fragment.html :: main-nav}"></nav>
 
-<div class="container mt-5 text-body-emphasis bg-body-secondary">
+<div class="container mt-5 text-body-emphasis bg-body-secondary" style="min-height: 100vh;">
     <div class="row py-5 text-center">
         <div class = "col-3">
             <ul class="list-group">
@@ -81,5 +81,16 @@
     </div>
 </div>
 <div th:replace="~{fragment.html::footer}"></div>
+<script src="/node_modules/dayjs/dayjs.min.js"></script>
+<script src="/node_modules/dayjs/locale/ko.js"></script>
+<script>
+    dayjs.locale('ko');
+    document.querySelectorAll('.send-date').forEach(elem => {
+        const rawText = elem.innerText.trim();
+        if(rawText){
+            elem.innerText = dayjs(rawText).format('YYYY년 MM월 DD일 dddd HH:mm');
+        }
+    });
+</script>
 </body>
 </html>
