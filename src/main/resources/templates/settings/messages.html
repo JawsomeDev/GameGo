@@ -27,7 +27,7 @@
                 <form class="col-12" action="#" th:action="@{/settings/messages}" th:object="${messageForm}" method="post">
                     <div>
                         <strong><a th:href="@{/settings/times}" class="text-decoration-none text-black">주 플레이 시간대</a>에
-                            <a th:href="@{/settings/games}" class="text-decoration-none text-black"> 관심있는 게임</a>의 방이 만들어졌을 때</strong> 메시지를 받는 방법을 설정하세요.
+                            <a th:href="@{/settings/games}" class="text-decoration-none text-black"> 관심있는 게임</a>의 방이 팀원을 모집 할 때</strong> 메시지를 받는 방법을 설정하세요.
                     </div>
                     <div>
                         <div class="form-check form-switch form-check-inline">
@@ -39,7 +39,7 @@
                             <label class="form-check-label" for="gameCreatedByWeb">웹으로 받기</label>
                         </div>
                         <div>
-                            <strong>게임 참가 신청</strong> 결과 메시지를 받을 방법을 설정하세요.
+                            <strong>파티 참가 신청</strong> 결과 메시지를 받을 방법을 설정하세요.
                         </div>
                         <div class="form-check form-switch form-check-inline ">
                             <input type="checkbox" th:field="*{gameEnrollmentResultByEmail}" class="form-check-input" id="gameEnrollmentResultByEmail">
@@ -50,7 +50,7 @@
                             <label class="form-check-label" for="gameEnrollmentResultByWeb">웹으로 받기</label>
                         </div>
                         <div>
-                            <strong class="green">참여중인 게임</strong>에 대한 메시지를 받을 방법을 설정하세요.
+                            <strong class="green">참가된 방의 파티 모집</strong>에 대한 메시지를 받을 방법을 설정하세요.
                         </div>
                         <div class="form-check form-switch form-check-inline">
                             <input type="checkbox" th:field="*{gameUpdatedByEmail}" class="form-check-input" id="gameUpdatedByEmail">

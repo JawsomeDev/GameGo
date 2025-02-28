@@ -52,13 +52,13 @@ public class EnrollEventListener {
                 .map(RoomAccount::getAccount).collect(Collectors.toSet());
 
         accounts.forEach( a -> {
-            if(account.isGameEnrollmentResultByEmail()) {
-                sendEmail(enrollEvent, account, event, room);
+            if(a.isGameEnrollmentResultByEmail()) {
+                sendEmail(enrollEvent, a, event, room);
                 log.info("Enroll event has been processed by Email");
             }
 
-            if(account.isGameEnrollmentResultByWeb()){
-                sendMessage(enrollEvent, account, event, room);
+            if(a.isGameEnrollmentResultByWeb()){
+                sendMessage(enrollEvent, a, event, room);
                 log.info("Enroll event has been processed by Web");
             }
         });
