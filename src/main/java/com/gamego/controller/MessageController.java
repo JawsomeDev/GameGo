@@ -45,7 +45,7 @@ public class MessageController {
 
     @PostMapping("/messages/delete")
     public String deleteMessages(@CurrentAccount Account account) {
-        messageRepository.deleteByAccountAndChecked(account, true);
+        messageService.deleteMessage(account);
         return "redirect:/messages";
     }
 
