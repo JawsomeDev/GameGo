@@ -7,6 +7,7 @@ import com.gamego.domain.event.Event;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.game.form.GameResp;
 import com.gamego.domain.room.Room;
+import com.gamego.domain.room.event.RoomBannedEvent;
 import com.gamego.domain.room.event.RoomCreatedEvent;
 import com.gamego.domain.room.form.RoomDescriptionForm;
 import com.gamego.domain.roomaccount.BanHistory;
@@ -150,7 +151,7 @@ public class RoomService {
         findRoom.changeRecruiting(true);
         // 시간 횟수 업데이트 로직
         findRoom.updateRecruitmentChangeTracking();
-        eventPublisher.publishEvent(new RoomCreatedEvent(findRoom));
+        eventPublisher.publishEvent(new RoomCreatedEvent(findRoom, "선호하는 게임과 시간이 매칭되는 방이 팀원 모집중입니다."));
     }
 
     public void stopRecruit(Room room) {
@@ -263,6 +264,7 @@ public class RoomService {
                 .bannedAt(LocalDateTime.now())
                 .build();
         banHistoryRepository.save(banHistory);
+        eventPublisher.publishEvent(new RoomBannedEvent(room, targetAccountId,  "방에서 추방당하셨습니다."));
         return room;
     }
 }

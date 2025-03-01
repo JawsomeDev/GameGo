@@ -1,17 +1,15 @@
 package com.gamego.domain.room.event;
 
 import com.gamego.domain.room.Room;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEvent;
+
 
 @Getter
 @RequiredArgsConstructor
-public class RoomCreatedEvent {
+public class RoomBannedEvent {
 
     private final Room room;
-
-
+    private final Long bannedAccountId;
     private final String message;
 }

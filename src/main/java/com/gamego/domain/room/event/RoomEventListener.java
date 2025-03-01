@@ -6,6 +6,7 @@ import com.gamego.domain.account.Account;
 import com.gamego.domain.messages.Message;
 import com.gamego.domain.messages.MessageType;
 import com.gamego.domain.room.Room;
+import com.gamego.domain.roomaccount.BanHistory;
 import com.gamego.domain.roomaccount.RoomAccount;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
@@ -22,7 +23,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,7 +54,7 @@ public class RoomEventListener {
                         "새로운 방이 생겼습니다.", "겜할래, '" + room.getTitle() + "' 방이 생겼습니다.");
             }
             if(account.isGameCreatedByWeb()){
-                sendMessage(account, room, MessageType.CREATED);
+                sendMessage(account, room,  MessageType.CREATED, roomCreatedEvent.getMessage());
             }
         });
     }
@@ -72,18 +72,31 @@ public class RoomEventListener {
                 );
             }
             if(account.isGameUpdatedByWeb()){
-                sendMessage(account, room, MessageType.UPDATED);
+                sendMessage(account, room, MessageType.UPDATED, roomUpdateEvent.getMessage());
             }
         });
     }
 
-    private void sendMessage(Account account, Room room, MessageType messageType) {
+    @EventListener
+    public void handleRoomBannedEvent(RoomBannedEvent roomBannedEvent) {
+        // 벤 대상자의 계정을 직접 조회합니다.
+        Account bannedAccount = accountRepository.findById(roomBannedEvent.getBannedAccountId())
+                .orElseThrow(() -> new IllegalArgumentException("벤 대상 계정을 찾을 수 없습니다."));
+
+        // 방 정보는 필요하다면 조회 (예: 메시지에 방 제목을 포함하기 위함)
+        Room room = roomRepository.findRoomWithMemberById(roomBannedEvent.getRoom().getId());
+
+        // 벤 대상자에게 메시지 전송
+        sendMessage(bannedAccount, room, MessageType.BANNED, roomBannedEvent.getMessage());
+    }
+
+    private void sendMessage(Account account, Room room, MessageType messageType, String contextMessage) {
         Message message = new Message();
         message.setTitle(room.getTitle());
         message.setLink("/room/" + room.getEncodedPath());
         message.setChecked(false);
         message.setCreatedDateTime(LocalDateTime.now());
-        message.setMessage(room.getShortDescription());
+        message.setMessage(contextMessage);
         message.setAccount(account);
         message.setMessageType(messageType);
         messageRepository.save(message);

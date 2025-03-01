@@ -49,7 +49,7 @@ public class EventService {
                 .limitOfNumbers(eventForm.getLimitOfNumbers())
                 .eventType(eventForm.getEventType())
                 .build();
-        eventPublisher.publishEvent(new RoomUpdateEvent(event.getRoom(), "'" + event.getTitle() + "' 파티 모집중입니다."));
+        eventPublisher.publishEvent(new RoomUpdateEvent(event.getRoom(), "파티가 생성되었습니다."));
         return eventRepository.save(event);
 
     }

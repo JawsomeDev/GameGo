@@ -20,6 +20,7 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(BannedMemberJoinException.class)
     public String handleBannedMemberJoinException(BannedMemberJoinException ex, Model model){
         model.addAttribute("errorMessage", ex.getMessage());
+        model.addAttribute("hasMessage", false);
         return "error/join-error";
     }
 

@@ -11,6 +11,6 @@
 
         private final Room room;
 
-        private final String message;
 
+        private final String message;
     }
