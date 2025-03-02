@@ -13,7 +13,7 @@ import com.gamego.domain.game.form.GameResp;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.room.form.RoomDescriptionForm;
 import com.gamego.repository.GameRepository;
-import com.gamego.repository.RoomRepository;
+import com.gamego.repository.room.RoomRepository;
 import com.gamego.service.query.RoomQueryService;
 import com.gamego.service.RoomService;
 import jakarta.validation.Valid;

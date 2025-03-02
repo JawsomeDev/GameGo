@@ -3,23 +3,17 @@ package com.gamego.controller;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
-import com.gamego.domain.review.Review;
-import com.gamego.domain.review.form.ReviewForm;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.room.form.RoomForm;
-import com.gamego.repository.RoomRepository;
+import com.gamego.repository.room.RoomRepository;
 import com.gamego.service.ReviewService;
 import com.gamego.service.query.ReviewQueryService;
 import com.gamego.service.query.RoomQueryService;
 import com.gamego.service.RoomService;
 import com.gamego.validator.RoomValidator;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -27,8 +21,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor

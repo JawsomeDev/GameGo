@@ -1,7 +1,7 @@
 package com.gamego.validator;
 
 import com.gamego.domain.room.form.RoomForm;
-import com.gamego.repository.RoomRepository;
+import com.gamego.repository.room.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

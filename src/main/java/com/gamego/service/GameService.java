@@ -41,10 +41,10 @@ public class GameService {
         } catch (Exception e) {
             log.info("API 호출 실패 : {}", e.getMessage());
         }
-        List<String> koreaGames = List.of("리그오브레전드",
+        List<String> koreaGames = List.of("리그오브레전드", "워크래프트", "배틀그라운드",
                 "서든어택", "카트라이더 드리프트", "던전앤파이터", "로스트아크",
                 "메이플스토리", "블레이드 & 소울", "검은사막", "에오스 레드",
-                "바람의나라", "뮤 온라인", "리니지", "리니지2", "엘소드", "발로란트", "오버워치2", "메이플랜드"
+                "바람의나라", "롤", "뮤 온라인", "리니지", "리니지2", "엘소드", "발로란트", "오버워치2", "메이플랜드"
         );
         gameList.addAll(koreaGames);
 

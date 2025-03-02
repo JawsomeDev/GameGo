@@ -1,15 +1,12 @@
-package com.gamego.repository;
+package com.gamego.repository.room;
 
 import com.gamego.domain.room.Room;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-
 @Transactional(readOnly = true)
-public interface RoomRepository extends JpaRepository<Room, Long> {
+public interface RoomRepository extends JpaRepository<Room, Long>, RoomRepositoryCustom {
 
     boolean existsByPath(String path);
 

@@ -64,7 +64,7 @@ public class Room {
     private boolean recruiting;
     private boolean active;
     private boolean closed;
-    private boolean useBanner;
+    private boolean useBanner=false;
 
     private int recruitmentChangeCountToday;
 

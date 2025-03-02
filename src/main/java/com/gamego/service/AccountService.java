@@ -13,6 +13,7 @@ import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
 import com.gamego.repository.account.AccountRepository;
 import com.gamego.repository.GameRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -41,6 +42,7 @@ public class AccountService {
     private final EmailService emailService;
     private final GameRepository gameRepository;
     private final ObjectMapper objectMapper;
+    private final EntityManager em;
 
 
     @GetMapping("/login")
@@ -177,6 +179,7 @@ public class AccountService {
         byId.ifPresent(a -> {
             a.updateTimePreference(timePreference);
         });
+
     }
 
     public void removeTimePreference(Account account) {
@@ -184,6 +187,7 @@ public class AccountService {
         byId.ifPresent(a -> {
             a.updateTimePreference(null);
         });
+
     }
 
     public void updateNickname(Account account, String nickname) {

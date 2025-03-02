@@ -16,6 +16,7 @@ import com.gamego.service.query.AccountQueryService;
 import com.gamego.service.AccountService;
 import com.gamego.validator.NicknameValidator;
 import com.gamego.validator.PasswordValidator;
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +25,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,6 +52,7 @@ public class ProfileController {
     private final GameRepository gameRepository;
     private final ObjectMapper objectMapper;
     private final AccountQueryService accountQueryService;
+    private final EntityManager em;
 
     @InitBinder("nicknameForm")
     public void initBinder1(WebDataBinder binder){
@@ -179,6 +184,7 @@ public class ProfileController {
         Map<String, String> response = new HashMap<>();
         response.put("status", "add");
         response.put("timePreference", selectedPreference);
+
         return ResponseEntity.ok(response);
     }
 
@@ -189,6 +195,7 @@ public class ProfileController {
         accountService.removeTimePreference(account);
         Map<String, String> response = new HashMap<>();
         response.put("status", "remove");
+
         return ResponseEntity.ok(response);
     }
 

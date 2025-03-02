@@ -17,7 +17,7 @@ import com.gamego.exception.BannedMemberJoinException;
 import com.gamego.repository.BanHistoryRepository;
 import com.gamego.repository.EventRepository;
 import com.gamego.repository.RoomAccountRepository;
-import com.gamego.repository.RoomRepository;
+import com.gamego.repository.room.RoomRepository;
 import com.gamego.service.query.RoomQueryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

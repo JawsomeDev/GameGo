@@ -11,7 +11,7 @@ import com.gamego.domain.roomaccount.RoomAccount;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
 import com.gamego.repository.MessageRepository;
-import com.gamego.repository.RoomRepository;
+import com.gamego.repository.room.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -24,8 +24,6 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.gamego.domain.room.QRoom.room;
 
 @Component
 @Async

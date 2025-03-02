@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html :: head}"></head>
+<body>
+<div th:replace="~{fragment.html :: main-nav}"></div>
+
+<div class="container">
+    <div class="py-5 text-center text-white">
+        <p class="lead" th:if="${roomPage.getTotalElements() == 0}">
+            <span th:text="${keyword}" id="keyword" class="context"></span>에 해당하는 방이 없습니다. 방을 새로 만들어 보아요.
+        </p>
+        <p class="lead" th:if="${roomPage.getTotalElements() > 0}">
+            <span th:text="${keyword}" id="roomPage" class="context"></span>에 해당하는 방을
+            <span th:text="${roomPage.getTotalElements()}"></span>개 찾았습니다.
+        </p>
+        <div class="dropdown">
+            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                검색 결과 정렬 방식
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" th:classappend="${#strings.equals(sortProperty, 'activeDateTime')}? active"
+                   th:href="@{'/search/room?sort=activeDateTime,desc&keyword=' + ${keyword}}">
+                    방 공개일
+                </a>
+                <a class="dropdown-item" th:classappend="${#strings.equals(sortProperty, 'memberCount')}? active"
+                     th:href="@{'/search/room?sort=memberCount,desc&keyword=' + ${keyword}}">
+                    멤버수
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="row">
+            <div class="col-md-4" th:each="room : ${roomPage.getContent()}">
+                <div class="card mb-4 shadow-sm">
+                    <img th:src="${room.useBanner && !#strings.isEmpty(room.image) ? room.image : '/images/default_banner.jpg'}"
+                         alt="Room Banner" class="img-fluid rounded" />
+                    <div class="card-body">
+                        <a th:href="@{'/room/' + ${room.path}}" class="text-decoration-none">
+                            <h5 class="card-title context" th:text="${room.title}"></h5>
+                        </a>
+                        <p class="card-text" th:text="${room.shortDescription}">Short Description</p>
+                        <p class="card-text context">
+                            <span th:each="game : ${room.games}" class="font-weight-bold text-monospace badge badge-pill badge-custom mr-3">
+                                <span class="text-white">
+                                    <i class="fa fa-tag"></i> <span th:text="${game.name}">Game</span>
+                                </span>
+                            </span>
+                            <span th:if="${room.timePreference != null}" class="font-weight-light text-monospace badge badge-custom mr-3">
+                                    <span class="text-white">
+                                        <i class="fa fa-clock"></i> <span th:text="${room.timePreference.getValue()}">time</span>
+                                    </span>
+                            </span>
+                        </p>
+                        <div class="d-flext justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fa fa-users icon-blue"></i>
+                                <span th:text="${room.getRoomAccounts().size()}"></span>명
+                            </small>
+                            <small class="text-muted date" th:text="${room.activeDateTime}">9 mins</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav aria-label="Page navigation example ">
+            <ul class="pagination mt-5 justify-content-center">
+                <!-- 이전 버튼: 첫 페이지면 비활성화 -->
+                <li class="page-item" th:classappend="${!roomPage.hasPrevious()} ? 'disabled'">
+                    <a class="page-link" th:href="@{|/search/room?keyword=' + ${keyword} + &sort='
+                      + ${sortProperty} + ',desc&page=' + ${roomPage.getNumber()-1}}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <!-- 페이지 번호: 0부터 totalPages-1까지의 번호를 생성하고, 현재 페이지에는 active 클래스 추가 -->
+                <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, roomPage.totalPages - 1)}"
+                    th:classappend="${pageNum == roomPage.number} ? 'active'">
+                    <a class="page-link" th:href="@{|/search/room?keyword=' + ${keyword} + &sort='
+                      + ${sortProperty} + ',desc&page=' + ${pageNum}}"
+                       th:text="${pageNum + 1}">1</a>
+                </li>
+                <!-- 다음 버튼: 마지막 페이지면 비활성화 -->
+                <li class="page-item" th:classappend="${roomPage.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{|/search/room?keyword=' + ${keyword} + &sort='
+                      + ${sortProperty} + ',desc&page=' + ${roomPage.getNumber() + 1 }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<div th:replace="~{fragment.html :: footer}"></div>
+
+
+</body>
+</html>

@@ -1,7 +1,6 @@
 package com.gamego.service;
 
 import com.gamego.domain.account.Account;
-import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.enroll.Enroll;
 import com.gamego.domain.enroll.EnrollAcceptedEvent;
 import com.gamego.domain.enroll.EnrollRejectedEvent;
@@ -11,8 +10,6 @@ import com.gamego.domain.room.Room;
 import com.gamego.domain.room.event.RoomUpdateEvent;
 import com.gamego.repository.EnrollRepository;
 import com.gamego.repository.EventRepository;
-import com.gamego.repository.RoomRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,10 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

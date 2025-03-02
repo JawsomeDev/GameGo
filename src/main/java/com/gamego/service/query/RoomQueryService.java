@@ -6,7 +6,7 @@ import com.gamego.domain.event.Event;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.roomaccount.RoomRole;
 import com.gamego.repository.EventRepository;
-import com.gamego.repository.RoomRepository;
+import com.gamego.repository.room.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.AccessDeniedException;
