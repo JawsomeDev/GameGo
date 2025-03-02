@@ -82,6 +82,9 @@ public class EventController {
         boolean isEventOwner = roomQueryService.isEventOwner(event, account);
         model.addAttribute("isEventOwner", isEventOwner);
         model.addAttribute(event);
+        boolean isMember = room.getRoomAccounts().stream()
+                .anyMatch(ra -> ra.getAccount().getId().equals(account.getId()));
+        model.addAttribute("isMember", isMember);
         checkAuth(account, model, room);
         return "event/view";
     }
@@ -93,6 +96,7 @@ public class EventController {
         model.addAttribute(account);
         model.addAttribute(room);
         checkAuth(account, model, room);
+
 
         Page<Event> upcomingEvents = eventQueryService.getUpcomingEvents(room, pageable);
         model.addAttribute("events", upcomingEvents);
@@ -191,8 +195,6 @@ public class EventController {
         eventService.cancelCheckInEnroll(enrollId);
         return "redirect:/room/" + room.getEncodedPath() + "/events/" + eventId;
     }
-
-
 
     private void checkAuth(Account account, Model model, Room room) {
 

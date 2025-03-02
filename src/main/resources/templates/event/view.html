@@ -19,7 +19,7 @@
         <div class="col-4 text-end justify-content-end">
             <span sec:authorize="isAuthenticated()">
 
-                <button th:if="${event.isEnrollAble(#authentication.principal)}"
+                <button th:if="${event.isEnrollAble(#authentication.principal) && isMember} "
                         class="btn btn-outline-primary icon-blue"
                         data-bs-toggle="modal"
                         data-bs-target="#enrollModal">
@@ -27,7 +27,7 @@
                 </button>
 
 
-                <button th:if="${event.isDisEnrollAble(#authentication.principal)}"
+                <button th:if="${event.isDisEnrollAble(#authentication.principal) && isMember}"
                         class="btn btn-outline-primary icon-blue"
                         data-bs-toggle="modal"
                         data-bs-target="#disEnrollModal">
@@ -36,7 +36,7 @@
 
 
                 <span class="text-success icon-blue"
-                      th:if="${event.isAlreadyEnrolled(#authentication.principal)}"
+                      th:if="${event.isAlreadyEnrolled(#authentication.principal) && isMember}"
                       th:disabled="true">
                     <i class="fa fa-check-circle icon-blue"></i> 참석 완료
                 </span>
