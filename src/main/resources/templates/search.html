@@ -7,7 +7,7 @@
 <div th:replace="~{fragment.html :: main-nav}"></div>
 
 <div class="container">
-    <div class="py-5 text-center text-white">
+    <div class="py-5 text-center text-white ">
         <p class="lead" th:if="${roomPage.getTotalElements() == 0}">
             <span th:text="${keyword}" id="keyword" class="context"></span>에 해당하는 방이 없습니다. 방을 새로 만들어 보아요.
         </p>
@@ -15,8 +15,8 @@
             <span th:text="${keyword}" id="roomPage" class="context"></span>에 해당하는 방을
             <span th:text="${roomPage.getTotalElements()}"></span>개 찾았습니다.
         </p>
-        <div class="dropdown">
-            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div class="dropdown float-end">
+            <button class="btn btn-light dropdown-toggle text-end" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 검색 결과 정렬 방식
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -34,36 +34,53 @@
     <div class="row justify-content-center">
         <div class="row">
             <div class="col-md-4" th:each="room : ${roomPage.getContent()}">
-                <div class="card mb-4 shadow-sm">
+                <div class="position-relative">
+                <div class="card mb-4 shadow-sm  mt-4">
                     <img th:src="${room.useBanner && !#strings.isEmpty(room.image) ? room.image : '/images/default_banner.jpg'}"
-                         alt="Room Banner" class="img-fluid rounded" />
+                         alt="Room Banner" class="img-fluid rounded" style="height: 150px; width: 100%;">
                     <div class="card-body">
                         <a th:href="@{'/room/' + ${room.path}}" class="text-decoration-none">
                             <h5 class="card-title context" th:text="${room.title}"></h5>
                         </a>
                         <p class="card-text" th:text="${room.shortDescription}">Short Description</p>
                         <p class="card-text context">
-                            <span th:each="game : ${room.games}" class="font-weight-bold text-monospace badge badge-pill badge-custom mr-3">
-                                <span class="text-white">
-                                    <i class="fa fa-tag"></i> <span th:text="${game.name}">Game</span>
-                                </span>
+                        <span th:each="game : ${room.games}" class="font-weight-bold text-monospace badge badge-pill badge-custom me-2">
+                            <span class="text-white">
+                                <i class="fa fa-tag"></i>
+                                <span th:text="${game.name}">Game</span>
                             </span>
-                            <span th:if="${room.timePreference != null}" class="font-weight-light text-monospace badge badge-custom mr-3">
-                                    <span class="text-white">
-                                        <i class="fa fa-clock"></i> <span th:text="${room.timePreference.getValue()}">time</span>
-                                    </span>
-                            </span>
+                        </span>
+                            <span th:if="${room.timePreference != null}" class="font-weight-light text-monospace badge badge-custom me-2">
+                    <span class="text-white">
+                        <i class="fa fa-clock"></i>
+                        <span th:text="${room.timePreference.getValue()}">time</span>
+                    </span>
+                   </span>
                         </p>
-                        <div class="d-flext justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">
                                 <i class="fa fa-users icon-blue"></i>
                                 <span th:text="${room.getRoomAccounts().size()}"></span>명
                             </small>
-                            <small class="text-muted date" th:text="${room.activeDateTime}">9 mins</small>
+                            <small class="text-muted date datetime" th:text="${room.activeDateTime}">9 mins</small>
                         </div>
                     </div>
                 </div>
+                    <div th:if="${room.reviewScore != null}"
+                         class="rating-box  mb-2"
+                    style="position: absolute; bottom: -2rem; background-color: #1B1F3A;">
+                        <!-- 별 아이콘 5개 루프 -->
+                        <span th:each="i : ${#numbers.sequence(1,5)}"
+                              class="fa-star me-1"
+                              th:classappend="${i <= room.reviewScore} ? 'fas text-warning' : 'far text-warning'">
+                      </span>
+                        <!-- 점수 숫자 표시 (ex. 4.0) -->
+                        <span class="ms-1 fw-bold text-warning" th:text="${room.reviewScore}"></span>
+                    </div>
+                </div>
+
             </div>
+
         </div>
         <nav aria-label="Page navigation example ">
             <ul class="pagination mt-5 justify-content-center">
@@ -75,10 +92,10 @@
                     </a>
                 </li>
                 <!-- 페이지 번호: 0부터 totalPages-1까지의 번호를 생성하고, 현재 페이지에는 active 클래스 추가 -->
-                <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, roomPage.totalPages - 1)}"
+                <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, roomPage.getTotalPages() - 1)}"
                     th:classappend="${pageNum == roomPage.number} ? 'active'">
-                    <a class="page-link" th:href="@{|/search/room?keyword=' + ${keyword} + &sort='
-                      + ${sortProperty} + ',desc&page=' + ${pageNum}}"
+                    <a class="page-link" th:href="@{'/search/room?keyword=' + ${keyword}
+                    + '&sort=' + ${sortProperty} + ',desc&page=' + ${pageNum}}"
                        th:text="${pageNum + 1}">1</a>
                 </li>
                 <!-- 다음 버튼: 마지막 페이지면 비활성화 -->
@@ -92,9 +109,17 @@
         </nav>
     </div>
 </div>
-
 <div th:replace="~{fragment.html :: footer}"></div>
-
-
+<script src="/node_modules/dayjs/dayjs.min.js"></script>
+<script src="/node_modules/dayjs/locale/ko.js"></script>
+<script>
+    dayjs.locale('ko');
+    document.querySelectorAll('.datetime').forEach(elem => {
+        const rawText = elem.innerText.trim();
+        if(rawText){
+            elem.innerText = dayjs(rawText).format('YYYY년 MM월 DD일 dddd HH:mm');
+        }
+    });
+</script>
 </body>
 </html>

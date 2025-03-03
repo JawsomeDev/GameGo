@@ -6,11 +6,13 @@ import com.gamego.domain.room.QRoom;
 import com.gamego.domain.room.Room;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,35 +33,53 @@ public class RoomRepositoryImpl implements RoomRepositoryCustom{
         QRoom room = QRoom.room;
         QGame game = QGame.game;
 
-        // 키워드 관련 조건 (방 제목 또는 게임 이름에 포함)
         BooleanExpression keywordCondition =
                 room.title.containsIgnoreCase(keyword)
                         .or(room.games.any().name.containsIgnoreCase(keyword));
 
-        // account의 timePreference가 null이면 상관 x , 아니면 매치
+
         BooleanExpression timePreferenceCondition =
                 account.getTimePreference() == null
-                        ? Expressions.TRUE : room.timePreference.eq(account.getTimePreference());
+                        ? Expressions.TRUE
+                        : room.timePreference.eq(account.getTimePreference());
 
         BooleanExpression predicate = room.active.isTrue()
                 .and(keywordCondition)
                 .and(timePreferenceCondition);
 
-        List<Room> rooms = queryFactory
+        JPAQuery<Room> query = queryFactory
                 .selectFrom(room)
                 .leftJoin(room.games, game).fetchJoin()
                 .leftJoin(room.roomAccounts).fetchJoin()
                 .where(predicate)
-                .distinct()
+                .distinct();
+
+        for (Sort.Order order : pageable.getSort()) {
+            if (order.getProperty().equals("activeDateTime")) {
+                query.orderBy(order.isAscending()
+                        ? room.activeDateTime.asc()
+                        : room.activeDateTime.desc());
+            }
+            else if (order.getProperty().equals("memberCount")) {
+                query.orderBy(order.isAscending()
+                        ? room.memberCount.asc()
+                        : room.memberCount.desc());
+            }
+        }
+
+        List<Room> rooms = query
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
+
         long total = queryFactory
-                .selectFrom(room)
+                .select(room.count())
+                .from(room)
                 .where(predicate)
-                .fetchCount();
+                .fetchOne();
 
         return new PageImpl<>(rooms, pageable, total);
     }
+
 }

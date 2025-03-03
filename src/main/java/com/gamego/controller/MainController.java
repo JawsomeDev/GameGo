@@ -7,6 +7,9 @@ import com.gamego.domain.room.Room;
 import com.gamego.repository.MessageRepository;
 import com.gamego.repository.account.AccountRepository;
 import com.gamego.repository.room.RoomRepository;
+import com.gamego.service.ReviewService;
+import com.gamego.service.RoomService;
+import com.gamego.service.query.ReviewQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +28,9 @@ public class MainController {
     private final MessageRepository messageRepository;
     private final RoomRepository roomRepository;
     private final AccountRepository accountRepository;
+    private final ReviewService reviewService;
+    private final ReviewQueryService reviewQueryService;
+    private final RoomService roomService;
 
     @GetMapping("/")
     public String index() {
@@ -44,8 +50,13 @@ public class MainController {
     @GetMapping("/search/room")
     public String searchRoom(@CurrentAccount Account account, @PageableDefault(size = 9, sort = "activeDateTime",
         direction = Sort.Direction.DESC) Pageable pageable, String keyword, Model model) {
+        // freshAccount를 조회해야 account.timepreference가 출력됨.
         Account freshAccount = accountRepository.findById(account.getId()).orElseThrow(() -> new IllegalStateException("해당 계정이 존재하지 않습니다."));
         Page<Room> roomPage = roomRepository.findByKeyword(keyword, freshAccount, pageable);
+        for (Room room : roomPage) {
+            Double averageRating = reviewQueryService.getAverageRating(room);
+            roomService.saveReviewScore(averageRating, room);
+        }
         model.addAttribute("account", freshAccount);
         model.addAttribute("roomPage", roomPage);
         model.addAttribute("keyword", keyword);

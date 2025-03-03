@@ -40,6 +40,22 @@ public class ReviewQueryService {
         return (count == 0) ? null : sum/count;
     }
 
+    public Double getAverageRating(Room room) {
+        List<Review> reviews = reviewRepository.findReviewsByRoom(room);
+        if(reviews.isEmpty()) {
+            return null;
+        }
+        double sum = 0;
+        int count = 0;
+        for(Review review : reviews) {
+            if(review.getRating() !=null){
+                sum += review.getRating();
+                count++;
+            }
+        }
+        return (count == 0) ? null : sum/count;
+    }
+
     public boolean findByRoomAndAccount(Room room, Account account){
         Optional<Review> existingReview = reviewRepository.findByRoomAndAccount(room, account);
         if (existingReview.isPresent()) {

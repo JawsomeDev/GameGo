@@ -50,7 +50,7 @@ public class Room {
     @Basic(fetch = FetchType.EAGER)
     private String longDescription;
 
-
+    private Double reviewScore;
 
     @Enumerated(EnumType.STRING)
     private TimePreference timePreference;
@@ -68,7 +68,7 @@ public class Room {
 
     private int recruitmentChangeCountToday;
 
-    @Column(nullable = false, columnDefinition = "integer default 0")
+    @Column(nullable = false, columnDefinition = "integer default 1")
     private int memberCount;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -204,6 +204,10 @@ public class Room {
                 break;
             }
         }
+    }
+
+    public void setReviewScore(Double reviewScore) {
+        this.reviewScore = reviewScore;
     }
 
     public void demoteMember(Account account) {

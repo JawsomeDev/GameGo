@@ -267,4 +267,9 @@ public class RoomService {
         eventPublisher.publishEvent(new RoomBannedEvent(room, targetAccountId,  "방에서 추방당하셨습니다."));
         return room;
     }
+
+    public void saveReviewScore(Double averageRating, Room room) {
+        room.setReviewScore(averageRating);
+        roomRepository.save(room);
+    }
 }
