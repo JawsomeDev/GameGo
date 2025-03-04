@@ -11,6 +11,7 @@ import com.gamego.domain.roomaccount.RoomRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

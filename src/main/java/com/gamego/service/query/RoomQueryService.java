@@ -9,6 +9,8 @@ import com.gamego.repository.EventRepository;
 import com.gamego.repository.room.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,5 +117,9 @@ public class RoomQueryService {
     public boolean isEventOwner(Event event, Account account) {
         Event findEvent = eventRepository.findById(event.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 파티입니다."));
         return findEvent.getCreateBy().equals(account);
+    }
+
+    public Page<Room> getRoomWithGames(String keyword, Account freshAccount, Pageable pageable) {
+        return roomRepository.findByKeyword(keyword, freshAccount, pageable);
     }
 }

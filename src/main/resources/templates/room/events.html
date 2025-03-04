@@ -9,7 +9,7 @@
 <div class="container mt-5  text-body-emphasis custom-room">
     <div th:replace="~{fragment.html :: room-info}"></div>
     <div th:replace="~{fragment.html::room-menu (roomMenu = 'events')}"></div>
-    <div class="row py-3 px-3 justify-content-center bg-white">
+    <div class="row py-3 px-3 justify-content-center bg-white " style="min-height: 100vh">
         <div class="col-10 row">
             <div id="event-list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 <div class="col" th:each="event : ${events}">
@@ -42,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <nav aria-label="Page navigation example ">
+        <nav th:if="${events.totalPages != 0}" aria-label="Page navigation example ">
             <ul class="pagination mt-5 justify-content-center">
                 <!-- 이전 버튼: 첫 페이지면 비활성화 -->
                 <li class="page-item" th:classappend="${events.first} ? 'disabled'">

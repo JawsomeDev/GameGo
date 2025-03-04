@@ -6,6 +6,7 @@ import com.gamego.domain.account.accountenum.TimePreference;
 import com.gamego.domain.event.Event;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.game.form.GameResp;
+import com.gamego.domain.review.QReview;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.room.event.RoomBannedEvent;
 import com.gamego.domain.room.event.RoomCreatedEvent;
@@ -19,6 +20,7 @@ import com.gamego.repository.EventRepository;
 import com.gamego.repository.RoomAccountRepository;
 import com.gamego.repository.room.RoomRepository;
 import com.gamego.service.query.RoomQueryService;
+import com.querydsl.core.Tuple;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -29,7 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -271,5 +275,22 @@ public class RoomService {
     public void saveReviewScore(Double averageRating, Room room) {
         room.setReviewScore(averageRating);
         roomRepository.save(room);
+    }
+
+    public void updateReviewScores(List<Room> rooms) {
+        if(rooms.isEmpty()) {
+            return;
+        }
+
+        List<Long> roomIds = rooms.stream().map(Room::getId).collect(Collectors.toList());
+
+        Map<Long, Double> avgRatingMap = roomRepository.findAverageRatingForRooms(roomIds);
+
+        for (Room room : rooms) {
+            Double averageRating = avgRatingMap.get(room.getId());
+            room.setReviewScore(averageRating);
+        }
+
+        roomRepository.saveAll(rooms);
     }
 }

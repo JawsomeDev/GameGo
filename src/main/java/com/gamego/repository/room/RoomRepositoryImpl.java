@@ -1,9 +1,14 @@
 package com.gamego.repository.room;
 
 import com.gamego.domain.account.Account;
+import com.gamego.domain.account.accountenum.TimePreference;
+import com.gamego.domain.game.Game;
 import com.gamego.domain.game.QGame;
+import com.gamego.domain.review.QReview;
 import com.gamego.domain.room.QRoom;
 import com.gamego.domain.room.Room;
+import com.gamego.domain.roomaccount.QRoomAccount;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -13,14 +18,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 @Transactional(readOnly = true)
 public class RoomRepositoryImpl implements RoomRepositoryCustom{
+
 
     private final JPAQueryFactory queryFactory;
 
@@ -31,12 +42,10 @@ public class RoomRepositoryImpl implements RoomRepositoryCustom{
     @Override
     public Page<Room> findByKeyword(String keyword, Account account, Pageable pageable) {
         QRoom room = QRoom.room;
-        QGame game = QGame.game;
 
         BooleanExpression keywordCondition =
                 room.title.containsIgnoreCase(keyword)
                         .or(room.games.any().name.containsIgnoreCase(keyword));
-
 
         BooleanExpression timePreferenceCondition =
                 account.getTimePreference() == null
@@ -49,9 +58,11 @@ public class RoomRepositoryImpl implements RoomRepositoryCustom{
 
         JPAQuery<Room> query = queryFactory
                 .selectFrom(room)
-                .leftJoin(room.games, game).fetchJoin()
-                .leftJoin(room.roomAccounts).fetchJoin()
                 .where(predicate)
+                .leftJoin(room.games, QGame.game).fetchJoin()
+                .leftJoin(room.roomAccounts, QRoomAccount.roomAccount).fetchJoin()
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .distinct();
 
         for (Sort.Order order : pageable.getSort()) {
@@ -66,20 +77,47 @@ public class RoomRepositoryImpl implements RoomRepositoryCustom{
                         : room.memberCount.desc());
             }
         }
+        List<Room> rooms = query.fetch();
 
-        List<Room> rooms = query
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-
-        long total = queryFactory
+        JPAQuery<Long> countQuery = queryFactory
                 .select(room.count())
                 .from(room)
-                .where(predicate)
-                .fetchOne();
+                .where(predicate);
 
-        return new PageImpl<>(rooms, pageable, total);
+        return PageableExecutionUtils.getPage(rooms, pageable, countQuery::fetchOne);
+         }
+    @Override
+    public List<Room> findByAccount(Set<Game> games, TimePreference timePreference) {
+        QRoom room = QRoom.room;
+        return queryFactory.selectFrom(room)
+                .where(
+                        room.active.isTrue(),
+                        room.closed.isFalse(),
+                        room.games.any().in(games),
+                        room.timePreference.eq(timePreference)
+                )
+                .leftJoin(room.games, QGame.game).fetchJoin()
+                .orderBy(room.activeDateTime.desc())
+                .distinct()
+                .limit(9)
+                .fetch();
     }
 
+    @Override
+    public Map<Long, Double> findAverageRatingForRooms(List<Long> roomIds) {
+        QReview review = QReview.review;
+
+        List<Tuple> results = queryFactory
+                .select(review.room.id, review.rating.avg())
+                .from(review)
+                .where(review.room.id.in(roomIds))
+                .groupBy(review.room.id)
+                .fetch();
+
+        return results.stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(review.room.id),
+                        tuple -> tuple.get(review.rating.avg())
+                ));
+    }
 }

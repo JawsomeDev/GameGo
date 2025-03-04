@@ -1,9 +1,13 @@
 package com.gamego.repository.room;
 
+import com.gamego.domain.account.accountenum.TimePreference;
+import com.gamego.domain.game.Game;
 import com.gamego.domain.room.Room;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
 
 @Transactional(readOnly = true)
 public interface RoomRepository extends JpaRepository<Room, Long>, RoomRepositoryCustom {

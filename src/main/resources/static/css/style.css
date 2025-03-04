@@ -183,13 +183,13 @@ main h2 span::after{
 }
 
 .pagination .page-item.active .page-link {
-    background-color: #1B1F3A;
-    border-color: #1B1F3A !important;
+    background-color: #11162b;
+    border-color: #11162b !important;
     color: #fff !important;
 }
 
 .pagination .page-link{
-    color: #1B1F3A;
+    color: #11162b;
 }
 
 .note-editable p{
