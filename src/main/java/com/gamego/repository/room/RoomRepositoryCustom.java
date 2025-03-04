@@ -18,5 +18,5 @@ public interface RoomRepositoryCustom {
 
     List<Room> findByAccount(Set<Game> games, TimePreference timePreference);
 
-    Map<Long, Double> findAverageRatingForRooms(List<Long> roomIds);
+//    Map<Long, Double> findAverageRatingForRooms(List<Long> roomIds);
 }

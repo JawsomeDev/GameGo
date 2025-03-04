@@ -5,12 +5,14 @@ import com.gamego.domain.account.accountenum.TimePreference;
 import com.gamego.domain.game.Game;
 import com.gamego.domain.game.QGame;
 import com.gamego.domain.review.QReview;
+import com.gamego.domain.review.Review;
 import com.gamego.domain.room.QRoom;
 import com.gamego.domain.room.Room;
 import com.gamego.domain.roomaccount.QRoomAccount;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -61,6 +63,7 @@ public class RoomRepositoryImpl implements RoomRepositoryCustom{
                 .where(predicate)
                 .leftJoin(room.games, QGame.game).fetchJoin()
                 .leftJoin(room.roomAccounts, QRoomAccount.roomAccount).fetchJoin()
+                .leftJoin(room.reviews, QReview.review).fetchJoin()
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .distinct();
@@ -103,21 +106,29 @@ public class RoomRepositoryImpl implements RoomRepositoryCustom{
                 .fetch();
     }
 
-    @Override
-    public Map<Long, Double> findAverageRatingForRooms(List<Long> roomIds) {
-        QReview review = QReview.review;
+//    @Override
+//    public Map<Long, Double> findAverageRatingForRooms(List<Long> roomIds) {
+//        QRoom room = QRoom.room;
+//        QReview review = QReview.review;
+//
+//        // Room과 Review를 fetch join하여 한 번에 조회합니다.
+//        List<Room> roomsWithReviews = queryFactory
+//                .selectFrom(room)
+//                .leftJoin(room.reviews, review).fetchJoin()
+//                .leftJoin(room.games, QGame.game).fetchJoin()
+//                .leftJoin(room.roomAccounts, QRoomAccount.roomAccount).fetchJoin()
+//                .where(room.id.in(roomIds))
+//                .distinct()
+//                .fetch();
+//
+//        return roomsWithReviews.stream()
+//                .collect(Collectors.toMap(
+//                        Room::getId,
+//                        r -> r.getReviews().stream()
+//                                .mapToDouble(Review::getRating)
+//                                .average()
+//                                .orElse(0.0)
+//                ));
+//    }
 
-        List<Tuple> results = queryFactory
-                .select(review.room.id, review.rating.avg())
-                .from(review)
-                .where(review.room.id.in(roomIds))
-                .groupBy(review.room.id)
-                .fetch();
-
-        return results.stream()
-                .collect(Collectors.toMap(
-                        tuple -> tuple.get(review.room.id),
-                        tuple -> tuple.get(review.rating.avg())
-                ));
-    }
 }

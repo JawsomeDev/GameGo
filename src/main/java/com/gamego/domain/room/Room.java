@@ -3,6 +3,7 @@ package com.gamego.domain.room;
 
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.AccountUserDetails;
+import com.gamego.domain.review.Review;
 import com.gamego.domain.roomaccount.RoomAccount;
 import com.gamego.domain.account.accountenum.TimePreference;
 import com.gamego.domain.event.Event;
@@ -69,6 +70,9 @@ public class Room {
 
     private int recruitmentChangeCountToday;
 
+    @OneToMany(mappedBy = "room")
+    private List<Review> reviews = new ArrayList<>();
+
     @Column(nullable = false, columnDefinition = "integer default 1")
     private int memberCount;
 
@@ -77,6 +81,9 @@ public class Room {
 
     @ManyToMany
     private Set<Game> games = new HashSet<>();
+
+    @Transient
+    private double averageRating;
 
     public void updateBanner(String image) {
         this.image = image;
@@ -211,6 +218,10 @@ public class Room {
         this.reviewScore = reviewScore;
     }
 
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
     public void demoteMember(Account account) {
         for(RoomAccount ra : this.roomAccounts){
             if(ra.getAccount().equals(account) && ra.getRole().equals(RoomRole.MANAGER)){
@@ -218,5 +229,12 @@ public class Room {
                 break;
             }
         }
+    }
+
+    public double calculateAverageRating() {
+        return reviews.stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0);
     }
 }

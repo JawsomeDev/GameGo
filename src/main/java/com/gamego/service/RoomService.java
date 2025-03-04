@@ -277,20 +277,20 @@ public class RoomService {
         roomRepository.save(room);
     }
 
-    public void updateReviewScores(List<Room> rooms) {
-        if(rooms.isEmpty()) {
-            return;
-        }
-
-        List<Long> roomIds = rooms.stream().map(Room::getId).collect(Collectors.toList());
-
-        Map<Long, Double> avgRatingMap = roomRepository.findAverageRatingForRooms(roomIds);
-
-        for (Room room : rooms) {
-            Double averageRating = avgRatingMap.get(room.getId());
-            room.setReviewScore(averageRating);
-        }
-
-        roomRepository.saveAll(rooms);
-    }
+//    public void updateReviewScores(List<Room> rooms) {
+//        if(rooms.isEmpty()) {
+//            return;
+//        }
+//
+//        List<Long> roomIds = rooms.stream().map(Room::getId).collect(Collectors.toList());
+//
+//        Map<Long, Double> avgRatingMap = roomRepository.findAverageRatingForRooms(roomIds);
+//
+//        for (Room room : rooms) {
+//            Double averageRating = avgRatingMap.get(room.getId());
+//            room.setReviewScore(averageRating);
+//        }
+//
+//        roomRepository.saveAll(rooms);
+//    }
 }

@@ -66,16 +66,16 @@
                         </div>
                     </div>
                 </div>
-                    <div th:if="${room.reviewScore != null}"
+                    <div th:if="${room.averageRating != null && room.averageRating > 0.0}"
                          class="rating-box  mb-2"
                     style="position: absolute; bottom: -2rem; background-color: #1B1F3A;">
                         <!-- 별 아이콘 5개 루프 -->
                         <span th:each="i : ${#numbers.sequence(1,5)}"
                               class="fa-star me-1"
-                              th:classappend="${i <= room.reviewScore} ? 'fas text-warning' : 'far text-warning'">
+                              th:classappend="${i <= room.averageRating} ? 'fas text-warning' : 'far text-warning'">
                       </span>
                         <!-- 점수 숫자 표시 (ex. 4.0) -->
-                        <span class="ms-1 fw-bold text-warning" th:text="${room.reviewScore}"></span>
+                        <span class="ms-1 fw-bold text-warning" th:text="${room.averageRating}"></span>
                     </div>
                 </div>
 

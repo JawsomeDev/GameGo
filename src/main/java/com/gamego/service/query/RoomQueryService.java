@@ -120,6 +120,16 @@ public class RoomQueryService {
     }
 
     public Page<Room> getRoomWithGames(String keyword, Account freshAccount, Pageable pageable) {
-        return roomRepository.findByKeyword(keyword, freshAccount, pageable);
+        Page<Room> roomPage = roomRepository.findByKeyword(keyword, freshAccount, pageable);
+        getReviewAverage(roomPage);
+        return roomPage;
+
+    }
+
+    public void getReviewAverage(Page<Room> roomPage){
+        roomPage.getContent().forEach(room -> {
+            double avg = room.calculateAverageRating();
+            room.setAverageRating(avg);
+        });
     }
 }

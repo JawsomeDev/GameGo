@@ -59,7 +59,7 @@ public class MainController {
         // freshAccount를 조회해야 account.timepreference가 출력됨.
         Account freshAccount = accountRepository.findById(account.getId()).orElseThrow(() -> new IllegalStateException("해당 계정이 존재하지 않습니다."));
         Page<Room> roomPage = roomQueryService.getRoomWithGames(keyword, freshAccount, pageable);
-        roomService.updateReviewScores(roomPage.getContent());
+
         model.addAttribute("account", freshAccount);
         model.addAttribute("roomPage", roomPage);
         model.addAttribute("keyword", keyword);
