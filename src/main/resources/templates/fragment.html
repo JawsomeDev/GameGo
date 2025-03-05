@@ -21,24 +21,17 @@
 <nav th:fragment="main-nav" class="navbar navbar-expand-lg bg-black text-white fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center me-4 text-white"
-           th:href="@{/main}" sec:authorize="isAuthenticated()">
+           th:href="@{/}" >
             <img src="/images/gamegogo.png" alt="겜할래" class="navbar-logo me-2" width="50">
             <span class="fw-bold">겜할래</span>
         </a>
-        <a class="navbar-brand d-flex align-items-center me-4 text-white"
-           th:href="@{/}" sec:authorize="!isAuthenticated()">
-            <img src="/images/gamegogo.png" alt="겜할래" class="navbar-logo me-2" width="50">
-            <span class="fw-bold">겜할래</span>
-        </a>
+<!--        <a class="navbar-brand d-flex align-items-center me-4 text-white"-->
+<!--           th:href="@{/}" sec:authorize="!isAuthenticated()">-->
+<!--            <img src="/images/gamegogo.png" alt="겜할래" class="navbar-logo me-2" width="50">-->
+<!--            <span class="fw-bold">겜할래</span>-->
+<!--        </a>-->
 
         <div class="collapse navbar-collapse">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <form th:action="@{/search/room}" class="form-inline d-flex" sec:authorize="isAuthenticated()" method="get">
-                        <input class="form-control bg-light w-75 me-4" name="keyword" type="search" placeholder="방 찾기" aria-label="Search">
-                    </form>
-                </li>
-            </ul>
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item" sec:authorize="!isAuthenticated()">
                     <a class="nav-link text-white" th:href="@{/login}">로그인</a>
@@ -214,6 +207,57 @@
                             </a>
                     </span>
             </p>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="room-list (roomPage)">
+    <div class="row">
+        <div class="col-md-4" th:each="room : ${roomPage}">
+            <div class="position-relative">
+                <div class="card mb-4 shadow-sm  mt-4">
+                    <img th:src="${room.useBanner && !#strings.isEmpty(room.image) ? room.image : '/images/default_banner.jpg'}"
+                         alt="Room Banner" class="img-fluid rounded" style="height: 150px; width: 100%;">
+                    <div class="card-body">
+                        <a th:href="@{'/room/' + ${room.path}}" class="text-decoration-none">
+                            <h5 class="card-title context" th:text="${room.title}"></h5>
+                        </a>
+                        <p class="card-text" th:text="${room.shortDescription}">Short Description</p>
+                        <p class="card-text context">
+                            <span th:each="game : ${room.games}" class="font-weight-bold text-monospace badge badge-pill badge-custom me-2">
+                                <span class="text-white">
+                                    <i class="fa fa-tag"></i>
+                                    <span th:text="${game.name}">Game</span>
+                                </span>
+                            </span>
+                            <span th:if="${room.timePreference != null}" class="font-weight-light text-monospace badge badge-custom me-2">
+                        <span class="text-white">
+                            <i class="fa fa-clock"></i>
+                            <span th:text="${room.timePreference.getValue()}">time</span>
+                        </span>
+                       </span>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fa fa-users icon-blue"></i>
+                                <span th:text="${room.memberCount + 1}"></span>명
+                            </small>
+                            <small class="text-muted date datetime" th:text="${room.activeDateTime}">9 mins</small>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${room.averageRating != null && room.averageRating > 0.0}"
+                     class="rating-box  mb-2"
+                     style="position: absolute; bottom: -2rem; background-color: #1B1F3A;">
+                    <!-- 별 아이콘 5개 루프 -->
+                    <span th:each="i : ${#numbers.sequence(1,5)}"
+                          class="fa-star me-1"
+                          th:classappend="${i <= room.averageRating} ? 'fas text-warning' : 'far text-warning'">
+                          </span>
+                    <!-- 점수 숫자 표시 (ex. 4.0) -->
+                    <span class="ms-1 fw-bold text-warning" th:text="${room.averageRating}"></span>
+                </div>
+            </div>
         </div>
     </div>
 </div>

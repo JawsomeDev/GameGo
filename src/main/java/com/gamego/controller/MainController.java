@@ -4,8 +4,11 @@ package com.gamego.controller;
 import com.gamego.domain.account.Account;
 import com.gamego.domain.account.CurrentAccount;
 import com.gamego.domain.room.Room;
+import com.gamego.domain.roomaccount.RoomAccount;
+import com.gamego.domain.roomaccount.RoomRole;
 import com.gamego.repository.EnrollRepository;
 import com.gamego.repository.MessageRepository;
+import com.gamego.repository.RoomAccountRepository;
 import com.gamego.repository.account.AccountRepository;
 import com.gamego.repository.room.RoomRepository;
 import com.gamego.service.ReviewService;
@@ -22,6 +25,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 @Slf4j
 @RequiredArgsConstructor
@@ -35,21 +42,40 @@ public class MainController {
     private final RoomService roomService;
     private final EnrollRepository enrollRepository;
     private final RoomQueryService roomQueryService;
+    private final RoomAccountRepository roomAccountRepository;
+
+//    @GetMapping("/")
+//    public String index() {
+//        return "index";
+//    }
 
     @GetMapping("/")
-    public String index() {
-        return "index";
-    }
-
-    @GetMapping("/main")
     public String main(@CurrentAccount Account account, Model model) {
         if(account != null) {
             Account findAccount = accountRepository.findAccountWithGamesById(account.getId()).orElseThrow(() -> new IllegalArgumentException("해당 계정을 찾을 수 없습니다."));
             model.addAttribute("account", account);
-//            model.addAttribute("enroll", enrollRepository.findByAccountAndAcceptedOrderByEnrolledAtDesc(account, true));
-//            model.addAttribute("roomList", roomRepository.findByAccount(
-//                    findAccount.getGames(), findAccount.getTimePreference()));
+            model.addAttribute("enroll", enrollRepository.findByAccountAndAcceptedOrderByEnrolledAtDesc(account, true));
+            model.addAttribute("roomList", roomRepository.findByAccount(
+                    findAccount.getGames(), findAccount.getTimePreference()));
+
+            List<Room> allActiveRooms = roomQueryService.findActiveRooms();
+            model.addAttribute("allActiveRooms", allActiveRooms);
+
+            List<RoomAccount> roomAccountList = roomAccountRepository.findFirst9ByAccountAndRoleIn(findAccount,
+                    Arrays.asList(RoomRole.MANAGER, RoomRole.MASTER));
+
+            List<Room> masterRooms = roomAccountList.stream().map(RoomAccount::getRoom).collect(Collectors.toList());
+            model.addAttribute("roomMasterOf", masterRooms);
+
+            List<RoomAccount> roomAccountListByMember = roomAccountRepository.findFirst9ByAccountAndRole(findAccount, RoomRole.MEMBER);
+            List<Room> memberRooms = roomAccountListByMember.stream().map(RoomAccount::getRoom).collect(Collectors.toList());
+            model.addAttribute("roomMemberOf", memberRooms);
+
+            return "index-after-login";
         }
+        List<Room> roomList = roomQueryService.findActiveRooms();
+        roomQueryService.calculateAverageRating(roomList);
+        model.addAttribute("roomList", roomList);
         return "main";
     }
 
@@ -59,6 +85,7 @@ public class MainController {
         // freshAccount를 조회해야 account.timepreference가 출력됨.
         Account freshAccount = accountRepository.findById(account.getId()).orElseThrow(() -> new IllegalStateException("해당 계정이 존재하지 않습니다."));
         Page<Room> roomPage = roomQueryService.getRoomWithGames(keyword, freshAccount, pageable);
+
 
         model.addAttribute("account", freshAccount);
         model.addAttribute("roomPage", roomPage);

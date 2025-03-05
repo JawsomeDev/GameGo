@@ -15,6 +15,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -131,5 +133,16 @@ public class RoomQueryService {
             double avg = room.calculateAverageRating();
             room.setAverageRating(avg);
         });
+    }
+
+    public void calculateAverageRating(List<Room> rooms) {
+        rooms.forEach(room -> {
+            double avg = room.calculateAverageRating();
+            room.setAverageRating(avg);
+        });
+    }
+
+    public List<Room> findActiveRooms() {
+      return roomRepository.findFirst9ByActiveAndClosedOrderByActiveDateTimeDesc(true, false);
     }
 }

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html :: head}"></head>
+<body>
+<div th:replace="~{fragment.html :: main-nav}"></div>
+
+<div class="alert alert-warning text-center mb-0" role="alert" th:if="${account != null && !account.emailVerified}" style="padding-top: 46px">
+    프로필을 수정하려면 <a href="#" th:href="@{/check-email}" class="alert-link">계정 인증 메일을 확인</a>하세요.
+</div>
+<div class="container mt-5">
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <form th:action="@{/search/room}" sec:authorize="isAuthenticated()" method="get" class="mx-auto" style="max-width: 600px;">
+                <div class="input-group input-group-lg rounded-pill overflow-hidden shadow">
+                    <!-- 검색 아이콘 -->
+                    <span class="input-group-text bg-white border-0" id="search-icon">
+                        <i class="fa fa-search text-muted"></i>
+                    </span>
+                    <!-- 검색 인풋 -->
+                    <input type="search"
+                           class="form-control border-0"
+                           placeholder="원하는 게임을 검색하세요."
+                           aria-label="Search"
+                           name="keyword"
+                           aria-describedby="search-icon">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 탭 메뉴 -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <!-- Bootstrap Nav Tabs -->
+            <ul class="nav nav-tabs" id="roomTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active"
+                            id="managing-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#managing"
+                            type="button"
+                            role="tab"
+                            aria-controls="managing"
+                            aria-selected="true">
+                        관리중인 방
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link"
+                            id="joined-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#joined"
+                            type="button"
+                            role="tab"
+                            aria-controls="joined"
+                            aria-selected="false">
+                        들어가 있는 방
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link"
+                            id="match-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#match"
+                            type="button"
+                            role="tab"
+                            aria-controls="match"
+                            aria-selected="false">
+                       추천 방
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link"
+                            id="allrooms-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#allrooms"
+                            type="button"
+                            role="tab"
+                            aria-controls="allrooms"
+                            aria-selected="false">
+                        전체 방
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="roomTabContent">
+                <!-- 탭1: 관리중인 방 -->
+                <div class="tab-pane fade show active"
+                     id="managing"
+                     role="tabpanel"
+                     aria-labelledby="managing-tab"
+                     tabindex="0">
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3">
+                        <!-- roomMasterOf: 내가 마스터/매니저로 있는 방들 -->
+                        <div class="col" th:each="room : ${roomMasterOf}">
+                            <div class="card h-100">
+                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)
+                                              ? room.image : '/images/default_banner.jpg'}"
+                                     class="card-img-top"
+                                     alt="Room Banner"
+                                     style="height: 150px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>
+                                    <p class="card-text">
+                                        인원: <span th:text="${room.memberCount + 1}">N</span>명
+                                    </p>
+                                    <p class="card-text">
+                                        <span th:text="${room.shortDescription}">방 소개</span>
+                                    </p>
+                                    <!-- 예: 자세히 보기 버튼 -->
+                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade"
+                     id="joined"
+                     role="tabpanel"
+                     aria-labelledby="joined-tab"
+                     tabindex="0">
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3">
+                        <!-- roomMemberOf: 내가 일반 멤버로 들어가 있는 방들 -->
+                        <div class="col" th:each="room : ${roomMemberOf}">
+                            <div class="card h-100">
+                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)
+                                              ? room.image : '/images/default_banner.jpg'}"
+                                     class="card-img-top"
+                                     alt="Room Banner"
+                                     style="height: 150px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>
+                                    <p class="card-text">
+                                        인원: <span th:text="${room.memberCount + 1}">N</span>명
+                                    </p>
+                                    <p class="card-text">
+                                        <span th:text="${room.shortDescription}">방 소개</span>
+                                    </p>
+                                    <!-- 예: 자세히 보기 버튼 -->
+                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade"
+                     id="match"
+                     role="tabpanel"
+                     aria-labelledby="match-tab"
+                     tabindex="0">
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3">
+                        <div class="col" th:each="room : ${roomList}">
+                            <div class="card h-100">
+                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)
+                                              ? room.image : '/images/default_banner.jpg'}"
+                                     class="card-img-top"
+                                     alt="Room Banner"
+                                     style="height: 150px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>
+                                    <p class="card-text">
+                                        인원: <span th:text="${room.memberCount + 1}">N</span>명
+                                    </p>
+                                    <p class="card-text">
+                                        <span th:text="${room.shortDescription}">방 소개</span>
+                                    </p>
+                                    <!-- 예: 자세히 보기 버튼 -->
+                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade"
+                     id="allrooms"
+                     role="tabpanel"
+                     aria-labelledby="allrooms-tab"
+                     tabindex="0">
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3">
+                        <!-- roomMemberOf: 내가 일반 멤버로 들어가 있는 방들 -->
+                        <div class="col" th:each="room : ${allActiveRooms}">
+                            <div class="card h-100">
+                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)
+                                              ? room.image : '/images/default_banner.jpg'}"
+                                     class="card-img-top"
+                                     alt="Room Banner"
+                                     style="height: 150px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>
+                                    <p class="card-text">
+                                        인원: <span th:text="${room.memberCount + 1}">N</span>명
+                                    </p>
+                                    <p class="card-text">
+                                        <span th:text="${room.shortDescription}">방 소개</span>
+                                    </p>
+                                    <!-- 예: 자세히 보기 버튼 -->
+                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- //col-12 -->
+    </div><!-- //row (탭 메뉴) -->
+</div>
+<div th:replace="~{fragment.html :: footer}"></div>
+<script src="/node_modules/dayjs/dayjs.min.js"></script>
+<script src="/node_modules/dayjs/locale/ko.js"></script>
+<script>
+    dayjs.locale('ko');
+    document.querySelectorAll('.datetime').forEach(elem => {
+        const rawText = elem.innerText.trim();
+        if(rawText){
+            elem.innerText = dayjs(rawText).format('YYYY년 MM월 DD일 dddd HH:mm');
+        }
+    });
+</script>
+</body>
+</html>

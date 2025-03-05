@@ -16,6 +16,6 @@ public interface EnrollRepository extends JpaRepository<Enroll, Long> {
 
     Enroll findByEventAndAccount(Event event, Account account);
 
-    @EntityGraph(attributePaths = {"events", "event.room"})
+    @EntityGraph(attributePaths = {"event", "event.room"})
     List<Enroll> findByAccountAndAcceptedOrderByEnrolledAtDesc(Account account, boolean accepted);
 }

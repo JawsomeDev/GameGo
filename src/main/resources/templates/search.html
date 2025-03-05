@@ -8,6 +8,23 @@
 
 <div class="container">
     <div class="py-5 text-center text-white ">
+        <br/>
+        <form th:action="@{/search/room}" sec:authorize="isAuthenticated()" method="get"
+              class="mx-auto" style="max-width: 600px;">
+            <div class="input-group input-group-lg rounded-pill overflow-hidden shadow">
+                <!-- 왼쪽 아이콘 영역 -->
+                <span class="input-group-text bg-white border-0" id="search-icon">
+                <i class="fa fa-search text-muted"></i>
+            </span>
+                <!-- 실제 검색 인풋 -->
+                <input type="search"
+                       class="form-control border-0"
+                       placeholder="원하는 게임을 검색하세요."
+                       aria-label="Search"
+                       name="keyword"
+                       aria-describedby="search-icon">
+            </div>
+        </form><br/>
         <p class="lead" th:if="${roomPage.getTotalElements() == 0}">
             <span th:text="${keyword}" id="keyword" class="context"></span>에 해당하는 방이 없습니다. 방을 새로 만들어 보아요.
         </p>
@@ -32,56 +49,7 @@
         </div>
     </div>
     <div class="row justify-content-center">
-        <div class="row">
-            <div class="col-md-4" th:each="room : ${roomPage.getContent()}">
-                <div class="position-relative">
-                <div class="card mb-4 shadow-sm  mt-4">
-                    <img th:src="${room.useBanner && !#strings.isEmpty(room.image) ? room.image : '/images/default_banner.jpg'}"
-                         alt="Room Banner" class="img-fluid rounded" style="height: 150px; width: 100%;">
-                    <div class="card-body">
-                        <a th:href="@{'/room/' + ${room.path}}" class="text-decoration-none">
-                            <h5 class="card-title context" th:text="${room.title}"></h5>
-                        </a>
-                        <p class="card-text" th:text="${room.shortDescription}">Short Description</p>
-                        <p class="card-text context">
-                        <span th:each="game : ${room.games}" class="font-weight-bold text-monospace badge badge-pill badge-custom me-2">
-                            <span class="text-white">
-                                <i class="fa fa-tag"></i>
-                                <span th:text="${game.name}">Game</span>
-                            </span>
-                        </span>
-                            <span th:if="${room.timePreference != null}" class="font-weight-light text-monospace badge badge-custom me-2">
-                    <span class="text-white">
-                        <i class="fa fa-clock"></i>
-                        <span th:text="${room.timePreference.getValue()}">time</span>
-                    </span>
-                   </span>
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
-                                <i class="fa fa-users icon-blue"></i>
-                                <span th:text="${room.memberCount + 1}"></span>명
-                            </small>
-                            <small class="text-muted date datetime" th:text="${room.activeDateTime}">9 mins</small>
-                        </div>
-                    </div>
-                </div>
-                    <div th:if="${room.averageRating != null && room.averageRating > 0.0}"
-                         class="rating-box  mb-2"
-                    style="position: absolute; bottom: -2rem; background-color: #1B1F3A;">
-                        <!-- 별 아이콘 5개 루프 -->
-                        <span th:each="i : ${#numbers.sequence(1,5)}"
-                              class="fa-star me-1"
-                              th:classappend="${i <= room.averageRating} ? 'fas text-warning' : 'far text-warning'">
-                      </span>
-                        <!-- 점수 숫자 표시 (ex. 4.0) -->
-                        <span class="ms-1 fw-bold text-warning" th:text="${room.averageRating}"></span>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
+    <div th:replace="~{fragment.html :: room-list (roomPage = ${roomPage.getContent()})}"></div>
         <nav aria-label="Page navigation example ">
             <ul class="pagination mt-5 justify-content-center">
                 <!-- 이전 버튼: 첫 페이지면 비활성화 -->

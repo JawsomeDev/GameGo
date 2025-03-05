@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 @Transactional(readOnly = true)
@@ -40,4 +41,7 @@ public interface RoomRepository extends JpaRepository<Room, Long>, RoomRepositor
 
     @EntityGraph(attributePaths = {"roomAccounts"})
     Room findRoomWithRoomAccountsById(Long id);
+
+    @EntityGraph(attributePaths = {"games", "reviews"})
+    List<Room> findFirst9ByActiveAndClosedOrderByActiveDateTimeDesc(boolean active, boolean closed);
 }
