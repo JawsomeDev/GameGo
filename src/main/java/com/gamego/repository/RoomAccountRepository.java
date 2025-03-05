@@ -16,9 +16,9 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface RoomAccountRepository extends JpaRepository<RoomAccount, Long> {
 
-    @EntityGraph(attributePaths = {"room"})
+    @EntityGraph(attributePaths = {"room", "room.games"})
     List<RoomAccount> findFirst9ByAccountAndRole(Account account, RoomRole role);
 
-    @EntityGraph(attributePaths = {"room"})
+    @EntityGraph(attributePaths = {"room", "room.games"})
     List<RoomAccount> findFirst9ByAccountAndRoleIn(Account account, List<RoomRole> roles);
 }

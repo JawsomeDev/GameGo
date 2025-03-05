@@ -57,7 +57,7 @@
                             role="tab"
                             aria-controls="joined"
                             aria-selected="false">
-                        들어가 있는 방
+                        참가 중인 방
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -92,28 +92,29 @@
                      role="tabpanel"
                      aria-labelledby="managing-tab"
                      tabindex="0">
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3">
+                    <div class="row">
+                        <div th:replace="~{fragment.html:: room-list (roomPage = ${roomMasterOf})}"></div>
                         <!-- roomMasterOf: 내가 마스터/매니저로 있는 방들 -->
-                        <div class="col" th:each="room : ${roomMasterOf}">
-                            <div class="card h-100">
-                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)
-                                              ? room.image : '/images/default_banner.jpg'}"
-                                     class="card-img-top"
-                                     alt="Room Banner"
-                                     style="height: 150px; object-fit: cover;">
-                                <div class="card-body">
-                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>
-                                    <p class="card-text">
-                                        인원: <span th:text="${room.memberCount + 1}">N</span>명
-                                    </p>
-                                    <p class="card-text">
-                                        <span th:text="${room.shortDescription}">방 소개</span>
-                                    </p>
-                                    <!-- 예: 자세히 보기 버튼 -->
-                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>
-                                </div>
-                            </div>
-                        </div>
+<!--                        <div class="col" th:each="room : ${roomMasterOf}">-->
+<!--                            <div class="card h-100">-->
+<!--                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)-->
+<!--                                              ? room.image : '/images/default_banner.jpg'}"-->
+<!--                                     class="card-img-top"-->
+<!--                                     alt="Room Banner"-->
+<!--                                     style="height: 150px; object-fit: cover;">-->
+<!--                                <div class="card-body">-->
+<!--                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>-->
+<!--                                    <p class="card-text">-->
+<!--                                        인원: <span th:text="${room.memberCount + 1}">N</span>명-->
+<!--                                    </p>-->
+<!--                                    <p class="card-text">-->
+<!--                                        <span th:text="${room.shortDescription}">방 소개</span>-->
+<!--                                    </p>-->
+<!--                                    &lt;!&ndash; 예: 자세히 보기 버튼 &ndash;&gt;-->
+<!--                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
                     </div>
                 </div>
                 <div class="tab-pane fade"
@@ -121,28 +122,29 @@
                      role="tabpanel"
                      aria-labelledby="joined-tab"
                      tabindex="0">
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3">
+                    <div class="row">
+                        <div th:replace="~{fragment.html:: room-list (roomPage = ${roomMemberOf})}"></div>
                         <!-- roomMemberOf: 내가 일반 멤버로 들어가 있는 방들 -->
-                        <div class="col" th:each="room : ${roomMemberOf}">
-                            <div class="card h-100">
-                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)
-                                              ? room.image : '/images/default_banner.jpg'}"
-                                     class="card-img-top"
-                                     alt="Room Banner"
-                                     style="height: 150px; object-fit: cover;">
-                                <div class="card-body">
-                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>
-                                    <p class="card-text">
-                                        인원: <span th:text="${room.memberCount + 1}">N</span>명
-                                    </p>
-                                    <p class="card-text">
-                                        <span th:text="${room.shortDescription}">방 소개</span>
-                                    </p>
-                                    <!-- 예: 자세히 보기 버튼 -->
-                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>
-                                </div>
-                            </div>
-                        </div>
+<!--                        <div class="col" th:each="room : ${roomMemberOf}">-->
+<!--                            <div class="card h-100">-->
+<!--                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)-->
+<!--                                              ? room.image : '/images/default_banner.jpg'}"-->
+<!--                                     class="card-img-top"-->
+<!--                                     alt="Room Banner"-->
+<!--                                     style="height: 150px; object-fit: cover;">-->
+<!--                                <div class="card-body">-->
+<!--                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>-->
+<!--                                    <p class="card-text">-->
+<!--                                        인원: <span th:text="${room.memberCount + 1}">N</span>명-->
+<!--                                    </p>-->
+<!--                                    <p class="card-text">-->
+<!--                                        <span th:text="${room.shortDescription}">방 소개</span>-->
+<!--                                    </p>-->
+<!--                                    &lt;!&ndash; 예: 자세히 보기 버튼 &ndash;&gt;-->
+<!--                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
                     </div>
                 </div>
 
@@ -151,27 +153,28 @@
                      role="tabpanel"
                      aria-labelledby="match-tab"
                      tabindex="0">
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3">
-                        <div class="col" th:each="room : ${roomList}">
-                            <div class="card h-100">
-                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)
-                                              ? room.image : '/images/default_banner.jpg'}"
-                                     class="card-img-top"
-                                     alt="Room Banner"
-                                     style="height: 150px; object-fit: cover;">
-                                <div class="card-body">
-                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>
-                                    <p class="card-text">
-                                        인원: <span th:text="${room.memberCount + 1}">N</span>명
-                                    </p>
-                                    <p class="card-text">
-                                        <span th:text="${room.shortDescription}">방 소개</span>
-                                    </p>
-                                    <!-- 예: 자세히 보기 버튼 -->
-                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="row">
+                        <div th:replace="~{fragment.html:: room-list (roomPage = ${roomList})}"></div>
+<!--                        <div class="col" th:each="room : ${roomList}">-->
+<!--                            <div class="card h-100">-->
+<!--                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)-->
+<!--                                              ? room.image : '/images/default_banner.jpg'}"-->
+<!--                                     class="card-img-top"-->
+<!--                                     alt="Room Banner"-->
+<!--                                     style="height: 150px; object-fit: cover;">-->
+<!--                                <div class="card-body">-->
+<!--                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>-->
+<!--                                    <p class="card-text">-->
+<!--                                        인원: <span th:text="${room.memberCount + 1}">N</span>명-->
+<!--                                    </p>-->
+<!--                                    <p class="card-text">-->
+<!--                                        <span th:text="${room.shortDescription}">방 소개</span>-->
+<!--                                    </p>-->
+<!--                                    &lt;!&ndash; 예: 자세히 보기 버튼 &ndash;&gt;-->
+<!--                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
                     </div>
                 </div>
                 <div class="tab-pane fade"
@@ -179,28 +182,29 @@
                      role="tabpanel"
                      aria-labelledby="allrooms-tab"
                      tabindex="0">
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3">
+                    <div class="row">
+                        <div th:replace="~{fragment.html :: room-list (roomPage = ${allActiveRooms})}"></div>
                         <!-- roomMemberOf: 내가 일반 멤버로 들어가 있는 방들 -->
-                        <div class="col" th:each="room : ${allActiveRooms}">
-                            <div class="card h-100">
-                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)
-                                              ? room.image : '/images/default_banner.jpg'}"
-                                     class="card-img-top"
-                                     alt="Room Banner"
-                                     style="height: 150px; object-fit: cover;">
-                                <div class="card-body">
-                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>
-                                    <p class="card-text">
-                                        인원: <span th:text="${room.memberCount + 1}">N</span>명
-                                    </p>
-                                    <p class="card-text">
-                                        <span th:text="${room.shortDescription}">방 소개</span>
-                                    </p>
-                                    <!-- 예: 자세히 보기 버튼 -->
-                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>
-                                </div>
-                            </div>
-                        </div>
+<!--                        <div class="col" th:each="room : ${allActiveRooms}">-->
+<!--                            <div class="card h-100">-->
+<!--                                <img th:src="${room.useBanner && !#strings.isEmpty(room.image)-->
+<!--                                              ? room.image : '/images/default_banner.jpg'}"-->
+<!--                                     class="card-img-top"-->
+<!--                                     alt="Room Banner"-->
+<!--                                     style="height: 150px; object-fit: cover;">-->
+<!--                                <div class="card-body">-->
+<!--                                    <h5 class="card-title" th:text="${room.title}">방 이름</h5>-->
+<!--                                    <p class="card-text">-->
+<!--                                        인원: <span th:text="${room.memberCount + 1}">N</span>명-->
+<!--                                    </p>-->
+<!--                                    <p class="card-text">-->
+<!--                                        <span th:text="${room.shortDescription}">방 소개</span>-->
+<!--                                    </p>-->
+<!--                                    &lt;!&ndash; 예: 자세히 보기 버튼 &ndash;&gt;-->
+<!--                                    <a class="btn btn-primary" th:href="@{'/room/' + ${room.path}}">방 입장</a>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
