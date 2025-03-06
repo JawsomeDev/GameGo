@@ -143,6 +143,15 @@ public class RoomQueryService {
     }
 
     public List<Room> findActiveRooms() {
-      return roomRepository.findFirst9ByActiveAndClosedOrderByActiveDateTimeDesc(true, false);
+        List<Room> room = roomRepository.findFirst21ByActiveAndClosedOrderByActiveDateTimeDesc(true, false);
+        calculateAverageRating(room);
+        return room;
+    }
+
+    public List<Room> getRoomList(Account account) {
+        List<Room> room = roomRepository.findByAccount(
+                account.getGames(), account.getTimePreference());
+        calculateAverageRating(room);
+        return room;
     }
 }

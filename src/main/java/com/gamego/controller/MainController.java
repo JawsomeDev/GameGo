@@ -53,22 +53,22 @@ public class MainController {
     public String main(@CurrentAccount Account account, Model model) {
         if(account != null) {
             Account findAccount = accountRepository.findAccountWithGamesById(account.getId()).orElseThrow(() -> new IllegalArgumentException("해당 계정을 찾을 수 없습니다."));
+            List<Room> roomList = roomQueryService.getRoomList(findAccount);
             model.addAttribute("account", account);
-            model.addAttribute("enroll", enrollRepository.findByAccountAndAcceptedOrderByEnrolledAtDesc(account, true));
-            model.addAttribute("roomList", roomRepository.findByAccount(
-                    findAccount.getGames(), findAccount.getTimePreference()));
+            model.addAttribute("roomList", roomList);
 
             List<Room> allActiveRooms = roomQueryService.findActiveRooms();
             model.addAttribute("allActiveRooms", allActiveRooms);
 
             List<RoomAccount> roomAccountList = roomAccountRepository.findFirst9ByAccountAndRoleIn(findAccount,
                     Arrays.asList(RoomRole.MANAGER, RoomRole.MASTER));
-
             List<Room> masterRooms = roomAccountList.stream().map(RoomAccount::getRoom).collect(Collectors.toList());
+            roomQueryService.calculateAverageRating(masterRooms);
             model.addAttribute("roomMasterOf", masterRooms);
 
             List<RoomAccount> roomAccountListByMember = roomAccountRepository.findFirst9ByAccountAndRole(findAccount, RoomRole.MEMBER);
             List<Room> memberRooms = roomAccountListByMember.stream().map(RoomAccount::getRoom).collect(Collectors.toList());
+            roomQueryService.calculateAverageRating(memberRooms);
             model.addAttribute("roomMemberOf", memberRooms);
 
             return "index-after-login";

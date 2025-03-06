@@ -43,5 +43,5 @@ public interface RoomRepository extends JpaRepository<Room, Long>, RoomRepositor
     Room findRoomWithRoomAccountsById(Long id);
 
     @EntityGraph(attributePaths = {"games", "reviews"})
-    List<Room> findFirst9ByActiveAndClosedOrderByActiveDateTimeDesc(boolean active, boolean closed);
+    List<Room> findFirst21ByActiveAndClosedOrderByActiveDateTimeDesc(boolean active, boolean closed);
 }

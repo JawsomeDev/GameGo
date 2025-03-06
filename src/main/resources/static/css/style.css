@@ -224,3 +224,33 @@ main h2 span::after{
 .star-rating-bottom {
     color: #ddd; /* 빈 별 색상 */
 }
+
+.nav-pills .nav-link {
+    color: #aaa;
+    background: none;
+    border-radius: .5rem; /* pill 모양 */
+    margin: 0 0.3rem;     /* 탭 간격 */
+    transition: background-color .2s;
+}
+
+.nav-pills .nav-link:hover {
+    background: #3a3a3a;
+    color: #fff;
+}
+
+.nav-pills .nav-link.active {
+    color: #fff;
+    background-color: #3a424c; /* 활성 탭 색상 */
+}
+.card-img-top {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    height: 150px;
+    object-fit: cover;
+}
+
+.card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1;
+}
