@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity @EqualsAndHashCode(of = "id")
-@Getter @AllArgsConstructor
+@Getter @AllArgsConstructor @Setter
 public class Account {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)

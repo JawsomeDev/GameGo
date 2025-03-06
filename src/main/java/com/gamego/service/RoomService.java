@@ -52,6 +52,7 @@ public class RoomService {
     public Room createNewRoom(Room room, Account account) {
         Room savedRoom = roomRepository.save(room);
         RoomAccount roomAccount = new RoomAccount(savedRoom, account.getNickname(), account, RoomRole.MASTER, LocalDateTime.now());
+        savedRoom.addRoomAccount(roomAccount);
         roomAccountRepository.save(roomAccount);
 
         return savedRoom;
@@ -204,7 +205,7 @@ public class RoomService {
         Room findRoom = roomRepository.findRoomWithMemberByPath(path);
         boolean isBanned = banHistoryRepository.existsByRoomIdAndAccountId(findRoom.getId(), account.getId());
         if(isBanned){
-            throw new BannedMemberJoinException("추방된 회원은 재가입할 수 없습니다.");
+            throw new BannedMemberJoinException("추방된 회원은 재가입 할 수 없습니다.");
         }
         findRoom.addMember(account);
         return findRoom;

@@ -31,9 +31,7 @@ public class RoomController {
     private final RoomValidator roomValidator;
     private final RoomQueryService roomQueryService;
     private final ModelMapper modelMapper;
-    private final RoomRepository roomRepository;
-    private final ReviewService reviewService;
-    private final ReviewQueryService reviewQueryService;
+
 
     @InitBinder("roomForm")
     public void roomFormInitBinder(WebDataBinder binder) {
@@ -96,7 +94,7 @@ public class RoomController {
                                 @RequestParam("targetAccountId") Long targetAccountId,
                                 RedirectAttributes attributes) {
         Room room = roomService.promoteMember(path, targetAccountId, account);
-        attributes.addFlashAttribute("message","매니저로 승급이 완료되었습니다..");
+        attributes.addFlashAttribute("message","매니저로 승급이 완료되었습니다.");
         return "redirect:/room/" + room.getEncodedPath() + "/members";
     }
 

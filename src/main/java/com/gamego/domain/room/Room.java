@@ -23,8 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Entity
-@Getter @AllArgsConstructor @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity @Setter
+@Getter @AllArgsConstructor @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Room {
     
@@ -181,6 +181,11 @@ public class Room {
 
     public void changeTitle(String newTitle) {
         this.title = newTitle;
+    }
+
+    public void addRoomAccount(RoomAccount roomAccount) {
+        this.roomAccounts.add(roomAccount);
+        roomAccount.setRoom(this);
     }
 
 
