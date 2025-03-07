@@ -12,6 +12,7 @@ import com.gamego.domain.game.form.GameListResp;
 import com.gamego.domain.game.form.GameForm;
 import com.gamego.domain.game.form.GameResp;
 import com.gamego.repository.GameRepository;
+import com.gamego.service.GameService;
 import com.gamego.service.query.AccountQueryService;
 import com.gamego.service.AccountService;
 import com.gamego.validator.NicknameValidator;
@@ -53,6 +54,7 @@ public class ProfileController {
     private final ObjectMapper objectMapper;
     private final AccountQueryService accountQueryService;
     private final EntityManager em;
+    private final GameService gameService;
 
     @InitBinder("nicknameForm")
     public void initBinder1(WebDataBinder binder){
@@ -135,12 +137,7 @@ public class ProfileController {
     @ResponseBody
     public ResponseEntity<?> addGame(@CurrentAccount Account account,
                                      @RequestBody @Valid GameForm gameForm) {
-        Game game = gameRepository.findByName(gameForm.getGameName());
-        if (game == null) {
-            return ResponseEntity.badRequest()
-                    .body("{\"status\":\"error\",\"message\":\"등록된 게임만 선택 가능합니다.\"}");
-        }
-
+        Game game = gameService.findOrCreateNew(gameForm.getGameName());
         GameResp response = accountService.addGame(account, game);
         return ResponseEntity.ok(response);
     }

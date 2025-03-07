@@ -3,6 +3,7 @@ package com.gamego.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.gamego.domain.game.Game;
 import com.gamego.repository.GameRepository;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -61,5 +62,13 @@ public class GameService {
                 log.info("이미 존재하는 게임 : {}", game.getName());
             }
         }
+    }
+
+    public Game findOrCreateNew(@NotNull String gameName) {
+        Game game = gameRepository.findByName(gameName);
+        if(game == null) {
+            game = gameRepository.save(Game.builder().name(gameName).build());
+        }
+        return game;
     }
 }

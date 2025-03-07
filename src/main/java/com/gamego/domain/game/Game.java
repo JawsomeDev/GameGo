@@ -6,8 +6,9 @@ import lombok.*;
 
 
 @Entity @Builder
+@Setter
 @Getter @EqualsAndHashCode(of = "id")
-@AllArgsConstructor @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor @NoArgsConstructor
 public class Game {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)

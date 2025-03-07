@@ -14,6 +14,7 @@ import com.gamego.domain.room.Room;
 import com.gamego.domain.room.form.RoomDescriptionForm;
 import com.gamego.repository.GameRepository;
 import com.gamego.repository.room.RoomRepository;
+import com.gamego.service.GameService;
 import com.gamego.service.query.RoomQueryService;
 import com.gamego.service.RoomService;
 import jakarta.validation.Valid;
@@ -43,6 +44,7 @@ public class RoomSettingsController {
     private final GameRepository gameRepository;
     private final ObjectMapper objectMapper;
     private final RoomRepository roomRepository;
+    private final GameService gameService;
 
     @GetMapping("/description")
     public String viewRoomSettings(@CurrentAccount Account account, @PathVariable String path, Model model) {
@@ -131,13 +133,8 @@ public class RoomSettingsController {
     public ResponseEntity<?> addGame(@CurrentAccount Account account, @PathVariable String path,
                                      @RequestBody GameForm gameForm) {
         Room room = roomQueryService.getRoomToUpdateGame(path, account);
-        Game game = gameRepository.findByName(gameForm.getGameName());
-
-        if (game == null) {
-            return ResponseEntity.badRequest()
-                    .body("{\"status\":\"error\",\"message\":\"등록된 게임만 선택 가능합니다.\"}");
-        }
-
+        String gameName = gameForm.getGameName();
+        Game game = gameService.findOrCreateNew(gameName);
         GameResp response = roomService.addGame(room, game);
         return ResponseEntity.ok(response);
     }
