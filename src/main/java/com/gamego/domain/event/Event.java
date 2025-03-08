@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Getter @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Event {
 
@@ -51,6 +51,7 @@ public class Event {
     @Column(nullable = false)
     private Integer limitOfNumbers;
 
+    @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Enroll> enrolls = new ArrayList<>();
 
