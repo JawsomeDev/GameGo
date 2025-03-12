@@ -95,7 +95,7 @@
                     <div class="row">
                         <div th:if="${roomMasterOf.isEmpty()}">
                             <div class="row justify-content-center">
-                                <h3 class="text-center">관리중인 방이 없습니다.</h3>
+                                <h3 class="text-center text-white">관리중인 방이 없습니다.</h3>
                             </div>
                         </div>
                         <div th:replace="~{fragment.html:: room-list (roomPage = ${roomMasterOf})}"></div>
@@ -109,7 +109,7 @@
                     <div class="row">
                         <div th:if="${roomMemberOf.isEmpty()}">
                             <div class="row justify-content-center">
-                                <h3 class="text-center">참가 중인 방이 없습니다.</h3>
+                                <h3 class="text-center text-white">참가 중인 방이 없습니다.</h3>
                             </div>
                         </div>
                         <div th:replace="~{fragment.html:: room-list (roomPage = ${roomMemberOf})}"></div>
