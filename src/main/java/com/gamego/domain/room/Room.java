@@ -70,7 +70,7 @@ public class Room {
 
     private int recruitmentChangeCountToday;
 
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 
     @Column(nullable = false, columnDefinition = "integer default 1")

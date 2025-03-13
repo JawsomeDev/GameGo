@@ -310,6 +310,6 @@ public class RoomSettingsController {
     public String removeRoom(@CurrentAccount Account account, @PathVariable String path, Model model) {
         Room room = roomQueryService.getRoomToUpdateByStatus(path, account);
         roomService.removeRoom(room);
-        return "redirect:/main";
+        return "redirect:/";
     }
 }
