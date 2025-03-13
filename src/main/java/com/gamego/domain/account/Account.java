@@ -41,7 +41,7 @@ public class Account {
 
     private String location;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String profileImage;
 
     private boolean gameCreatedByEmail;
