@@ -63,7 +63,7 @@ public class RoomQueryService {
 
 
 
-    private static void checkExistRoom(String path, Room room) {
+    public void checkExistRoom(String path, Room room) {
         if (room == null) {
             throw new IllegalArgumentException(path + "에 해당하는 방이 없습니다.");
         }

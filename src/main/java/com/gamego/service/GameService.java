@@ -64,7 +64,7 @@ public class GameService {
         }
     }
 
-    public Game findOrCreateNew(@NotNull String gameName) {
+    public Game findOrCreateNew(String gameName) {
         Game game = gameRepository.findByName(gameName);
         if(game == null) {
             game = gameRepository.save(Game.builder().name(gameName).build());

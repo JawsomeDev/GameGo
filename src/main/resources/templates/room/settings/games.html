@@ -36,15 +36,18 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
-<script type="application/javascript">
+<script type="application/javascript" th:inline="javascript">
+    const roomPath = /*[[${room.path}]]*/ 'defaultPath';
+
     document.addEventListener("DOMContentLoaded", function () {
         // CSRF 토큰과 헤더 값 가져오기
         const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
         const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
 
+
         // 태그 추가/삭제 요청 함수
         function tagRequest(url, gameName) {
-            fetch("/settings/games" + url , {
+            fetch(`/room/${roomPath}/settings/games` + url , {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

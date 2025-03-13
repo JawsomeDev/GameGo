@@ -133,8 +133,7 @@ public class RoomSettingsController {
     public ResponseEntity<?> addGame(@CurrentAccount Account account, @PathVariable String path,
                                      @RequestBody GameForm gameForm) {
         Room room = roomQueryService.getRoomToUpdateGame(path, account);
-        String gameName = gameForm.getGameName();
-        Game game = gameService.findOrCreateNew(gameName);
+        Game game = gameService.findOrCreateNew(gameForm.getGameName());
         GameResp response = roomService.addGame(room, game);
         return ResponseEntity.ok(response);
     }
