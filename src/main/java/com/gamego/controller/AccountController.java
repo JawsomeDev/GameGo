@@ -103,7 +103,7 @@ public class AccountController {
         }
         model.addAttribute("account", account);
         accountService.sendVerificationEmail(account);
-        return "redirect:/main";
+        return "redirect:/";
    }
 
    @GetMapping("/profile/{nickname}")

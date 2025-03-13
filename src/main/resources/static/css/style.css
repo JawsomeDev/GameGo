@@ -234,13 +234,13 @@ main h2 span::after{
 }
 
 .nav-pills .nav-link:hover {
-    background: #3a3a3a;
+    background: #8B5CF6;
     color: #fff;
 }
 
 .nav-pills .nav-link.active {
     color: #fff;
-    background-color: #3a424c; /* 활성 탭 색상 */
+    background-color: #9333EA; /* 활성 탭 색상 */
 }
 .card-img-top {
     border-top-left-radius: 0.5rem;

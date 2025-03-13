@@ -388,7 +388,7 @@ class EventControllerTest {
 
         assertNotNull(enrollRepository.findByEventAndAccount(event, test));
         assertNotNull(enrollRepository.findByEventAndAccount(event, henzi));
-        assertNull(enrollRepository.findByEventAndAccount(event, shark));
+        assertFalse(enrollRepository.findByEventAndAccount(event, test).isAccepted());
     }
 
 

@@ -95,7 +95,7 @@
                     <div class="row">
                         <div th:if="${roomMasterOf.isEmpty()}">
                             <div class="row justify-content-center">
-                                <h3 class="text-center text-white">관리중인 방이 없습니다.</h3>
+                                <h3 class="text-center text-white mt-5">관리중인 방이 없습니다.</h3>
                             </div>
                         </div>
                         <div th:replace="~{fragment.html:: room-list (roomPage = ${roomMasterOf})}"></div>
@@ -109,7 +109,7 @@
                     <div class="row">
                         <div th:if="${roomMemberOf.isEmpty()}">
                             <div class="row justify-content-center">
-                                <h3 class="text-center text-white">참가 중인 방이 없습니다.</h3>
+                                <h3 class="text-center text-white mt-5">참가 중인 방이 없습니다.</h3>
                             </div>
                         </div>
                         <div th:replace="~{fragment.html:: room-list (roomPage = ${roomMemberOf})}"></div>
@@ -122,8 +122,8 @@
                      tabindex="0">
                     <div class="row">
                         <div  th:if="${roomList.isEmpty()}">
-                            <div class="row justify-content-center">x
-                                <h3 class="text-center text-white"> 추천 방 목록을 보려면 프로필 설정에서 게임과 시간을 설정하세요.</h3>
+                            <div class="row justify-content-center">
+                                <h3 class="text-center text-white mt-5"> 추천 방 목록을 보려면 프로필 설정에서 게임과 시간을 설정하세요.</h3>
                             </div>
                         </div>
                         <div th:replace="~{fragment.html:: room-list (roomPage = ${roomList})}"></div>
