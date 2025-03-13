@@ -133,7 +133,7 @@
         <a class="nav-item nav-link icon-blue" th:classappend="${roomMenu == 'events'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/events'}">
             <i class="fa fa-calendar icon-blue"></i> 모집
         </a>
-        <a class="nav-item nav-link icon-blue" th:classappend="${roomMenu == 'reviews'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/reviews'}">
+        <a class="nav-item nav-link icon-blue" th:if="${isMemberOrManager} or ${isMaster}" th:classappend="${roomMenu == 'reviews'}? active" href="#" th:href="@{'/room/' + ${room.path} + '/reviews'}">
             <i class="fa fa-star icon-blue"></i> 리뷰
         </a>
         <a sec:authorize="isAuthenticated()"  th:if="${isMaster}"
@@ -277,7 +277,7 @@
                           th:classappend="${i <= room.averageRating} ? 'fas text-warning' : 'far text-warning'">
                           </span>
                     <!-- 점수 숫자 표시 (ex. 4.0) -->
-                    <span class="ms-1 fw-bold text-warning" th:text="${room.averageRating}"></span>
+                    <span class="ms-1 fw-bold text-warning" th:text="${#numbers.formatDecimal(room.averageRating, 1, 1)}"></span>
                 </div>
             </div>
         </div>

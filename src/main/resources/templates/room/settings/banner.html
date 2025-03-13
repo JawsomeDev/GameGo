@@ -120,6 +120,13 @@
         fileInput.addEventListener("change", function(event) {
             if (event.target.files.length === 1) {
                 const file = event.target.files[0];
+
+                // 파일 크기 제한: 1MB (1024000 바이트) 초과 시 경고 후 중단
+                if (file.size > 1024000) {
+                    alert("배너 이미지 파일이 너무 큽니다. 1MB 이하의 파일을 사용하세요.");
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     if (!e.target.result.startsWith("data:image")) {
@@ -139,10 +146,8 @@
                     });
                     // 파일 선택 후 크롭 관련 버튼들 표시 (자르기와 취소)
                     cutButton.style.display = "inline-block";
-                    // 확인 버튼은 아직 숨김 (보여주기 전, 먼저 "자르기"로 미리보기 확인)
                     confirmButton.style.display = "none";
                     resetButton.style.display = "inline-block";
-                    // 만약 저장 버튼이 있다면 숨김 처리
                     if (saveButton) {
                         saveButton.style.display = "none";
                     }
@@ -150,7 +155,6 @@
                 reader.readAsDataURL(file);
             }
         });
-
         // "자르기" 버튼 클릭: 크롭한 결과 미리보기 생성
         cutButton.addEventListener("click", function(e) {
             e.preventDefault();

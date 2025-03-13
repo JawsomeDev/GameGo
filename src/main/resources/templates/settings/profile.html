@@ -147,6 +147,13 @@
         profileImageFile.addEventListener("change", function (event) {
             if (event.target.files.length === 1) {
                 const file = event.target.files[0];
+
+                // 파일 크기를 체크 (예: 1024000 바이트 = 약 1MB)
+                if (file.size > 1024000) {
+                    alert("이미지 파일이 너무 큽니다. 1MB 보다 작은 파일을 사용하세요.");
+                    return;
+                }
+
                 const reader = new FileReader();
 
                 reader.onload = function (e) {
@@ -155,7 +162,7 @@
                         return;
                     }
 
-                    // 기존 이미지 숨기고 새 이미지 추가
+                    // 기존 이미지 숨기고 새 이미지 표시
                     currentProfileImage.style.display = "none";
                     newProfileImageContainer.style.display = "block";
                     newProfileImageContainer.innerHTML = `<img id="new-profile" src="${e.target.result}" style="max-width: 100%;">`;
@@ -175,7 +182,6 @@
                             document.querySelector(".cropper-face").style.borderRadius = "50%";
                         }
                     });
-
                     // 버튼 표시
                     cutButton.style.display = "inline-block";
                     deleteButton.style.display = "inline-block";
