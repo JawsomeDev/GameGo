@@ -315,7 +315,9 @@
 <script th:fragment="summernote">
     $(document).ready(function() {
         $('.summernote').summernote({
-            lang: 'ko-KR',
+            dialogsInBody: true,    // 모달을 <body> 직속에 생성
+            dialogsFade: true,      // 모달 등장 애니메이션 (원하는 경우)
+            lang: "ko-KR",
             placeholder: '게임 스타일, 목표 점수, 디스코드 링크 등 게임 방에 대해 자세히 적어주세요.',
             tabsize: 2,
             height: 300,
