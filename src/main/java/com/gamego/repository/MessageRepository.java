@@ -17,4 +17,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Transactional
     void deleteByAccountAndChecked(Account account, boolean checked);
+
+    void deleteByAccount(Account account);
 }

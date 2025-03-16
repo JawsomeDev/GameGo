@@ -21,4 +21,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByRoomAndAccount(Room room, Account account);
 
     List<Review> findReviewsByRoom(Room room);
+
+    void deleteByAccount(Account account);
 }

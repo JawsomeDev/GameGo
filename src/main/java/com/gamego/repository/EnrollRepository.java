@@ -18,4 +18,6 @@ public interface EnrollRepository extends JpaRepository<Enroll, Long> {
 
     @EntityGraph(attributePaths = {"event", "event.room"})
     List<Enroll> findByAccountAndAcceptedOrderByEnrolledAtDesc(Account account, boolean accepted);
+
+    void deleteByAccount(Account account);
 }

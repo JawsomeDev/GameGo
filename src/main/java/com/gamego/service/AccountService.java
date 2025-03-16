@@ -11,6 +11,9 @@ import com.gamego.domain.account.accountenum.TimePreference;
 import com.gamego.domain.game.form.GameResp;
 import com.gamego.email.EmailMessage;
 import com.gamego.email.EmailService;
+import com.gamego.repository.EnrollRepository;
+import com.gamego.repository.MessageRepository;
+import com.gamego.repository.ReviewRepository;
 import com.gamego.repository.account.AccountRepository;
 import com.gamego.repository.GameRepository;
 import jakarta.persistence.EntityManager;
@@ -43,6 +46,9 @@ public class AccountService {
     private final GameRepository gameRepository;
     private final ObjectMapper objectMapper;
     private final EntityManager em;
+    private final EnrollRepository enrollRepository;
+    private final MessageRepository messageRepository;
+    private final ReviewRepository reviewRepository;
 
 
     @GetMapping("/login")
@@ -199,5 +205,8 @@ public class AccountService {
 
     public void deleteAccount(Account account) {
         accountRepository.delete(account);
+        enrollRepository.deleteByAccount(account);
+        messageRepository.deleteByAccount(account);
+        reviewRepository.deleteByAccount(account);
     }
 }

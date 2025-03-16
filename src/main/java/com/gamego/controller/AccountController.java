@@ -107,7 +107,7 @@ public class AccountController {
    }
 
    @GetMapping("/profile/{nickname}")
-    public String profile(@PathVariable String nickname, Model model, @CurrentAccount Account account) {
+    public String profile( @CurrentAccount Account account, @PathVariable String nickname, Model model) {
        Account myAccount = accountQueryService.getAccount(nickname);
        boolean isOwner = account.getNickname().equals(myAccount.getNickname());
 

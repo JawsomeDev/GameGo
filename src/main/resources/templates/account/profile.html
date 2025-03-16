@@ -2,54 +2,67 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-<head th:replace="~{fragment.html :: head}"></head>
+<head th:replace="~{fragment.html :: head}">
+    <!-- fragment.html 안에 다음 meta 태그가 있는지 확인:
+         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    -->
+</head>
 <body>
+<!-- 네비게이션 -->
 <div th:replace="~{fragment.html :: main-nav}"></div>
 
 <div class="container text-white">
-        <div class="row mt-5 justify-content-center">
-            <div class="col-2">
-                <img th:src="${account.profileImage != null and account.profileImage != '' ? account.profileImage : '/images/default.png'}"
-                     alt="프로필 사진"
-                     class="img-fluid rounded-circle"
-                     style="max-width: 150px;">
-            </div>
-            <div class="col-8">
-                    <h1 th:text="${account.nickname}">닉네임</h1>
-                <p class="lead" th:if="${!#strings.isEmpty(account.bio)}" th:text="${account.bio}">bio</p>
-                <p class="lead text-white" th:if="${#strings.isEmpty(account.bio) && isOwner}">
-                    한 줄 소개를 추가하세요.
-                </p>
-            </div>
-        </div>
+
+    <!-- 프로필 상단(이미지+닉네임+소개+기타 정보) 영역 -->
     <div class="row mt-5 justify-content-center">
-        <div class="col-2">
+        <!-- 왼쪽: 프로필 이미지 -->
+        <div class="col-12 col-md-2 text-center">
+            <img th:src="${account.profileImage != null and account.profileImage != '' ? account.profileImage : '/images/default.png'}"
+                 alt="프로필 사진"
+                 class="img-fluid rounded-circle mx-auto d-block"
+                 style="max-width: 150px;">
         </div>
-        <div class="col-8">
+
+        <!-- 오른쪽: 닉네임, 소개, 상세정보(성별/이메일 등) -->
+        <div class="col-12 col-md-8 mt-3 mt-md-0">
+            <!-- 닉네임, 한 줄 소개 -->
+            <h1 th:text="${account.nickname}">닉네임</h1>
+            <p class="lead" th:if="${!#strings.isEmpty(account.bio)}" th:text="${account.bio}">
+                안녕하세요.
+            </p>
+            <p class="lead text-white" th:if="${#strings.isEmpty(account.bio) && isOwner}">
+                한 줄 소개를 추가하세요.
+            </p>
+
+            <!-- 하단 정보들 (URL, 성별, 위치, 이메일 등) -->
             <p th:if="${!#strings.isEmpty(account.url)}">
-                            <span style="font-size: 20px;">
-                                <i class="fa-solid fa-link" style="color: #B197FC;"></i>
-                            </span>
+                <span style="font-size: 20px;">
+                    <i class="fa-solid fa-link" style="color: #B197FC;"></i>
+                </span>
                 <span th:text="${account.url}" class="col-11"></span>
             </p>
+
             <p th:if="${!#strings.isEmpty(account.gender)}">
-                            <span style="font-size: 20px;">
-                              <i class="fa-solid fa-venus-mars" style="color: #B197FC;"></i>
-                            </span>
+                <span style="font-size: 20px;">
+                    <i class="fa-solid fa-venus-mars" style="color: #B197FC;"></i>
+                </span>
                 <span th:text="${account.gender.displayName}" class="col-9"></span>
             </p>
+
             <p th:if="${!#strings.isEmpty(account.location)}">
-                            <span style="font-size: 20px;">
-                                <i class="fa-solid fa-location-dot" style="color: #B197FC;"></i>
-                            </span>
-                <span th:text="${account.location}" class="col-9"> </span>
+                <span style="font-size: 20px;">
+                    <i class="fa-solid fa-location-dot" style="color: #B197FC;"></i>
+                </span>
+                <span th:text="${account.location}" class="col-9"></span>
             </p>
+
             <p th:if="${isOwner}">
-                            <span style="font-size: 20px;">
-                               <i class="fa-regular fa-envelope " style="color: #B197FC;"></i>
-                            </span>
+                <span style="font-size: 20px;">
+                    <i class="fa-regular fa-envelope" style="color: #B197FC;"></i>
+                </span>
                 <span th:text="${account.email}" class="col-9"></span>
             </p>
+
             <p>
                 <span style="font-size: 20px;">
                     <i class="fa-solid fa-user-check" style="color: #B197FC;"></i>
@@ -57,17 +70,27 @@
 
                 <!-- 본인 계정(isOwner) + 미인증(account.emailVerified=false)인 경우 -->
                 <span th:if="${isOwner and !account.emailVerified}" class="col-9">
-                    <a class="text-white fw-bold" href="#" th:href="@{/check-email}">프로필을 수정하려면 이메일을 확인하세요.</a>
+                    <a class="text-white fw-bold" th:href="@{/check-email}">
+                        프로필을 수정하려면 이메일을 확인하세요.
+                    </a>
                 </span>
 
                 <!-- 본인 또는 다른 사람의 프로필에서, 인증이 완료된 경우 -->
-                <span th:if="${account.emailVerified}" class="col-9">이메일 인증 완료</span>
+                <span th:if="${account.emailVerified}" class="col-9">
+                    이메일 인증 완료
+                </span>
 
                 <!-- 다른 사람의 프로필에서, 인증되지 않은 계정인 경우 -->
-                <span th:if="${!isOwner and !account.emailVerified}" class="col-9">인증되지 않은 계정입니다.</span>
+                <span th:if="${!isOwner and !account.emailVerified}" class="col-9">
+                    인증되지 않은 계정입니다.
+                </span>
             </p>
-            <div sec:authorize="hasRole('USER')"  th:if="${isOwner}">
-                <a class="btn btn-outline-primary fw-bold" href="#" th:href="@{/settings/profile}">프로필 수정</a>
+
+            <!-- 프로필 수정 버튼 (본인 계정만) -->
+            <div sec:authorize="hasRole('USER')" th:if="${isOwner}">
+                <a class="btn btn-outline-primary fw-bold" th:href="@{/settings/profile}">
+                    프로필 수정
+                </a>
             </div>
         </div>
     </div>

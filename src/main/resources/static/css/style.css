@@ -10,6 +10,15 @@
     box-sizing: border-box;
 }
 
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    .container {
+        width: 100%;
+        margin: 0;
+    }
+}
 .strong-orange{
     color: orange;
 }
@@ -19,18 +28,7 @@ body{
     padding-top: 56px;
 }
 
-main{
-    background-color: #1B1F3A;
-    width: 100%;
-    display: flex;
-    height: 100vh;
-    color: white;
-    background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('../images/backgroundimage.png') center center;
-    background-size: cover;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
+
 strong{
     color : #0d0822;
 }

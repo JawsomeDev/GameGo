@@ -3,6 +3,7 @@ package com.gamego.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gamego.domain.account.AccountUserDetails;
 import com.gamego.domain.account.accountenum.*;
 import com.gamego.domain.account.form.*;
 import com.gamego.domain.game.Game;
@@ -12,6 +13,7 @@ import com.gamego.domain.game.form.GameListResp;
 import com.gamego.domain.game.form.GameForm;
 import com.gamego.domain.game.form.GameResp;
 import com.gamego.repository.GameRepository;
+import com.gamego.repository.account.AccountRepository;
 import com.gamego.service.GameService;
 import com.gamego.service.query.AccountQueryService;
 import com.gamego.service.AccountService;
@@ -39,6 +41,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 
@@ -55,6 +58,7 @@ public class ProfileController {
     private final AccountQueryService accountQueryService;
     private final EntityManager em;
     private final GameService gameService;
+    private final AccountRepository accountRepository;
 
     @InitBinder("nicknameForm")
     public void initBinder1(WebDataBinder binder){
@@ -198,8 +202,10 @@ public class ProfileController {
 
     @GetMapping("/settings/account")
     public String accountToUpdate(@CurrentAccount Account account, Model model){
-        model.addAttribute("account", account);
-        model.addAttribute(modelMapper.map(account, NicknameForm.class));
+        Account updatedAccount = accountRepository.findById(account.getId())
+                .orElseThrow(() -> new IllegalArgumentException("계정을 찾을 수 없습니다."));
+        model.addAttribute("account", updatedAccount);
+        model.addAttribute(modelMapper.map(updatedAccount, NicknameForm.class));
         return "settings/account";
     }
 
@@ -212,6 +218,14 @@ public class ProfileController {
         }
 
         accountService.updateNickname(account, nicknameForm.getNickname());
+        Account updatedAccount = accountRepository.findById(account.getId())
+                .orElseThrow(() -> new IllegalArgumentException("계정을 찾을 수 없습니다."));
+
+        AccountUserDetails updatedDetails = new AccountUserDetails(updatedAccount);
+        UsernamePasswordAuthenticationToken newAuth =
+                new UsernamePasswordAuthenticationToken(updatedDetails, updatedDetails.getPassword(), updatedDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+
         attributes.addFlashAttribute("message", "닉네임을 수정했습니다.");
         return "redirect:/settings/account";
     }
