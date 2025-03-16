@@ -39,7 +39,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/main","/", "/check-email-token","/error", "/reset-password/**" , "/reset-password-confirm" , "/reset-password/confirm" ,"/css/**", "/js/**", "/images/**", "/fonts/**"
+                        auth.requestMatchers("/main","/","/ads.txt", "/robots.txt", "/check-email-token","/error", "/reset-password/**" , "/reset-password-confirm" , "/reset-password/confirm" ,"/css/**", "/js/**", "/images/**", "/fonts/**"
                         ,"/sign-up", "/node_modules/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/profile").hasRole("UNVERIFIED")
                                 .requestMatchers("/settings/**").hasRole("USER")
