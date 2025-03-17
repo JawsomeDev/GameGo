@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragment.html :: head}"></head>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    body{
+        display: flex;
+        flex-direction: column;
+        background-color: #1B1F3A;
+    }
+    .error-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .error-content {
+        max-width: 500px;
+    }
+
+    .error-code {
+        font-size: 5rem;
+        font-weight: bold;
+        color: #9d4edd; /* 밝은 퍼플 */
+        margin-bottom: 1rem;
+    }
+
+    .error-title {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .error-message {
+        color: #ccc;
+        margin-bottom: 2rem;
+    }
+
+    .error-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+        .error-actions {
+            flex-direction: column;
+        }
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 1px solid #9d4edd;
+        color: #b8a9e3;
+    }
+
+    .btn-outline:hover {
+        background-color: rgba(157, 78, 221, 0.2);
+    }
+
+    .btn-primary {
+        background-color: #7b2cbf;
+        border: none;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #6a26a3;
+    }
+
+    .icon {
+        margin-right: 0.5rem;
+    }
+</style>
+<body>
+<div class="error-container">
+    <div class="error-content">
+        <h1 class="error-title text-white" id="error-title">잘못된 요청입니다.(404)</h1>
+        <p class="error-message" id="error-message">해당 경로는 존재하지 않습니다</p>
+
+        <div class="error-actions">
+            <button class="btn btn-outline" onclick="retryAction()">
+                <span class="icon">↻</span>
+                다시 시도
+            </button>
+            <a href="/static" class="btn btn-primary">
+                <span class="icon">⌂</span>
+                홈으로 돌아가기
+            </a>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragment.html :: footer}"></div>
+<script>
+    function retryAction() {
+        // 이전 페이지로 돌아가기
+        if (document.referrer && document.referrer.includes(window.location.hostname)) {
+            window.location.href = document.referrer;
+        } else {
+            // 이전 페이지 정보가 없으면 홈으로
+            window.location.href = '/';
+        }
+    }
+
+    // 페이지 로드 시 오류 정보 표시
+    window.addEventListener('DOMContentLoaded', displayErrorInfo);
+</script>
+</body>
+</html>
